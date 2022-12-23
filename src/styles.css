@@ -7,3 +7,21 @@ body {
 .example-tooltip {
   font-size: 100%;
 }
+
+/* Common formatting for all the help pages */
+.help-container {
+  margin-top: 30px;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.help-container a {
+  text-decoration: none;
+}
+
+.help-container a:link {
+  color: darkmagenta;
+}
+.help-container a:hover {
+  color: red;
+}

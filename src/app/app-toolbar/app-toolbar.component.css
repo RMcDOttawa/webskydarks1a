@@ -18,3 +18,11 @@
   font-size: small;
   color: darkgray;
 }
+
+a {
+  text-decoration: none;
+}
+
+a:visited {
+  color: white;
+}
