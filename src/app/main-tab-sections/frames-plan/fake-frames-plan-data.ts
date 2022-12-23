@@ -1,4 +1,4 @@
-const fakeFramesPlanData: FramePlan = {
+export const fakeFramesPlanData: FramePlan = {
   frameSets: [
     {
       frameSpec: {
