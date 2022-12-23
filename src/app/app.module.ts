@@ -12,11 +12,15 @@ import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatMenuModule} from "@angular/material/menu";
 import {MatIconModule} from "@angular/material/icon";
 import { AppToolbarComponent } from './app-toolbar/app-toolbar.component';
+import { HelpPageComponent } from './help-page/help-page.component';
+import { MainPageComponent } from './main-page/main-page.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    AppToolbarComponent
+    AppToolbarComponent,
+    HelpPageComponent,
+    MainPageComponent
   ],
   imports: [
     //  Angular
