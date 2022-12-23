@@ -11,13 +11,28 @@ export class LocalStorageService {
 
   constructor() { }
 
+  //  Set string value of given key
+  public setString(key: string, value: string): void {
+    window.localStorage.setItem(key, value);
+  }
+
+  //  Set arbitrary object value for a given key (json stringify it to a string)
+  public setObject(key: string, value: any): void {
+    const objectAsString = JSON.stringify(value);
+    this.setString(key, objectAsString);
+  }
+
   //  Get string stored for given key
-  public get(key: string): string | null {
+  public getString(key: string): string | null {
     return window.localStorage.getItem(key);
   }
 
-  //  Set string value of given key
-  public set(key: string, value: string): void {
-    window.localStorage.setItem(key, value);
+  //  Get arbitrary object stored for given key
+  //  We assume the object has been stored as a JSON string
+  public getObject(key: string): any {
+    const retrievedString = this.getString(key);
+    if (retrievedString === null) return null;
+    const rebuiltObject = JSON.parse(retrievedString);
+    return rebuiltObject;
   }
 }

@@ -9,6 +9,9 @@ describe('LocalStorageService', () => {
   const testValue = 'Arbitrary string to test service';
   const nonExistentKey = 'ensure this key is never used to store something';
 
+  const testObjectKey = 'testObjectKey';
+  const testObject: string[] = ['test', 'object', 'to', 'store', 'as', 'json'];
+
   beforeEach(() => {
     TestBed.configureTestingModule({});
     service = TestBed.inject(LocalStorageService);
@@ -21,7 +24,7 @@ describe('LocalStorageService', () => {
   it('should store a value successfully', () => {
     window.localStorage.removeItem(testKey);  // Ensure it's not there
 
-    service.set(testKey, testValue);
+    service.setString(testKey, testValue);
 
     expect(window.localStorage.getItem(testKey)).toEqual(testValue);
   });
@@ -30,16 +33,41 @@ describe('LocalStorageService', () => {
     window.localStorage.removeItem(testKey);  // Ensure it's not there
     window.localStorage.setItem(testKey, testValue);
 
-    const retrieved = service.get(testKey);
+    const retrieved = service.getString(testKey);
 
     expect(retrieved).toEqual(testValue);
   });
 
   it('should return null for a non-existent key', () => {
 
-    const retrieved = service.get(nonExistentKey);
+    const retrieved = service.getString(nonExistentKey);
 
     expect(retrieved).toBeNull();
   });
+
+  it('should store a complex object as a json string', () => {
+    const jsonConversion = JSON.stringify(testObject);
+    window.localStorage.removeItem(testObjectKey);  // Ensure it's not there
+
+    //  Store it
+    service.setObject(testObjectKey, testObject);
+
+    //  Confirm json was stored
+    expect(window.localStorage.getItem(testObjectKey)).toEqual(jsonConversion);
+
+  });
+
+  it('should retrieve a stored complex object', () => {
+    //  Manually store the json for the object
+    const jsonConversion = JSON.stringify(testObject);
+    window.localStorage.removeItem(testObjectKey);  // Ensure it's not there
+    window.localStorage.setItem(testObjectKey, jsonConversion);
+
+    //  Retrieve the object
+    const retrievedObject = service.getObject(testObjectKey);
+    expect(retrievedObject).toEqual(testObject);
+
+  })
+
 
 });
