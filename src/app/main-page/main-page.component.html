@@ -1,1 +1,18 @@
-<p>main-page works!</p>
+<!-- Main page is really 5 pages, selected by tab bar -->
+<mat-tab-group>
+  <mat-tab label="Start and End">
+    <app-start-end-specs></app-start-end-specs>
+  </mat-tab>
+  <mat-tab label="Temperature">
+    <app-temperature-specs></app-temperature-specs>
+  </mat-tab>
+  <mat-tab label="TheSkyX Server">
+    <app-server-specs></app-server-specs>
+  </mat-tab>
+  <mat-tab label="Frames Plan">
+    <app-frames-plan></app-frames-plan>
+  </mat-tab>
+  <mat-tab label="Run Session">
+    <app-run-session></app-run-session>
+  </mat-tab>
+</mat-tab-group>
