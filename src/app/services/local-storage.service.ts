@@ -35,4 +35,8 @@ export class LocalStorageService {
     const rebuiltObject = JSON.parse(retrievedString);
     return rebuiltObject;
   }
+
+  delete(keyToDelete: string) {
+    window.localStorage.removeItem(keyToDelete);
+  }
 }

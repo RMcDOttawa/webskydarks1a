@@ -33,3 +33,7 @@ tr:active {
   padding: 12px;
   border: solid red;
 }
+
+.fake-data-button {
+  margin-right: 8px;
+}

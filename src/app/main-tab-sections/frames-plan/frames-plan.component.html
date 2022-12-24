@@ -58,6 +58,8 @@
   <!-- This section will be commented out once real data management has been implemented -->
   <div class="fake-data-controls">
     <h3>Temporary management of fake data during development.</h3>
-    <button mat-button color="warn" (click)="storeFakeData()">Store Fake Data</button>
+    <button class="fake-data-button" mat-button color="warn" (click)="storeFakeData()">Store Fake Data</button>
+    <button class="fake-data-button" mat-button color="warn" (click)="emptyFakeData()">Empty Fake Data</button>
+    <button class="fake-data-button" mat-button color="warn" (click)="deleteFakeData()">Delete Fake Data</button>
   </div>
 </div>

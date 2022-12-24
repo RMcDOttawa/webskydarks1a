@@ -27,11 +27,27 @@ export class FramesPlanComponent implements OnInit {
     this.dataSource = new MatTableDataSource<DarkFrameSet>(this.framePlan.frameSets);
   }
 
+  //  Development-only methods to load and clear fake data into the browser store
+
   //  "Store Fake Data" button has been clicked.  Write the fake data into the browser store
   //  so it is available to be loaded into the table
   storeFakeData() {
     this.settingsService.setFramePlan(fakeFramesPlanData);
     this.framePlan = fakeFramesPlanData;
+    this.dataSource = new MatTableDataSource<DarkFrameSet>(this.framePlan.frameSets);
+  }
+
+  emptyFakeData() {
+    const emptyFrameSet = {frameSets: [], currentSet: 0};
+    this.settingsService.setFramePlan(emptyFrameSet);
+    this.framePlan = emptyFrameSet;
+    this.dataSource = new MatTableDataSource<DarkFrameSet>(this.framePlan.frameSets);
+  }
+
+  deleteFakeData() {
+    const emptyFrameSet = {frameSets: [], currentSet: 0};
+    this.settingsService.deleteFramePlan();
+    this.framePlan = emptyFrameSet;
     this.dataSource = new MatTableDataSource<DarkFrameSet>(this.framePlan.frameSets);
   }
 }

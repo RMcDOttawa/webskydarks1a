@@ -41,4 +41,8 @@ export class SettingsService {
   setFramePlan(framePlan: FramePlan) {
     this.localStorage.setObject(framePlanKey, framePlan);
   }
+
+  deleteFramePlan() {
+    this.localStorage.delete(framePlanKey);
+  }
 }
