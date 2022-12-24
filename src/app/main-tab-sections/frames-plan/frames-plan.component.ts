@@ -12,6 +12,7 @@ import {SettingsService} from "../../services/settings.service";
 export class FramesPlanComponent implements OnInit {
   //  The stored data - will later come from browser storage
   private framePlan: FramePlan = {frameSets: [], currentSet: 0};
+  private emptyFrameSet = {frameSets: [], currentSet: 0};
 
   //  Info to reflect the framePlan on the table on the html page
   elementData: {id: number, quantity: number, frameType: string, exposure: number, binning: number, complete: number} [] = [];
@@ -20,16 +21,22 @@ export class FramesPlanComponent implements OnInit {
 
   constructor(
     private settingsService: SettingsService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
+    //  Load the frames plan saved in settings or, if there is none, an empty plan
+    const loadedPlan = this.settingsService.getFramePlan();
+    if (loadedPlan === null) {
+      this.framePlan = this.emptyFrameSet;
+    } else {
+      this.framePlan = loadedPlan;
+    }
     this.dataSource = new MatTableDataSource<DarkFrameSet>(this.framePlan.frameSets);
   }
 
   //  Development-only methods to load and clear fake data into the browser store
 
-  //  "Store Fake Data" button has been clicked.  Write the fake data into the browser store
+  //  "Store Fake Data" button has been clicked.  Write the fake data into the browser store,
   //  so it is available to be loaded into the table
   storeFakeData() {
     this.settingsService.setFramePlan(fakeFramesPlanData);
@@ -38,16 +45,14 @@ export class FramesPlanComponent implements OnInit {
   }
 
   emptyFakeData() {
-    const emptyFrameSet = {frameSets: [], currentSet: 0};
-    this.settingsService.setFramePlan(emptyFrameSet);
-    this.framePlan = emptyFrameSet;
+    this.settingsService.setFramePlan(this.emptyFrameSet);
+    this.framePlan = this.emptyFrameSet;
     this.dataSource = new MatTableDataSource<DarkFrameSet>(this.framePlan.frameSets);
   }
 
   deleteFakeData() {
-    const emptyFrameSet = {frameSets: [], currentSet: 0};
     this.settingsService.deleteFramePlan();
-    this.framePlan = emptyFrameSet;
+    this.framePlan = this.emptyFrameSet;
     this.dataSource = new MatTableDataSource<DarkFrameSet>(this.framePlan.frameSets);
   }
 }

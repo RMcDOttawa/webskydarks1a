@@ -7,9 +7,9 @@ import {FramePlan} from "../types";
 
 //  Settings can be any object that can be converted to string-json
 
-const testSettingKey = 'test setting key do not use';
-const selectedMainTabKey = 'selected main tab';
-const framePlanKey = 'frame plan';
+const testSettingKey = 'WebSkyDarks test setting key do not use';
+const selectedMainTabKey = 'WebSkyDarks selected main tab';
+const framePlanKey = 'WebSkyDarks frame plan';
 
 @Injectable({
   providedIn: 'root'
@@ -38,8 +38,13 @@ export class SettingsService {
     return this.localStorage.getObject(selectedMainTabKey);
   }
 
+  //  The frame plan - list of frames sets wanted
   setFramePlan(framePlan: FramePlan) {
     this.localStorage.setObject(framePlanKey, framePlan);
+  }
+
+  public getFramePlan(): FramePlan | null {
+    return this.localStorage.getObject(framePlanKey);
   }
 
   deleteFramePlan() {
