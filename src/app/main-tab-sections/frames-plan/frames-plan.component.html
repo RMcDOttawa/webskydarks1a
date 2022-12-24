@@ -54,4 +54,10 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns;sticky:true;"></tr>
     <tr mat-row *matRowDef="let row;columns:displayedColumns;"></tr>
   </table>
+  <!-- The following button set is used only during development, to inject or clear fake data -->
+  <!-- This section will be commented out once real data management has been implemented -->
+  <div class="fake-data-controls">
+    <h3>Temporary management of fake data during development.</h3>
+    <button mat-button color="warn" (click)="storeFakeData()">Store Fake Data</button>
+  </div>
 </div>

@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {LocalStorageService} from "./local-storage.service";
+import {FramePlan} from "../types";
 
 //  Service to store application settings, abstracting away how that is done.
 //  All settings are set and retrieved through public methods in this service.
@@ -8,6 +9,7 @@ import {LocalStorageService} from "./local-storage.service";
 
 const testSettingKey = 'test setting key do not use';
 const selectedMainTabKey = 'selected main tab';
+const framePlanKey = 'frame plan';
 
 @Injectable({
   providedIn: 'root'
@@ -34,5 +36,9 @@ export class SettingsService {
   }
   public getSelectedMainTab() : number | null {
     return this.localStorage.getObject(selectedMainTabKey);
+  }
+
+  setFramePlan(framePlan: FramePlan) {
+    this.localStorage.setObject(framePlanKey, framePlan);
   }
 }
