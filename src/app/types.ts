@@ -13,6 +13,7 @@ export interface DarkFrame  {
 
 //  A set of identical dark frames
 export interface DarkFrameSet  {
+  id: number;               //  Unique ID assigned to each frame set
   frameSpec:  DarkFrame;    //  What kind of dark frame?
   numberWanted: number;     //  How many do we want?
   numberCaptured: number;   //  How many, if any, have we already taken?

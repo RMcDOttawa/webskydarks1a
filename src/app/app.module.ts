@@ -27,26 +27,29 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatMenuModule} from "@angular/material/menu";
 import {MatTabsModule} from "@angular/material/tabs";
 import {MatToolbarModule} from "@angular/material/toolbar";
+import {MatTableModule} from "@angular/material/table";
 
 
 @NgModule({
   declarations: [
+    //  Angular
     AppComponent,
     AppToolbarComponent,
-    HelpPageComponent,
-    MainPageComponent,
-    StartEndSpecsComponent,
-    TemperatureSpecsComponent,
-    ServerSpecsComponent,
+    //  App content
     FramesPlanComponent,
-    RunSessionComponent,
-    HelpWorkflowComponent,
+    HelpDeveloperComponent,
+    HelpFramesPlanComponent,
+    HelpPageComponent,
+    HelpRunSessionComponent,
+    HelpServerComponent,
     HelpStartEndComponent,
     HelpTemperatureComponent,
-    HelpServerComponent,
-    HelpFramesPlanComponent,
-    HelpRunSessionComponent,
-    HelpDeveloperComponent,
+    HelpWorkflowComponent,
+    MainPageComponent,
+    RunSessionComponent,
+    ServerSpecsComponent,
+    StartEndSpecsComponent,
+    TemperatureSpecsComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -58,6 +61,7 @@ import {MatToolbarModule} from "@angular/material/toolbar";
     //  Material
     MatIconModule,
     MatMenuModule,
+    MatTableModule,
     MatTabsModule,
     MatToolbarModule,
   ],

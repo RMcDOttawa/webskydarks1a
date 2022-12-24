@@ -8,6 +8,7 @@ export const fakeFramesPlanData: FramePlan = {
         binning: 1,
         exposure: 0
       },
+      id: 1,
       numberWanted: 16,
       numberCaptured: 16
     },
@@ -17,6 +18,7 @@ export const fakeFramesPlanData: FramePlan = {
         binning: 2,
         exposure: 0
       },
+      id: 2,
       numberWanted: 16,
       numberCaptured: 16
     },
@@ -26,6 +28,7 @@ export const fakeFramesPlanData: FramePlan = {
         binning: 4,
         exposure: 0
       },
+      id: 3,
       numberWanted: 16,
       numberCaptured: 6
     },
@@ -35,6 +38,7 @@ export const fakeFramesPlanData: FramePlan = {
         binning: 1,
         exposure: 60
       },
+      id: 4,
       numberWanted: 16,
       numberCaptured: 0
     },
@@ -44,6 +48,7 @@ export const fakeFramesPlanData: FramePlan = {
         binning: 1,
         exposure: 180
       },
+      id: 5,
       numberWanted: 16,
       numberCaptured: 0
     },
@@ -53,6 +58,7 @@ export const fakeFramesPlanData: FramePlan = {
         binning: 1,
         exposure: 300
       },
+      id: 6,
       numberWanted: 16,
       numberCaptured: 0
     },
@@ -62,6 +68,7 @@ export const fakeFramesPlanData: FramePlan = {
         binning: 2,
         exposure: 300
       },
+      id: 7,
       numberWanted: 16,
       numberCaptured: 0
     },
