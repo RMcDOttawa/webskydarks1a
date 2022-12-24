@@ -1,3 +1,5 @@
+import {DarkFrameType, FramePlan} from "../../types";
+
 export const fakeFramesPlanData: FramePlan = {
   frameSets: [
     {
