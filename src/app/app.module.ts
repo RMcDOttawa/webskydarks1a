@@ -28,6 +28,7 @@ import {MatMenuModule} from "@angular/material/menu";
 import {MatTabsModule} from "@angular/material/tabs";
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatTableModule} from "@angular/material/table";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 
 @NgModule({
@@ -64,6 +65,7 @@ import {MatTableModule} from "@angular/material/table";
     MatTableModule,
     MatTabsModule,
     MatToolbarModule,
+    MatTooltipModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

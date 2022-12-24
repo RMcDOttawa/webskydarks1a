@@ -10,6 +10,7 @@ h1 {
 
 table {
   width: 100%;
+  border: solid gray;
 }
 
 th.mat-sort-header-sorted {
@@ -36,4 +37,28 @@ tr:active {
 
 .fake-data-button {
   margin-right: 8px;
+}
+
+.edit-buttons {
+  display: flex;
+  margin-top: 12px;
+  width: 100%;
+}
+
+.edit-button {
+  margin-left: 6px;
+  margin-right: 6px;
+}
+
+.content-buttons {
+  display: inline;
+}
+
+.motion-buttons {
+  display: inline;
+  margin-left: 24px;
+}
+
+.full-spacer {
+  flex: 1 1 auto;
 }
