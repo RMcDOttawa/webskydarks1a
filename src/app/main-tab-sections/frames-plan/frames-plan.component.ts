@@ -94,22 +94,35 @@ export class FramesPlanComponent implements OnInit {
     }
   }
 
-  //  Delete button has been clicked. Right now we're using this only to debug that selection checkboxes
-  //  are stored properly.
-  deleteClicked() {
-    console.log('Delete button clicked');
-    let anythingClicked = false;
-    for (let index = 0; index < this.checkedItems.length; index++) {
-      if (this.checkedItems[index]) {
-        console.log(`   Item at index ${index} is checked`);
-        anythingClicked = true;
-      }
-    }
-    if (!anythingClicked) console.log('   Nothing is selected.');
-  }
-
   //  Return the number of currently selected rows - this is used to enable and disable buttons
   numSelected(): number {
     return this.checkedItems.filter(Boolean).length;
+  }
+
+  //  One or more rows are selected.  Delete them from the plan.
+  //  Because indexes change as we delete things, we'll work via the frame set ids, retrieving them first
+  deleteSelected() {
+    const selectedIds = this.getSelectedIds();
+    selectedIds.forEach(id => {
+      this.framePlanService.deleteFrameSetById(id)
+    });
+    const frameSets = this.framePlanService.getFrameSets();
+    this.dataSource = new MatTableDataSource<DarkFrameSet>(frameSets);
+    this.checkedItems = this.makeCheckedArray(frameSets.length);
+  }
+
+  //  Get the internal ID numbers of any frames corresponding to selected checkboxes
+  //  We use the index of the checkboxes and map those to framesets via the service
+  private getSelectedIds(): number[] {
+    let selectedIds: number[] = [];
+    for (let index = 0; index < this.checkedItems.length; index++) {
+      if (this.checkedItems[index]) {
+        const thisFrameSet = this.framePlanService.getFrameSetByIndex(index);
+        if (thisFrameSet) {
+          selectedIds.push(thisFrameSet.id);
+        }
+      }
+    }
+    return selectedIds;
   }
 }

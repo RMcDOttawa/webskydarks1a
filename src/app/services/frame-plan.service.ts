@@ -1,13 +1,12 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {DarkFrameSet} from "../types";
 import {SettingsService} from "./settings.service";
 import {fakeFrameSets} from "../main-tab-sections/frames-plan/fake-frames-plan-data";
 
-//  The complete plan of what we need to acquire, and how far along we are in doing so
+//  The complete plan of what we need to acquire
 
 export interface FramePlanType {
   frameSets: DarkFrameSet[];
-  currentSet: number;
 }
 
 @Injectable({
@@ -16,14 +15,12 @@ export interface FramePlanType {
 export class FramePlanService {
 
   frameSets: DarkFrameSet[];
-  currentSet: number;
 
   //  Construct a FramePlanService, taking the set and cursor, or defaulting to empty
   constructor(
     private settingsService: SettingsService,
   ) {
     this.frameSets = [];
-    this.currentSet = -1;
   }
 
   //  Return the frame set array for use in driving a table
@@ -38,18 +35,16 @@ export class FramePlanService {
     if (loadedPlan === null) {
       //  There is no stored set, so initialize an empty one
       this.frameSets = [];
-      this.currentSet = -1;
     } else {
       //  Load the data from the stored set
       this.frameSets = loadedPlan.frameSets;
-      this.currentSet = loadedPlan.currentSet;
     }
 
   }
 
   //  Get the array index for a given id.  -1 = not found
   findIndexById(id: number): number {
-    for(let index = 0; index < this.frameSets.length; index++) {
+    for (let index = 0; index < this.frameSets.length; index++) {
       const frameSet = this.frameSets[index];
       if (id === frameSet.id) return index;
     }
@@ -62,21 +57,34 @@ export class FramePlanService {
   //  Put fake data into the frame plan, and the browser storage
   storeFakeData() {
     this.frameSets = fakeFrameSets;
-    this.currentSet = 2;
-    this.settingsService.setFramePlan({frameSets: this.frameSets, currentSet: this.currentSet});
+    this.settingsService.setFramePlan({frameSets: this.frameSets});
   }
 
   //  Set the frame plan to empty (no frame sets).  Update the stored version so it exists but is empty.
   deleteAllFrameSets() {
     this.frameSets = [];
-    this.currentSet = -1;
-    this.settingsService.setFramePlan({frameSets: this.frameSets, currentSet: this.currentSet});
+    this.settingsService.setFramePlan({frameSets: this.frameSets});
   }
 
   //  Delete the browser stored frame plan entirely, so next run discovers nothing is stored
   deleteStoredPlan() {
     this.frameSets = [];
-    this.currentSet = -1;
     this.settingsService.deleteFramePlan();
+  }
+
+  //  Delete the frame set with the given ID from the plan and store
+  deleteFrameSetById(idToDelete: number) {
+    this.frameSets.splice( this.frameSets.findIndex(fs => fs.id === idToDelete) , 1);
+    this.settingsService.setFramePlan({frameSets: this.frameSets});
+  }
+
+  //  Retrieve the frame set at the given index in the array.
+  //  Note: this is by array index, not by frameset ID
+  getFrameSetByIndex(index: number): DarkFrameSet | null {
+    if (index >= 0 && index < this.frameSets.length) {
+      return this.frameSets[index];
+    } else {
+      return null;
+    }
   }
 }

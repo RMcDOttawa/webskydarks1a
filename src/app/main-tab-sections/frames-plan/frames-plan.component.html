@@ -70,8 +70,9 @@
       <button class="edit-button" mat-button color="primary" matTooltip="Add new frame set">
         <mat-icon>add</mat-icon>
       </button>
-      <!-- Delte button - enabled if 1 or more rows are checked -->
+      <!-- Delete button - enabled if 1 or more rows are checked -->
       <button class="edit-button" mat-button color="primary"
+              (click)="deleteSelected()"
               [disabled]="numSelected()===0"
               matTooltip="Remove the selected frame sets">
         <mat-icon>remove</mat-icon>
