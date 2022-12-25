@@ -1,7 +1,6 @@
-import {DarkFrameType, FramePlan} from "../../types";
+import {DarkFrameSet, DarkFrameType} from "../../types";
 
-export const fakeFramesPlanData: FramePlan = {
-  frameSets: [
+export const fakeFrameSets: DarkFrameSet[] = [
     {
       frameSpec: {
         frameType: DarkFrameType.biasFrame,
@@ -72,6 +71,4 @@ export const fakeFramesPlanData: FramePlan = {
       numberWanted: 16,
       numberCaptured: 0
     },
-  ],
-  currentSet: 2
-}
+  ];

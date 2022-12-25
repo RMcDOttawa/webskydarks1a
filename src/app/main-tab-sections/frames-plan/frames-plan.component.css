@@ -62,3 +62,7 @@ tr:active {
 .full-spacer {
   flex: 1 1 auto;
 }
+
+.selected-row {
+  background-color: gray;
+}

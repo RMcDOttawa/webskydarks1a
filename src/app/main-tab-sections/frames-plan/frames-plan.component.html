@@ -1,6 +1,7 @@
 <div class="frame-plan-container">
   <h1>Frame Sets to be Acquired</h1>
-  <table mat-table [dataSource]="dataSource" multiTemplateDataRows>
+  <table mat-table
+    [dataSource]="dataSource" multiTemplateDataRows>
 
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef> ID</th>
@@ -52,22 +53,41 @@
 
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns;sticky:true;"></tr>
-    <tr mat-row *matRowDef="let row;columns:displayedColumns;"></tr>
+<!--    <tr mat-row-->
+<!--        (click)="rowClicked(row)"-->
+<!--        [ngClass]="{'selected-row': row.id === selectedId}"-->
+<!--        *matRowDef="let row;columns:displayedColumns;"></tr>-->
+    <tr mat-row
+        *matRowDef="let row;columns:displayedColumns;"></tr>
   </table>
   <!-- Row of edit buttons to manipulate the rows in the table -->
   <div class="edit-buttons">
     <div class="content-buttons">
-      <button class="edit-button" mat-button color="primary" matTooltip="Add new frame set"><mat-icon>add</mat-icon></button>
-      <button class="edit-button" mat-button color="primary" matTooltip="Remove the selected frame set"><mat-icon>remove</mat-icon></button>
-      <button class="edit-button" mat-button color="primary" matTooltip="Edit the selected frame set"><mat-icon>edit</mat-icon></button>
-      <button class="edit-button" mat-button color="primary" matTooltip="Bulk-edit multiple frame sets"><mat-icon>library_add</mat-icon></button>
+      <button class="edit-button" mat-button color="primary" matTooltip="Add new frame set">
+        <mat-icon>add</mat-icon>
+      </button>
+      <button class="edit-button" mat-button color="primary" matTooltip="Remove the selected frame sets">
+        <mat-icon>remove</mat-icon>
+      </button>
+      <button class="edit-button" mat-button color="primary" matTooltip="Edit the selected frame set">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button class="edit-button" mat-button color="primary" matTooltip="Bulk-edit multiple frame sets">
+        <mat-icon>library_add</mat-icon>
+      </button>
     </div>
     <div class="motion-buttons">
-      <button class="edit-button" mat-button color="primary" matTooltip="Move selected frame set up"><mat-icon>north</mat-icon></button>
-      <button class="edit-button" mat-button color="primary" matTooltip="Move selected frame set down"><mat-icon>south</mat-icon></button>
+      <button class="edit-button" mat-button color="primary" matTooltip="Move selected frame set up">
+        <mat-icon>north</mat-icon>
+      </button>
+      <button class="edit-button" mat-button color="primary" matTooltip="Move selected frame set down">
+        <mat-icon>south</mat-icon>
+      </button>
     </div>
     <span class="full-spacer"></span>
-    <button class="edit-button" mat-button color="primary" matTooltip="Reset all the Complete counts"><mat-icon>clear</mat-icon></button>
+    <button class="edit-button" mat-button color="primary" matTooltip="Reset all the Completed counts">
+      <mat-icon>clear</mat-icon>
+    </button>
   </div>
   <!-- The following button set is used only during development, to inject or clear fake data -->
   <!-- This section will be commented out once real data management has been implemented -->

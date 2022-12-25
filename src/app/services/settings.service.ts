@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {LocalStorageService} from "./local-storage.service";
-import {FramePlan} from "../types";
+import {FramePlanType} from "./frame-plan.service";
 
 //  Service to store application settings, abstracting away how that is done.
 //  All settings are set and retrieved through public methods in this service.
@@ -39,11 +39,11 @@ export class SettingsService {
   }
 
   //  The frame plan - list of frames sets wanted
-  setFramePlan(framePlan: FramePlan) {
+  setFramePlan(framePlan: FramePlanType) {
     this.localStorage.setObject(framePlanKey, framePlan);
   }
 
-  public getFramePlan(): FramePlan | null {
+  public getFramePlan(): FramePlanType | null {
     return this.localStorage.getObject(framePlanKey);
   }
 

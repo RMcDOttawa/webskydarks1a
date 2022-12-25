@@ -19,8 +19,3 @@ export interface DarkFrameSet  {
   numberCaptured: number;   //  How many, if any, have we already taken?
 }
 
-//  The complete plan of what we need to acquire, and how far along we are in doing so
-export interface FramePlan {
-  frameSets: DarkFrameSet[];
-  currentSet: number;
-}
