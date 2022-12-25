@@ -23,6 +23,7 @@ import { HelpRunSessionComponent } from './help-page/help-sub-pages/help-run-ses
 import { HelpDeveloperComponent } from './help-page/help-sub-pages/help-developer/help-developer.component';
 
 //  Material
+import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatIconModule} from "@angular/material/icon";
 import {MatMenuModule} from "@angular/material/menu";
 import {MatTabsModule} from "@angular/material/tabs";
@@ -52,21 +53,22 @@ import {MatTooltipModule} from "@angular/material/tooltip";
     StartEndSpecsComponent,
     TemperatureSpecsComponent,
   ],
-  imports: [
-    AppRoutingModule,
+    imports: [
+      AppRoutingModule,
 
-    //  Angular
-    BrowserAnimationsModule,
-    BrowserModule,
+      //  Angular
+      BrowserAnimationsModule,
+      BrowserModule,
 
-    //  Material
-    MatIconModule,
-    MatMenuModule,
-    MatTableModule,
-    MatTabsModule,
-    MatToolbarModule,
-    MatTooltipModule,
-  ],
+      //  Material
+      MatCheckboxModule,
+      MatIconModule,
+      MatMenuModule,
+      MatTableModule,
+      MatTabsModule,
+      MatToolbarModule,
+      MatTooltipModule,
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })

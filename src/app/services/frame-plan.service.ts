@@ -47,6 +47,15 @@ export class FramePlanService {
 
   }
 
+  //  Get the array index for a given id.  -1 = not found
+  findIndexById(id: number): number {
+    for(let index = 0; index < this.frameSets.length; index++) {
+      const frameSet = this.frameSets[index];
+      if (id === frameSet.id) return index;
+    }
+    return -1;
+  }
+
 
   /*** The following methods are used only for testing - the events that invoke them will be hidden for prod ***/
 
