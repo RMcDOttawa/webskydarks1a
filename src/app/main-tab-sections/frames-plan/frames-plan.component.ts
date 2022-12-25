@@ -1,9 +1,8 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MatTableDataSource} from "@angular/material/table";
 import {DarkFrameSet} from "../../types";
 import {FramePlanService} from "../../services/frame-plan.service";
 import {SettingsService} from "../../services/settings.service";
-import {MatCheckboxChange} from "@angular/material/checkbox";
 
 @Component({
   selector: 'app-frames-plan',
@@ -24,7 +23,6 @@ export class FramesPlanComponent implements OnInit {
   constructor(
     private framePlanService: FramePlanService,
     private settingsService: SettingsService,
-    // private changeDetectorRef: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -76,8 +74,6 @@ export class FramesPlanComponent implements OnInit {
       // console.log(`Set checkedItems[${index}] to ${checked}`);
       this.checkedItems[index] = checked;
     }
-    // this.changeDetectorRef.markForCheck();
-    //todo possibly need to use a separate selection object to track internally what is selected. we'll see.
   }
 
   //  Determine if the given dark frame set should be checked.  We use the ID to get the index number then
@@ -110,5 +106,10 @@ export class FramesPlanComponent implements OnInit {
       }
     }
     if (!anythingClicked) console.log('   Nothing is selected.');
+  }
+
+  //  Return the number of currently selected rows - this is used to enable and disable buttons
+  numSelected(): number {
+    return this.checkedItems.filter(Boolean).length;
   }
 }
