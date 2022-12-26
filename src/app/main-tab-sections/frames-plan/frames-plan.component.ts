@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {MatTableDataSource} from "@angular/material/table";
 import {DarkFrameSet} from "../../types";
-import {FramePlanService} from "../../services/frame-plan.service";
-import {SettingsService} from "../../services/settings.service";
+import {FramePlanService} from "../../services/frame-plan/frame-plan.service";
+import {SettingsService} from "../../services/settings/settings.service";
 
 @Component({
   selector: 'app-frames-plan',
@@ -16,62 +16,31 @@ export class FramesPlanComponent implements OnInit {
   displayedColumns: string[] = ['select', 'id', 'quantity', 'frameType', 'exposure', 'binning', 'complete'];
   dataSource!:MatTableDataSource<DarkFrameSet>;
   checkedItems: boolean[] = [];
+  frameSetsToDisplay: DarkFrameSet[] = [];
 
   //  We will record the ID of the selected row, if any.   IDs are positive numbers, so we use -1 for none.
   // public selectedId: number = -1;
 
   constructor(
-    private framePlanService: FramePlanService,
-    private settingsService: SettingsService,
+    private framePlanService: FramePlanService
   ) {}
 
   ngOnInit(): void {
     this.framePlanService.loadFramePlanFromStore();
-    const frameSets = this.framePlanService.getFrameSets();
-    this.dataSource = new MatTableDataSource<DarkFrameSet>(this.framePlanService.getFrameSets());
+    this.frameSetsToDisplay = this.framePlanService.getFrameSets();
+    this.dataSource = new MatTableDataSource<DarkFrameSet>(this.frameSetsToDisplay);
 
-    this.checkedItems = this.makeCheckedArray(frameSets.length);
+    this.checkedItems = this.makeCheckedArray(this.frameSetsToDisplay.length);
   }
 
   private makeCheckedArray(length: number): boolean[] {
     return Array(length).fill(false);
   }
 
-
-  //  Development-only methods to load and clear fake data into the browser store
-
-  //  "Store Fake Data" button has been clicked.  Write the fake data into the browser store,
-  //  so it is available to be loaded into the table
-  storeFakeData() {
-    this.framePlanService.storeFakeData();
-    const frameSets = this.framePlanService.getFrameSets();
-    this.dataSource = new MatTableDataSource<DarkFrameSet>(frameSets);
-    this.checkedItems = this.makeCheckedArray(frameSets.length);
-  }
-
-  //  "Empty fake data" button clicked.  We'll delete all the frame sets in the fake data, but leave the (empty)
-  //  plan in the browser store
-  emptyFakeData() {
-    this.framePlanService.deleteAllFrameSets();
-    const frameSets = this.framePlanService.getFrameSets();
-    this.dataSource = new MatTableDataSource<DarkFrameSet>(frameSets);
-    this.checkedItems = this.makeCheckedArray(frameSets.length);
-  }
-
-  //  "Delete fake data" button clicked.  Delete all the frame sets, and delete the plan from the
-  //  browser store
-  deleteFakeData() {
-    this.framePlanService.deleteStoredPlan();
-    const frameSets = this.framePlanService.getFrameSets();
-    this.dataSource = new MatTableDataSource<DarkFrameSet>(frameSets);
-    this.checkedItems = this.makeCheckedArray(frameSets.length);
-  }
-
   selectOrDeselectAll(event: any) {
     const checked = event.checked;
-     // Reflect the check visually on the table
+    // Reflect the check visually on the table
     for(let index = 0; index < this.checkedItems.length; index++) {
-      // console.log(`Set checkedItems[${index}] to ${checked}`);
       this.checkedItems[index] = checked;
     }
   }
@@ -106,9 +75,9 @@ export class FramesPlanComponent implements OnInit {
     selectedIds.forEach(id => {
       this.framePlanService.deleteFrameSetById(id)
     });
-    const frameSets = this.framePlanService.getFrameSets();
-    this.dataSource = new MatTableDataSource<DarkFrameSet>(frameSets);
-    this.checkedItems = this.makeCheckedArray(frameSets.length);
+    this.frameSetsToDisplay = this.framePlanService.getFrameSets();
+    this.dataSource = new MatTableDataSource<DarkFrameSet>(this.frameSetsToDisplay);
+    this.checkedItems = this.makeCheckedArray(this.frameSetsToDisplay.length);
   }
 
   //  Get the internal ID numbers of any frames corresponding to selected checkboxes
@@ -124,5 +93,34 @@ export class FramesPlanComponent implements OnInit {
       }
     }
     return selectedIds;
+  }
+
+  //  Development-only methods to load and clear fake data into the browser store
+
+  //  "Store Fake Data" button has been clicked.  Write the fake data into the browser store,
+  //  so it is available to be loaded into the table
+  storeFakeData() {
+    this.framePlanService.storeFakeData();
+    this.frameSetsToDisplay = this.framePlanService.getFrameSets();
+    this.dataSource = new MatTableDataSource<DarkFrameSet>(this.frameSetsToDisplay);
+    this.checkedItems = this.makeCheckedArray(this.frameSetsToDisplay.length);
+  }
+
+  //  "Empty fake data" button clicked.  We'll delete all the frame sets in the fake data, but leave the (empty)
+  //  plan in the browser store
+  emptyFakeData() {
+    this.framePlanService.deleteAllFrameSets();
+    this.frameSetsToDisplay = this.framePlanService.getFrameSets();
+    this.dataSource = new MatTableDataSource<DarkFrameSet>(this.frameSetsToDisplay);
+    this.checkedItems = this.makeCheckedArray(this.frameSetsToDisplay.length);
+  }
+
+  //  "Delete fake data" button clicked.  Delete all the frame sets, and delete the plan from the
+  //  browser store
+  deleteFakeData() {
+    this.framePlanService.deleteStoredPlan();
+    this.frameSetsToDisplay = this.framePlanService.getFrameSets();
+    this.dataSource = new MatTableDataSource<DarkFrameSet>(this.frameSetsToDisplay);
+    this.checkedItems = this.makeCheckedArray(this.frameSetsToDisplay.length);
   }
 }

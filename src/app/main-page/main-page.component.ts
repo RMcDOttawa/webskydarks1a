@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {SettingsService} from "../services/settings.service";
+import {SettingsService} from "../services/settings/settings.service";
 
 //  The main "page" that sits below the top toolbar and contains all the application interaction.
 //  It is subdivided by a tab bar into different functions

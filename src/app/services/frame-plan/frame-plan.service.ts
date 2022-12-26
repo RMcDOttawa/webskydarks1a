@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {DarkFrameSet} from "../types";
-import {SettingsService} from "./settings.service";
-import {fakeFrameSets} from "../main-tab-sections/frames-plan/fake-frames-plan-data";
+import {DarkFrameSet} from "../../types";
+import {SettingsService} from "../settings/settings.service";
+import {fakeFrameSets} from "./fake-frames-plan-data";
 
 //  The complete plan of what we need to acquire
 
@@ -56,7 +56,8 @@ export class FramePlanService {
 
   //  Put fake data into the frame plan, and the browser storage
   storeFakeData() {
-    this.frameSets = fakeFrameSets;
+    //  Assigning fakes.  Make a copy or future edits will affect the fake set
+    this.frameSets = fakeFrameSets.map((frameSet) => frameSet);
     this.settingsService.setFramePlan({frameSets: this.frameSets});
   }
 
