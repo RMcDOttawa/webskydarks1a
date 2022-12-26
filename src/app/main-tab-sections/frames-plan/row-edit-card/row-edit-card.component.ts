@@ -30,7 +30,6 @@ export class RowEditCardComponent implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<RowEditCardComponent>,
-    private formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: { edit: boolean, frameSet: DarkFrameSet }) {
     //  Prevent clicking outside window from closing it
     // dialogRef.disableClose = true;
@@ -87,8 +86,9 @@ export class RowEditCardComponent implements OnInit {
     }
   }
 
+  //  Cancel button has been clicked.  Close the window without saving anything.
   cancelDialog() {
-    alert('cancelDialog');
+    this.dialogRef.close();
   }
 
   saveDialog() {

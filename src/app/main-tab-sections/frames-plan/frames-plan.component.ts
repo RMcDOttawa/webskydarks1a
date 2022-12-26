@@ -183,9 +183,6 @@ export class FramesPlanComponent implements OnInit {
         width: '250px',
         data: {'edit': true, 'frameSet': this.frameSetsToDisplay[selectedIndex]}
       });
-      dialogRef.afterClosed().subscribe(result => {
-        alert(`User chose "${result}" in dialog`);
-      });
     } else {
       alert('Internal error detected in openEditDialog - selected rows not valid');
     }
