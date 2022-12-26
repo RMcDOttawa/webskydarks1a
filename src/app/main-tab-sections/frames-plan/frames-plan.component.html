@@ -87,11 +87,13 @@
     <div class="motion-buttons">
       <button class="edit-button" mat-button color="primary"
               [disabled]="numSelected()!==1 || !canMoveSelectedUp()"
+              (click)="moveSelectedUp()"
               matTooltip="Move selected frame set up">
         <mat-icon>north</mat-icon>
       </button>
       <button class="edit-button" mat-button color="primary"
               [disabled]="numSelected()!==1 || !canMoveSelectedDown()"
+              (click)="moveSelectedDown()"
               matTooltip="Move selected frame set down">
         <mat-icon>south</mat-icon>
       </button>

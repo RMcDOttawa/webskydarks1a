@@ -1,8 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {MatTableDataSource} from "@angular/material/table";
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {MatTable, MatTableDataSource} from "@angular/material/table";
 import {DarkFrameSet} from "../../types";
 import {FramePlanService} from "../../services/frame-plan/frame-plan.service";
 import {SettingsService} from "../../services/settings/settings.service";
+import * as assert from "assert";
 
 @Component({
   selector: 'app-frames-plan',
@@ -122,6 +123,43 @@ export class FramesPlanComponent implements OnInit {
       }
     }
     return selectedIndices;
+  }
+
+  //  Exactly one row is selected, and it is known not to be the first row.
+  //  Move it one index left (toward zero) in the array, shifting the other values right to make room
+  moveSelectedUp() {
+    const selectedIndices = this.getSelectedIndices();
+    if (selectedIndices.length === 1 && selectedIndices[0] > 0) {
+      const selectedIndex = selectedIndices[0];
+      //  Move the actual data
+      this.framePlanService.moveFrameSetAtIndex(selectedIndex, -1);
+      //  Move the selection checkmark
+      this.checkedItems[selectedIndex] = false;
+      this.checkedItems[selectedIndex - 1] = true;
+      //  Trigger update
+      this.frameSetsToDisplay = this.framePlanService.getFrameSets();
+      this.dataSource = new MatTableDataSource<DarkFrameSet>(this.frameSetsToDisplay);
+    } else {
+      alert('Internal error detected in moveSelectedUp - selected rows not valid');
+    }
+  }
+
+  //  Exactly one row is selected, and it is known not to be the last row.
+  //  Move it one index right (away from zero) in the array, shifting the other values left to make room
+  moveSelectedDown() {
+    const selectedIndices = this.getSelectedIndices();
+    if (selectedIndices.length === 1 && selectedIndices[0] < this.checkedItems.length) {
+      const selectedIndex = selectedIndices[0];
+      this.framePlanService.moveFrameSetAtIndex(selectedIndex, +1);
+      //  Move the selection checkmark
+      this.checkedItems[selectedIndex] = false;
+      this.checkedItems[selectedIndex + 1] = true;
+      //  Trigger update
+      this.frameSetsToDisplay = this.framePlanService.getFrameSets();
+      this.dataSource = new MatTableDataSource<DarkFrameSet>(this.frameSetsToDisplay);
+    } else {
+      alert('Internal error detected in moveSelectedDown - selected rows not valid');
+    }
   }
 
   //  Development-only methods to load and clear fake data into the browser store

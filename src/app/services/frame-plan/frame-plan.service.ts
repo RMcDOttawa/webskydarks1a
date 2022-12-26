@@ -88,4 +88,21 @@ export class FramePlanService {
       return null;
     }
   }
+
+  //  Move the frame set in the array, at the selected index, by the given amount.
+  //  -1 moves it left (toward index 0), while +1 moves it right
+  moveFrameSetAtIndex(index: number, increment: number) {
+    let arrayWithShift = this.insertAndShift(this.frameSets, index, index + increment);
+    this.frameSets = arrayWithShift;
+    this.settingsService.setFramePlan({frameSets: this.frameSets});
+  }
+
+  //  Return a copy of the given array, with an element moved from the given spot to the given spot
+  private insertAndShift(originalArray: DarkFrameSet[], from: number, to: number): DarkFrameSet[] {
+    let arrayCopy = originalArray.map((frameSet) => frameSet);
+    let cutOut = arrayCopy.splice(from, 1) [0]; // cut the element at index 'from'
+    arrayCopy.splice(to, 0, cutOut);            // insert it at index 'to'
+    return arrayCopy;
+  }
+
 }
