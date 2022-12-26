@@ -133,11 +133,11 @@ export class FramesPlanComponent implements OnInit {
       const selectedIndex = selectedIndices[0];
       //  Move the actual data
       this.framePlanService.moveFrameSetAtIndex(selectedIndex, -1);
+      this.frameSetsToDisplay = this.framePlanService.getFrameSets();
       //  Move the selection checkmark
       this.checkedItems[selectedIndex] = false;
       this.checkedItems[selectedIndex - 1] = true;
       //  Trigger update
-      this.frameSetsToDisplay = this.framePlanService.getFrameSets();
       this.dataSource = new MatTableDataSource<DarkFrameSet>(this.frameSetsToDisplay);
     } else {
       alert('Internal error detected in moveSelectedUp - selected rows not valid');
@@ -151,11 +151,11 @@ export class FramesPlanComponent implements OnInit {
     if (selectedIndices.length === 1 && selectedIndices[0] < this.checkedItems.length) {
       const selectedIndex = selectedIndices[0];
       this.framePlanService.moveFrameSetAtIndex(selectedIndex, +1);
+      this.frameSetsToDisplay = this.framePlanService.getFrameSets();
       //  Move the selection checkmark
       this.checkedItems[selectedIndex] = false;
       this.checkedItems[selectedIndex + 1] = true;
       //  Trigger update
-      this.frameSetsToDisplay = this.framePlanService.getFrameSets();
       this.dataSource = new MatTableDataSource<DarkFrameSet>(this.frameSetsToDisplay);
     } else {
       alert('Internal error detected in moveSelectedDown - selected rows not valid');

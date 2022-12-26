@@ -37,14 +37,15 @@
     <ng-container matColumnDef="exposure">
       <th mat-header-cell *matHeaderCellDef> Exposure</th>
       <td mat-cell *matCellDef="let element">
-        {{element.frameSpec.exposure}}
+        <!-- Don't display an exposure for bias frames, just dark frames -->
+        {{element.frameSpec.frameType === 'bias' ? '' : element.frameSpec.exposure}}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="binning">
       <th mat-header-cell *matHeaderCellDef> Binning</th>
       <td mat-cell *matCellDef="let element">
-        {{element.frameSpec.exposure}}
+        {{element.frameSpec.binning}}
       </td>
     </ng-container>
 
