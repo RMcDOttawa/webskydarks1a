@@ -1,7 +1,15 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {DarkFrameSet} from "../../../types";
-import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators
+} from "@angular/forms";
 
 @Component({
   selector: 'app-row-edit-card',
@@ -17,12 +25,12 @@ export class RowEditCardComponent implements OnInit {
   quantityControl!: FormControl;
   binningControl!: FormControl;
   completedControl!: FormControl;
+  exposureControl!: FormControl;
 
   constructor(
     private dialogRef: MatDialogRef<RowEditCardComponent>,
     private formBuilder: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: {edit: boolean, frameSet: DarkFrameSet})
-  {
+    @Inject(MAT_DIALOG_DATA) public data: { edit: boolean, frameSet: DarkFrameSet }) {
     //  Prevent clicking outside window from closing it
     // dialogRef.disableClose = true;
 
@@ -35,22 +43,45 @@ export class RowEditCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.dialogRef.updateSize('360px');
+
+    //  Quantity field must be an integer >= 1
     this.quantityControl = new FormControl('', [
       Validators.required,    //  Field is required
       Validators.pattern('[0-9]+'),    //  Digits only, so integer
       Validators.min(1),
     ]);
+
+    //  Binning field must be an integer >= 1
     this.binningControl = new FormControl('', [
       Validators.required,    //  Field is required
       Validators.pattern('[0-9]+'),    //  Digits only, so integer
       Validators.min(1),
     ]);
+
+    //  Completed field must be an integer >= 0
     this.completedControl = new FormControl('', [
       Validators.required,    //  Field is required
       Validators.pattern('[0-9]+'),    //  Digits only, so integer
       Validators.min(0),
     ]);
 
+    //  Exposure field can be any number, including decimals.
+    //  Trying to get all the possible cases with a regular expression was complex and error-ridden,
+    //  so instead we're using a custom validator that just attempts the actual conversion
+    this.exposureControl = new FormControl('', [
+      Validators.required,    //  Field is required
+      this.floatingPointValidator(),
+    ]);
+  }
+
+  //  Create a validation function that test if a form field is a valid floating point
+  //  number by trying to convert it
+  private floatingPointValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const stringToValidate: string = control.value;
+      const conversionAttempt = Number(stringToValidate);
+      return isNaN(conversionAttempt) ? {invalidFloat: {value: stringToValidate}} : null;
+    }
   }
 
   cancelDialog() {

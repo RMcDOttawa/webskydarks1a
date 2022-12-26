@@ -29,9 +29,16 @@
       <mat-form-field>
         <input matInput placeholder="Exposure Seconds"
                name="exposure"
+               [formControl]="exposureControl"
                [(ngModel)]="frameSet.frameSpec.exposure"
         >
       </mat-form-field>
+      <div class="validation-error"
+           *ngIf="exposureControl.hasError('required')">This field is required
+      </div>
+      <div class="validation-error"
+           *ngIf="exposureControl.hasError('invalidFloat')">This must be a number, and can include decimals
+      </div>
 
       <mat-form-field>
         <input matInput placeholder="Binning"
