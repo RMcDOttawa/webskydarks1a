@@ -12,8 +12,10 @@ export class RowEditCardComponent implements OnInit {
   isEdit: boolean;
   frameSet: DarkFrameSet;
   originalFrameSet: DarkFrameSet;
+
   //  Validator controls
   quantityControl!: FormControl;
+  binningControl!: FormControl;
 
   constructor(
     private dialogRef: MatDialogRef<RowEditCardComponent>,
@@ -36,7 +38,13 @@ export class RowEditCardComponent implements OnInit {
       Validators.required,    //  Field is required
       Validators.pattern('[0-9]+'),    //  Digits only, so integer
       Validators.min(1),
+    ]);
+    this.binningControl = new FormControl('', [
+      Validators.required,    //  Field is required
+      Validators.pattern('[0-9]+'),    //  Digits only, so integer
+      Validators.min(1),
     ])
+
   }
 
   cancelDialog() {
