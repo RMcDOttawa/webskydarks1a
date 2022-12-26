@@ -35,7 +35,9 @@ import {MatDialogModule} from "@angular/material/dialog";
 import {MatCardModule} from "@angular/material/card";
 import {MatInputModule} from "@angular/material/input";
 import {MatRadioModule} from "@angular/material/radio";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatButtonModule} from "@angular/material/button";
 
 
 @NgModule({
@@ -65,12 +67,17 @@ import {FormsModule} from "@angular/forms";
 
     //  Angular
     BrowserAnimationsModule,
+    FormsModule,
     BrowserModule,
+    ReactiveFormsModule,
 
     //  Material
+    MatButtonModule,
     MatCheckboxModule,
     MatDialogModule,
+    MatFormFieldModule,
     MatIconModule,
+    MatInputModule,
     MatMenuModule,
     MatTableModule,
     MatTabsModule,
@@ -79,7 +86,6 @@ import {FormsModule} from "@angular/forms";
     MatCardModule,
     MatInputModule,
     MatRadioModule,
-    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

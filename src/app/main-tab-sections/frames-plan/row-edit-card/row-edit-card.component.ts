@@ -1,6 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {DarkFrameSet} from "../../../types";
+import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-row-edit-card',
@@ -11,9 +12,12 @@ export class RowEditCardComponent implements OnInit {
   isEdit: boolean;
   frameSet: DarkFrameSet;
   originalFrameSet: DarkFrameSet;
+  //  Validator controls
+  quantityControl!: FormControl;
 
   constructor(
     private dialogRef: MatDialogRef<RowEditCardComponent>,
+    private formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: {edit: boolean, frameSet: DarkFrameSet})
   {
     //  Prevent clicking outside window from closing it
@@ -28,6 +32,11 @@ export class RowEditCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.dialogRef.updateSize('360px');
+    this.quantityControl = new FormControl('', [
+      Validators.required,    //  Field is required
+      Validators.pattern('[0-9]+'),    //  Digits only, so integer
+      Validators.min(1),
+    ])
   }
 
   cancelDialog() {

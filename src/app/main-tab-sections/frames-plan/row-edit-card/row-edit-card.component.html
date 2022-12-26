@@ -2,11 +2,25 @@
   <mat-card-title>Edit Frame Set {{frameSet.id}}</mat-card-title>
   <mat-card-content>
     <form>
+
       <mat-form-field>
         <input matInput placeholder="# Frames"
+               id="numberWanted"
                name="numberWanted"
-               [(ngModel)]="frameSet.numberWanted">
+               [formControl]="quantityControl"
+               [(ngModel)]="frameSet.numberWanted"
+        >
       </mat-form-field>
+      <div class="validation-error"
+           *ngIf="quantityControl.hasError('required')">This field is required
+      </div>
+      <div class="validation-error"
+           *ngIf="quantityControl.hasError('pattern')">This field must be an integer
+      </div>
+      <div class="validation-error"
+           *ngIf="quantityControl.hasError('min')">This field must be 1 or more
+      </div>
+
       <mat-radio-group name="frameType" [(ngModel)]="frameSet.frameSpec.frameType">
         <mat-radio-button name="bias" value="bias">Bias</mat-radio-button>
         <mat-radio-button name="dark" value="dark">Dark</mat-radio-button>
