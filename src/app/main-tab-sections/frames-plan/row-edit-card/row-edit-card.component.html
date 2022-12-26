@@ -52,10 +52,20 @@
 
       <mat-form-field>
         <input matInput placeholder="# Completed"
-               name="binning"
+               name="completed"
+               [formControl]="completedControl"
                [(ngModel)]="frameSet.numberCaptured"
         >
       </mat-form-field>
+      <div class="validation-error"
+           *ngIf="completedControl.hasError('required')">This field is required
+      </div>
+      <div class="validation-error"
+           *ngIf="completedControl.hasError('pattern')">This field must be an integer
+      </div>
+      <div class="validation-error"
+           *ngIf="completedControl.hasError('min')">This field must be 0 or more
+      </div>
 
     </form>
   </mat-card-content>
