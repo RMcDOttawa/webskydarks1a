@@ -8,7 +8,6 @@
                id="numberWanted"
                name="numberWanted"
                [formControl]="quantityControl"
-               [(ngModel)]="frameSet.numberWanted"
         >
       </mat-form-field>
       <div class="validation-error"
@@ -21,7 +20,7 @@
            *ngIf="quantityControl.hasError('min')">This field must be 1 or more
       </div>
 
-      <mat-radio-group name="frameType" [(ngModel)]="frameSet.frameSpec.frameType">
+      <mat-radio-group name="frameType" [formControl]="frameTypeControl">
         <mat-radio-button name="bias" value="bias">Bias</mat-radio-button>
         <mat-radio-button name="dark" value="dark">Dark</mat-radio-button>
       </mat-radio-group>
@@ -30,7 +29,6 @@
         <input matInput placeholder="Exposure Seconds"
                name="exposure"
                [formControl]="exposureControl"
-               [(ngModel)]="frameSet.frameSpec.exposure"
         >
       </mat-form-field>
       <div class="validation-error"
@@ -44,7 +42,6 @@
         <input matInput placeholder="Binning"
                name="binning"
                [formControl]="binningControl"
-               [(ngModel)]="frameSet.frameSpec.binning"
         >
       </mat-form-field>
       <div class="validation-error"
@@ -61,7 +58,6 @@
         <input matInput placeholder="# Completed"
                name="completed"
                [formControl]="completedControl"
-               [(ngModel)]="frameSet.numberCaptured"
         >
       </mat-form-field>
       <div class="validation-error"
