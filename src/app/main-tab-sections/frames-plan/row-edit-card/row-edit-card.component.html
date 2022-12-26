@@ -1,0 +1,39 @@
+<mat-card>
+  <mat-card-title>Edit Frame Set {{frameSet.id}}</mat-card-title>
+  <mat-card-content>
+    <form>
+      <mat-form-field>
+        <input matInput placeholder="# Frames"
+               name="numberWanted"
+               [(ngModel)]="frameSet.numberWanted">
+      </mat-form-field>
+      <mat-radio-group name="frameType" [(ngModel)]="frameSet.frameSpec.frameType">
+        <mat-radio-button name="bias" value="bias">Bias</mat-radio-button>
+        <mat-radio-button name="dark" value="dark">Dark</mat-radio-button>
+      </mat-radio-group>
+      <mat-form-field>
+        <input matInput placeholder="Exposure Seconds"
+               name="exposure"
+               [(ngModel)]="frameSet.frameSpec.exposure"
+        >
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Binning"
+               name="binning"
+               [(ngModel)]="frameSet.frameSpec.binning"
+        >
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="# Completed"
+               name="binning"
+               [(ngModel)]="frameSet.numberCaptured"
+        >
+      </mat-form-field>
+    </form>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-raised-button color="primary" (click)="cancelDialog()">Cancel</button>
+    <span class="spacer"></span>
+    <button mat-raised-button color="primary" (click)="saveDialog()">Save</button>
+  </mat-card-actions>
+</mat-card>

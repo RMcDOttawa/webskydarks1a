@@ -8,7 +8,7 @@ export const fakeFrameSets: DarkFrameSet[] = [
         exposure: 0
       },
       id: 1,
-      numberWanted: 16,
+      numberWanted: 161,
       numberCaptured: 16
     },
     {
@@ -18,7 +18,7 @@ export const fakeFrameSets: DarkFrameSet[] = [
         exposure: 0
       },
       id: 2,
-      numberWanted: 16,
+      numberWanted: 162,
       numberCaptured: 16
     },
     {
@@ -28,7 +28,7 @@ export const fakeFrameSets: DarkFrameSet[] = [
         exposure: 0
       },
       id: 3,
-      numberWanted: 16,
+      numberWanted: 163,
       numberCaptured: 6
     },
     {
@@ -38,7 +38,7 @@ export const fakeFrameSets: DarkFrameSet[] = [
         exposure: 60
       },
       id: 4,
-      numberWanted: 16,
+      numberWanted: 164,
       numberCaptured: 0
     },
     {
@@ -48,7 +48,7 @@ export const fakeFrameSets: DarkFrameSet[] = [
         exposure: 180
       },
       id: 5,
-      numberWanted: 16,
+      numberWanted: 165,
       numberCaptured: 0
     },
     {
@@ -58,7 +58,7 @@ export const fakeFrameSets: DarkFrameSet[] = [
         exposure: 300
       },
       id: 6,
-      numberWanted: 16,
+      numberWanted: 166,
       numberCaptured: 0
     },
     {
@@ -68,7 +68,7 @@ export const fakeFrameSets: DarkFrameSet[] = [
         exposure: 300
       },
       id: 7,
-      numberWanted: 16,
+      numberWanted: 167,
       numberCaptured: 0
     },
   ];

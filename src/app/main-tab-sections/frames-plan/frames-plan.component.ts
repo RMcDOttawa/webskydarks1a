@@ -4,6 +4,8 @@ import {DarkFrameSet} from "../../types";
 import {FramePlanService} from "../../services/frame-plan/frame-plan.service";
 import {SettingsService} from "../../services/settings/settings.service";
 import * as assert from "assert";
+import {MatDialog} from "@angular/material/dialog";
+import {RowEditCardComponent} from "./row-edit-card/row-edit-card.component";
 
 @Component({
   selector: 'app-frames-plan',
@@ -23,7 +25,8 @@ export class FramesPlanComponent implements OnInit {
   // public selectedId: number = -1;
 
   constructor(
-    private framePlanService: FramePlanService
+    private framePlanService: FramePlanService,
+    private dialog: MatDialog,
   ) {
   }
 
@@ -168,6 +171,26 @@ export class FramesPlanComponent implements OnInit {
     this.frameSetsToDisplay = this.framePlanService.getFrameSets();
   }
 
+  //  Open a modal dialog in which user can edit the details of the selected frame set
+  openEditDialog() {
+    const selectedIndices = this.getSelectedIndices();
+    if (selectedIndices.length === 1) {
+      //  Get the selected frame set
+      const selectedIndex = selectedIndices[0];
+
+      //  Open an edit dialog with this frame set as data
+      const dialogRef = this.dialog.open(RowEditCardComponent, {
+        width: '250px',
+        data: {'edit': true, 'frameSet': this.frameSetsToDisplay[selectedIndex]}
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        alert(`User chose "${result}" in dialog`);
+      });
+    } else {
+      alert('Internal error detected in openEditDialog - selected rows not valid');
+    }
+  }
+
   //  Development-only methods to load and clear fake data into the browser store
 
   //  "Store Fake Data" button has been clicked.  Write the fake data into the browser store,
@@ -196,4 +219,5 @@ export class FramesPlanComponent implements OnInit {
     this.dataSource = new MatTableDataSource<DarkFrameSet>(this.frameSetsToDisplay);
     this.checkedItems = this.makeCheckedArray(this.frameSetsToDisplay.length);
   }
+
 }

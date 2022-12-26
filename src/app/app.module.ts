@@ -30,6 +30,12 @@ import {MatTabsModule} from "@angular/material/tabs";
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatTableModule} from "@angular/material/table";
 import {MatTooltipModule} from "@angular/material/tooltip";
+import { RowEditCardComponent } from './main-tab-sections/frames-plan/row-edit-card/row-edit-card.component';
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatCardModule} from "@angular/material/card";
+import {MatInputModule} from "@angular/material/input";
+import {MatRadioModule} from "@angular/material/radio";
+import {FormsModule} from "@angular/forms";
 
 
 @NgModule({
@@ -52,23 +58,29 @@ import {MatTooltipModule} from "@angular/material/tooltip";
     ServerSpecsComponent,
     StartEndSpecsComponent,
     TemperatureSpecsComponent,
+    RowEditCardComponent,
   ],
-    imports: [
-      AppRoutingModule,
+  imports: [
+    AppRoutingModule,
 
-      //  Angular
-      BrowserAnimationsModule,
-      BrowserModule,
+    //  Angular
+    BrowserAnimationsModule,
+    BrowserModule,
 
-      //  Material
-      MatCheckboxModule,
-      MatIconModule,
-      MatMenuModule,
-      MatTableModule,
-      MatTabsModule,
-      MatToolbarModule,
-      MatTooltipModule,
-    ],
+    //  Material
+    MatCheckboxModule,
+    MatDialogModule,
+    MatIconModule,
+    MatMenuModule,
+    MatTableModule,
+    MatTabsModule,
+    MatToolbarModule,
+    MatTooltipModule,
+    MatCardModule,
+    MatInputModule,
+    MatRadioModule,
+    FormsModule,
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })

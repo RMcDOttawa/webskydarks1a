@@ -1,0 +1,26 @@
+.mat-card {
+  margin: auto;
+  width: 280px;
+}
+
+.mat-card .mat-card-actions {
+  display: flex;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.mat-card .mat-card-content .mat-radio-button {
+  margin-right: 12px;
+}
+
+.mat-card .mat-form-field {
+  display: block;
+  margin-top: 8px;
+}
+
+.mat-card .mat-radio-group {
+  display: block;
+  margin-bottom: 20px;
+}
