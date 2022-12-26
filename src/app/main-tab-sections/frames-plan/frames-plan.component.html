@@ -100,8 +100,11 @@
       </button>
     </div>
     <span class="full-spacer"></span>
-    <button class="edit-button" mat-button color="primary" matTooltip="Reset all the Completed counts">
-      <mat-icon>clear</mat-icon>
+    <button class="edit-button" mat-button color="primary"
+            [disabled]="frameSetsToDisplay.length === 0"
+            (click)="resetCompletedCounts()"
+            matTooltip="Reset all the Completed counts">
+      <mat-icon>restart_alt</mat-icon>
     </button>
   </div>
   <!-- The following button set is used only during development, to inject or clear fake data -->

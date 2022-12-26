@@ -105,4 +105,9 @@ export class FramePlanService {
     return arrayCopy;
   }
 
+  //  Reset all the completed counts in the plan to zero
+  resetCompletedCounts() {
+    this.frameSets.forEach((fs) => fs.numberCaptured = 0);
+    this.settingsService.setFramePlan({frameSets: this.frameSets});
+  }
 }

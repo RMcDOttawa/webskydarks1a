@@ -162,6 +162,12 @@ export class FramesPlanComponent implements OnInit {
     }
   }
 
+  //  Reset the "completed count" of all the frame sets to zero
+  resetCompletedCounts() {
+    this.framePlanService.resetCompletedCounts();
+    this.frameSetsToDisplay = this.framePlanService.getFrameSets();
+  }
+
   //  Development-only methods to load and clear fake data into the browser store
 
   //  "Store Fake Data" button has been clicked.  Write the fake data into the browser store,
