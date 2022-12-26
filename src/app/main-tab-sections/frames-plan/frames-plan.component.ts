@@ -14,7 +14,7 @@ export class FramesPlanComponent implements OnInit {
 
   //  Info to reflect the framePlan on the table on the html page
   displayedColumns: string[] = ['select', 'id', 'quantity', 'frameType', 'exposure', 'binning', 'complete'];
-  dataSource!:MatTableDataSource<DarkFrameSet>;
+  dataSource!: MatTableDataSource<DarkFrameSet>;
   checkedItems: boolean[] = [];
   frameSetsToDisplay: DarkFrameSet[] = [];
 
@@ -23,7 +23,8 @@ export class FramesPlanComponent implements OnInit {
 
   constructor(
     private framePlanService: FramePlanService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.framePlanService.loadFramePlanFromStore();
@@ -40,7 +41,7 @@ export class FramesPlanComponent implements OnInit {
   selectOrDeselectAll(event: any) {
     const checked = event.checked;
     // Reflect the check visually on the table
-    for(let index = 0; index < this.checkedItems.length; index++) {
+    for (let index = 0; index < this.checkedItems.length; index++) {
       this.checkedItems[index] = checked;
     }
   }
@@ -93,6 +94,34 @@ export class FramesPlanComponent implements OnInit {
       }
     }
     return selectedIds;
+  }
+
+  //  Can the selected row be moved up?  Any row except the first can be moved up, so just check index=0
+  canMoveSelectedUp() {
+    const selectedIndices = this.getSelectedIndices();
+    //  TO be able to move this set up, none of them can be the first item (i.e. index 0)
+    const positionOfZero = selectedIndices.indexOf(0);
+    return (positionOfZero == -1);
+  }
+
+  //  Can the selected row be moved down?  Any row except the last can be moved up, so just check index
+  canMoveSelectedDown() {
+    const selectedIndices = this.getSelectedIndices();
+    //  TO be able to move this set down, none of them can be the last item (i.e. n-1)
+    const positionOfLast = selectedIndices.indexOf(this.checkedItems.length - 1);
+    return (positionOfLast == -1);
+  }
+
+  //  Return an array of the indices of selected rows
+  private getSelectedIndices() {
+    //todo Find a way to do this without a for-loop.  reduce function?
+    let selectedIndices: number[] = [];
+    for (let index = 0; index < this.checkedItems.length; index++) {
+      if (this.checkedItems[index]) {
+        selectedIndices.push(index);
+      }
+    }
+    return selectedIndices;
   }
 
   //  Development-only methods to load and clear fake data into the browser store
