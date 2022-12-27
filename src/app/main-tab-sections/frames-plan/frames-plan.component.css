@@ -11,6 +11,7 @@ h1 {
 table {
   width: 100%;
   border: solid gray;
+  user-select: none;
 }
 
 th.mat-sort-header-sorted {

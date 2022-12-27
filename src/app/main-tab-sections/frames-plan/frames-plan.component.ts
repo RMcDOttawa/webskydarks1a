@@ -1,15 +1,20 @@
-import { Component, OnInit } from '@angular/core';
-import { MatTableDataSource} from "@angular/material/table";
+import {Component, OnInit} from '@angular/core';
+import {MatTableDataSource} from "@angular/material/table";
 import {DarkFrameSet} from "../../types";
 import {FramePlanService} from "../../services/frame-plan/frame-plan.service";
 import {MatDialog} from "@angular/material/dialog";
 import {RowEditCardComponent} from "./row-edit-card/row-edit-card.component";
+import {MAT_CHECKBOX_DEFAULT_OPTIONS} from "@angular/material/checkbox";
 
 @Component({
   selector: 'app-frames-plan',
   templateUrl: './frames-plan.component.html',
   styleUrls: ['./frames-plan.component.css'],
-  // changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    //  Arrange that the selection checkbox doesn't have its built-in function of toggling itself when clicked.
+    //  Instead, we will intercept a click anywhere in the row and use that to set the selection
+    {provide: MAT_CHECKBOX_DEFAULT_OPTIONS, useValue: {clickAction: 'noop'}}
+  ]
 })
 export class FramesPlanComponent implements OnInit {
 
@@ -58,11 +63,30 @@ export class FramesPlanComponent implements OnInit {
 
   //  A checkbox has been clicked.  Toggle the local "checked" array for that item, by getting the index
   //  via id lookup
-  checkboxChanged(frameSet: DarkFrameSet) {
+  // checkboxChanged(frameSet: DarkFrameSet) {
+  //   const id = frameSet.id;
+  //   const itemIndex = this.framePlanService.findIndexById(id);
+  //   if (itemIndex >= 0) {
+  //     this.checkedItems[itemIndex] = !this.checkedItems[itemIndex];
+  //   }
+  // }
+
+  //  A row has been clicked.  Change the selected row to this one.  If the Shift key is down,
+  //  toggle the selection of this row but leave the others as they are (so shift-click can add to
+  //  a multi-selection, or remove an item from it)
+
+  rowClicked(frameSet: DarkFrameSet, event: MouseEvent) {
     const id = frameSet.id;
     const itemIndex = this.framePlanService.findIndexById(id);
     if (itemIndex >= 0) {
-      this.checkedItems[itemIndex] = !this.checkedItems[itemIndex];
+      if (event.shiftKey) {
+        //  Shift-click toggles the selection state of this item
+        this.checkedItems[itemIndex] = !this.checkedItems[itemIndex];
+      } else {
+        //  Click without shift sets the selection to just this item
+        this.checkedItems = this.makeCheckedArray(this.frameSetsToDisplay.length);
+        this.checkedItems[itemIndex] = true;
+      }
     }
   }
 
@@ -179,7 +203,8 @@ export class FramesPlanComponent implements OnInit {
       //  Open an edit dialog with this frame set as data
       const dialogRef = this.dialog.open(RowEditCardComponent, {
         width: '250px',
-        data: {'edit': true,
+        data: {
+          'edit': true,
           'frameSet': this.frameSetsToDisplay[selectedIndex],
           'refreshCallback': () => {
             this.frameSetsToDisplay = this.framePlanService.getFrameSets();
