@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {DarkFrameSet} from "../../types";
 import {SettingsService} from "../settings/settings.service";
 import {fakeFrameSets} from "./fake-frames-plan-data";
+import {max} from "rxjs";
 
 //  The complete plan of what we need to acquire
 
@@ -122,5 +123,35 @@ export class FramePlanService {
     } else {
       console.error(`Internal error: updating frameset ID ${updatedFrameSet.id}, not in the current plan.`);
     }
+  }
+
+  //  Add the given as a new frame set.  Note that it won't have an ID number, so we find the next highest
+  //  one available and set that.
+  //  If selectedRow is -1, the new set goes at the end of the array.  if it is some other number, we
+  //  insert it in the array at that point, shifting other values to the right to make room.
+  addNewFrameSet(newFrameSet: DarkFrameSet, selectedRow: number) {
+    newFrameSet.id = this.allocateNextIdNumber();
+    if (selectedRow === -1) {
+      //  Put this at the end of the array
+      this.frameSets.push(newFrameSet);
+    } else {
+      //  Insert at the given point in the array
+      if (selectedRow >= 0 && selectedRow < this.frameSets.length) {
+        this.frameSets.splice(selectedRow, 0, newFrameSet);
+      } else {
+        alert(`Error in addNewFrameSet: index ${selectedRow} is out of bounds.`);
+      }
+    }
+    this.settingsService.setFramePlan({frameSets: this.frameSets});
+  }
+
+  private allocateNextIdNumber() {
+    const maximumIdFrame = this.frameSets.reduce(
+      (accumulate, currentValue) => {
+        return accumulate.id > currentValue.id ? accumulate : currentValue
+      }
+    );
+    const nextIdNumber = maximumIdFrame.id + 1;
+    return nextIdNumber;
   }
 }

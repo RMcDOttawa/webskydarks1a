@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {MatTableDataSource} from "@angular/material/table";
-import {DarkFrameSet} from "../../types";
+import {DarkFrameSet, DarkFrameType} from "../../types";
 import {FramePlanService} from "../../services/frame-plan/frame-plan.service";
 import {MatDialog} from "@angular/material/dialog";
 import {RowEditCardComponent} from "./row-edit-card/row-edit-card.component";
@@ -218,6 +218,7 @@ export class FramesPlanComponent implements OnInit {
         data: {
           'edit': true,
           'frameSet': this.frameSetsToDisplay[selectedIndex],
+          'selectedRow': selectedIndex,  //  Used only for NEW items
           'refreshCallback': () => {
             this.frameSetsToDisplay = this.framePlanService.getFrameSets();
             this.dataSource = new MatTableDataSource<DarkFrameSet>(this.frameSetsToDisplay);
@@ -226,6 +227,35 @@ export class FramesPlanComponent implements OnInit {
       });
     } else {
       alert('Internal error detected in openEditDialog - selected rows not valid');
+    }
+  }
+
+  // Open a modal dialog used to enter a new frame set.  The same dialog as Edit is used - a few parameters
+  //  are changed to reflect that this is a new entry, not an edit.  the selected row index, if one is
+  //  selected, is passed in so that the new item can be inserted at that point
+  openAddNewDialog() {
+    const selectedIndices = this.getSelectedIndices();
+    if (selectedIndices.length < 2) {
+      const selectedIndex = (selectedIndices.length == 1) ? selectedIndices[0] : -1;
+      const dialogRef = this.dialog.open(RowEditCardComponent, {
+        width: '250px',
+        data: {
+          'edit': false,  //Tell component this is a new item
+          'frameSet': { //  Defaults for new frame set
+            id: -1, numberWanted: 16, numberCaptured: 0,
+            frameSpec: {
+              frameType: DarkFrameType.darkFrame,
+              binning: 1,
+              exposure: 60
+            }
+          },
+          'selectedRow': selectedIndex,  //  Used only for NEW items
+          'refreshCallback': () => {
+            this.frameSetsToDisplay = this.framePlanService.getFrameSets();
+            this.dataSource = new MatTableDataSource<DarkFrameSet>(this.frameSetsToDisplay);
+          }
+        }
+      });
     }
   }
 

@@ -20,6 +20,7 @@ import {FramePlanService} from "../../../services/frame-plan/frame-plan.service"
 export class RowEditCardComponent implements OnInit {
   isEdit: boolean;
   frameSet: DarkFrameSet;
+  selectedRow: number;
 
   //  Validator controls
   quantityControl!: FormControl;
@@ -31,12 +32,17 @@ export class RowEditCardComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<RowEditCardComponent>,
     private framePlanService: FramePlanService,
-    @Inject(MAT_DIALOG_DATA) public data: { edit: boolean, frameSet: DarkFrameSet, refreshCallback: () => void }) {
+    @Inject(MAT_DIALOG_DATA) public data: {
+      edit: boolean,
+      frameSet: DarkFrameSet,
+      selectedRow: number,
+      refreshCallback: () => void }) {
     //  Prevent clicking outside window from closing it
     // dialogRef.disableClose = true;
 
     this.isEdit = data.edit;
     this.frameSet = data.frameSet;
+    this.selectedRow = data.selectedRow;
   }
 
   ngOnInit(): void {
@@ -89,6 +95,10 @@ export class RowEditCardComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  //  This is the method called both when saving an existing frame set that has been edited, and when
+  //  creating a new frame set.  We use "isEdit" to determine which is which.  If it is a New item,
+  //  we pass the selected row index (-1 = nothing selected) to the service so the new frame can be
+  //  inserted at the appropriate point - either before the selected row or at the end of the list
   saveDialog() {
     const updatedFrameSpec: DarkFrame = {
       frameType: this.frameTypeControl.value,
@@ -96,13 +106,18 @@ export class RowEditCardComponent implements OnInit {
       exposure: this.exposureControl.value
     };
     const updatedFrameSet: DarkFrameSet = {
-      id: this.frameSet.id,
+      id: this.frameSet.id, // Will be -1 if this is a new frame set
       frameSpec: updatedFrameSpec,
       numberWanted: this.quantityControl.value,
       numberCaptured: this.completedControl.value
     };
-    this.framePlanService.updateFrameSet(updatedFrameSet);
+    if (this.isEdit) {
+      this.framePlanService.updateFrameSet(updatedFrameSet);
+    } else {
+      this.framePlanService.addNewFrameSet(updatedFrameSet, this.selectedRow);
+    }
     this.data.refreshCallback();
     this.dialogRef.close();
   }
+
 }
