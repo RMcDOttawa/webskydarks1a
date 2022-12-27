@@ -110,4 +110,8 @@ export class FramePlanService {
     this.frameSets.forEach((fs) => fs.numberCaptured = 0);
     this.settingsService.setFramePlan({frameSets: this.frameSets});
   }
+
+  updateFrameSet(updatedFrameSet: DarkFrameSet) {
+    alert('updateFrameSet');
+  }
 }

@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {DarkFrameSet, DarkFrameType} from "../../../types";
+import {DarkFrame, DarkFrameSet, DarkFrameType} from "../../../types";
 import {
   AbstractControl,
   FormBuilder,
@@ -10,6 +10,7 @@ import {
   ValidatorFn,
   Validators
 } from "@angular/forms";
+import {FramePlanService} from "../../../services/frame-plan/frame-plan.service";
 
 @Component({
   selector: 'app-row-edit-card',
@@ -19,7 +20,6 @@ import {
 export class RowEditCardComponent implements OnInit {
   isEdit: boolean;
   frameSet: DarkFrameSet;
-  originalFrameSet: DarkFrameSet;
 
   //  Validator controls
   quantityControl!: FormControl;
@@ -30,15 +30,14 @@ export class RowEditCardComponent implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<RowEditCardComponent>,
+    private framePlanService: FramePlanService,
     @Inject(MAT_DIALOG_DATA) public data: { edit: boolean, frameSet: DarkFrameSet }) {
     //  Prevent clicking outside window from closing it
     // dialogRef.disableClose = true;
 
     this.isEdit = data.edit;
-    this.originalFrameSet = data.frameSet;
 
-    //  Edit a COPY of the frameSet so, if user cancels dialog, we haven't changed original
-    this.frameSet = structuredClone(data.frameSet);
+    this.frameSet = data.frameSet;
   }
 
   ngOnInit(): void {
@@ -92,6 +91,18 @@ export class RowEditCardComponent implements OnInit {
   }
 
   saveDialog() {
-    alert('saveDialog');
+    const updatedFrameSpec: DarkFrame = {
+      frameType: this.frameTypeControl.value,
+      binning: this.binningControl.value,
+      exposure: this.exposureControl.value
+    };
+    const updatedFrameSet: DarkFrameSet = {
+      id: this.frameSet.id,
+      frameSpec: updatedFrameSpec,
+      numberWanted: this.quantityControl.value,
+      numberCaptured: this.completedControl.value
+    };
+    this.framePlanService.updateFrameSet(updatedFrameSet);
+    this.dialogRef.close();
   }
 }

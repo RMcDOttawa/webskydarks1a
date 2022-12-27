@@ -75,6 +75,8 @@
   <mat-card-actions>
     <button mat-raised-button color="primary" (click)="cancelDialog()">Cancel</button>
     <span class="spacer"></span>
-    <button mat-raised-button color="primary" (click)="saveDialog()">Save</button>
+    <button mat-raised-button color="primary"
+            [disabled]="binningControl.invalid || quantityControl.invalid || exposureControl.invalid || completedControl.invalid"
+            (click)="saveDialog()">Save</button>
   </mat-card-actions>
 </mat-card>
