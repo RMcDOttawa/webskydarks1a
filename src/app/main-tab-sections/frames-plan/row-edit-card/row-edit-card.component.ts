@@ -37,7 +37,6 @@ export class RowEditCardComponent implements OnInit {
 
     this.isEdit = data.edit;
     this.frameSet = data.frameSet;
-    console.log(`RowEditCardComponent constructor. edit=${this.isEdit}, frameSet=${this.frameSet}`);
   }
 
   ngOnInit(): void {

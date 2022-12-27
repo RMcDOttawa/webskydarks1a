@@ -69,7 +69,9 @@
     <div class="content-buttons">
 
       <!-- "add" button, used to add an additional frameset to the plan -->
-      <button class="edit-button" mat-button color="primary" matTooltip="Add new frame set">
+      <button class="edit-button" mat-button color="primary"
+              [disabled]="numSelected() > 1"
+              matTooltip="Add new frame set">
         <mat-icon>add</mat-icon>
       </button>
 
