@@ -78,6 +78,7 @@ export class FramesPlanComponent implements OnInit {
   rowClicked(frameSet: DarkFrameSet, event: MouseEvent) {
     const id = frameSet.id;
     const itemIndex = this.framePlanService.findIndexById(id);
+    // console.log(`Clicked row ${itemIndex}, id ${id}, shift=${event.shiftKey}`);
     if (itemIndex >= 0) {
       if (event.shiftKey) {
         //  Shift-click toggles the selection state of this item
@@ -87,6 +88,17 @@ export class FramesPlanComponent implements OnInit {
         this.checkedItems = this.makeCheckedArray(this.frameSetsToDisplay.length);
         this.checkedItems[itemIndex] = true;
       }
+    }
+  }
+
+  //  A row has been double-clicked.
+  //  If this is the only row selected, this is equivalent to the "Edit" button.
+  rowDoubleClicked(frameSet: DarkFrameSet) {
+    const id = frameSet.id;
+    const itemIndex = this.framePlanService.findIndexById(id);
+    // console.log(`Double-Clicked row ${itemIndex}, id ${id}`);
+    if (this.numSelected() == 1) {
+      this.openEditDialog();
     }
   }
 
@@ -245,5 +257,4 @@ export class FramesPlanComponent implements OnInit {
     this.dataSource = new MatTableDataSource<DarkFrameSet>(this.frameSetsToDisplay);
     this.checkedItems = this.makeCheckedArray(this.frameSetsToDisplay.length);
   }
-
 }

@@ -60,6 +60,7 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns;sticky:true;"></tr>
     <tr mat-row
         (click)="rowClicked(row,$event)"
+        (dblclick)="rowDoubleClicked(row)"
         *matRowDef="let row;columns:displayedColumns;"></tr>
   </table>
 
