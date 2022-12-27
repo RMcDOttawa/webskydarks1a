@@ -31,7 +31,7 @@ export class RowEditCardComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<RowEditCardComponent>,
     private framePlanService: FramePlanService,
-    @Inject(MAT_DIALOG_DATA) public data: { edit: boolean, frameSet: DarkFrameSet }) {
+    @Inject(MAT_DIALOG_DATA) public data: { edit: boolean, frameSet: DarkFrameSet, refreshCallback: () => void }) {
     //  Prevent clicking outside window from closing it
     // dialogRef.disableClose = true;
 
@@ -103,6 +103,7 @@ export class RowEditCardComponent implements OnInit {
       numberCaptured: this.completedControl.value
     };
     this.framePlanService.updateFrameSet(updatedFrameSet);
+    this.data.refreshCallback();
     this.dialogRef.close();
   }
 }

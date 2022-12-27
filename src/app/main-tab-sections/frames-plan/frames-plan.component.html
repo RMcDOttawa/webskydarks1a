@@ -58,19 +58,19 @@
 
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns;sticky:true;"></tr>
-    <!--    <tr mat-row-->
-    <!--        (click)="rowClicked(row)"-->
-    <!--        [ngClass]="{'selected-row': row.id === selectedId}"-->
-    <!--        *matRowDef="let row;columns:displayedColumns;"></tr>-->
     <tr mat-row
         *matRowDef="let row;columns:displayedColumns;"></tr>
   </table>
+
   <!-- Row of edit buttons to manipulate the rows in the table -->
   <div class="edit-buttons">
     <div class="content-buttons">
+
+      <!-- "add" button, used to add an additional frameset to the plan -->
       <button class="edit-button" mat-button color="primary" matTooltip="Add new frame set">
         <mat-icon>add</mat-icon>
       </button>
+
       <!-- Delete button - enabled if 1 or more rows are checked -->
       <button class="edit-button" mat-button color="primary"
               (click)="deleteSelected()"
@@ -115,8 +115,8 @@
   <!-- This section will be commented out once real data management has been implemented -->
   <div class="fake-data-controls">
     <h3>Temporary management of fake data during development.</h3>
-    <button class="fake-data-button" mat-button color="warn" (click)="storeFakeData()">Store Fake Data</button>
-    <button class="fake-data-button" mat-button color="warn" (click)="emptyFakeData()">Empty Fake Data</button>
-    <button class="fake-data-button" mat-button color="warn" (click)="deleteFakeData()">Delete Fake Data</button>
+    <button class="fake-data-button" mat-raised-button color="warn" (click)="storeFakeData()">Store Fake Data</button>
+    <button class="fake-data-button" mat-raised-button color="warn" (click)="emptyFakeData()">Empty Fake Data</button>
+    <button class="fake-data-button" mat-raised-button color="warn" (click)="deleteFakeData()">Delete Fake Data</button>
   </div>
 </div>

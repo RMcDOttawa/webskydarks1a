@@ -1,9 +1,7 @@
-import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {MatTable, MatTableDataSource} from "@angular/material/table";
+import { Component, OnInit } from '@angular/core';
+import { MatTableDataSource} from "@angular/material/table";
 import {DarkFrameSet} from "../../types";
 import {FramePlanService} from "../../services/frame-plan/frame-plan.service";
-import {SettingsService} from "../../services/settings/settings.service";
-import * as assert from "assert";
 import {MatDialog} from "@angular/material/dialog";
 import {RowEditCardComponent} from "./row-edit-card/row-edit-card.component";
 
@@ -181,7 +179,13 @@ export class FramesPlanComponent implements OnInit {
       //  Open an edit dialog with this frame set as data
       const dialogRef = this.dialog.open(RowEditCardComponent, {
         width: '250px',
-        data: {'edit': true, 'frameSet': this.frameSetsToDisplay[selectedIndex]}
+        data: {'edit': true,
+          'frameSet': this.frameSetsToDisplay[selectedIndex],
+          'refreshCallback': () => {
+            this.frameSetsToDisplay = this.framePlanService.getFrameSets();
+            this.dataSource = new MatTableDataSource<DarkFrameSet>(this.frameSetsToDisplay);
+          }
+        }
       });
     } else {
       alert('Internal error detected in openEditDialog - selected rows not valid');

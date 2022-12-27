@@ -111,7 +111,16 @@ export class FramePlanService {
     this.settingsService.setFramePlan({frameSets: this.frameSets});
   }
 
+  //  Update a frameset in the plan with the given frameset.  Locate it by the ID number, which hasn't changed.
   updateFrameSet(updatedFrameSet: DarkFrameSet) {
-    alert('updateFrameSet');
+    // Find the index of this set by ID number
+    const frameSetIndex = this.findIndexById(updatedFrameSet.id);
+    if (frameSetIndex !== -1) {
+      // Replace the entire frameset in the plan and update in storage
+      this.frameSets[frameSetIndex] = updatedFrameSet;
+      this.settingsService.setFramePlan({frameSets: this.frameSets});
+    } else {
+      console.error(`Internal error: updating frameset ID ${updatedFrameSet.id}, not in the current plan.`);
+    }
   }
 }
