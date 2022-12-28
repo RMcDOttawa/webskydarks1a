@@ -64,8 +64,15 @@
         <div class="exposure-section">
           <div class="exposure-explanation">Exposure lengths, in seconds, separated by blanks:</div>
           <div class="exposure-field">
-            <textarea matInput placeholder="Enter exposure values here"></textarea>
+            <textarea matInput formControlName="exposureLengthsControl"
+                      placeholder="Enter exposure values here"></textarea>
           </div>
+        </div>
+        <div class="validation-error"
+             *ngIf="darkSectionGroup.hasError('emptyExposuresField')">If frames > 0, at least one exposure number is required.
+        </div>
+        <div class="validation-error"
+             *ngIf="darkSectionGroup.hasError('invalidNumbersInExposures')">Exposures field must be a list of numbers separated by spaces.
         </div>
       </fieldset>
 

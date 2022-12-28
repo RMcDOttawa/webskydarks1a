@@ -42,7 +42,7 @@ export class BulkAddFormComponent implements OnInit {
         binningControl3: new FormControl(false),
         binningControl4: new FormControl(false),
       },
-       this.numberBinningValidator()
+      this.numberBinningValidator()
     )
 
     //  Bias section: number of frames and binning.  Used as a group so we can validate across elements
@@ -56,8 +56,9 @@ export class BulkAddFormComponent implements OnInit {
         binningControl2: new FormControl(true),
         binningControl3: new FormControl(false),
         binningControl4: new FormControl(false),
+        exposureLengthsControl: new FormControl(''),
       },
-      this.numberBinningValidator()
+      [this.numberBinningValidator(), this.exposureListValidator()]
     )
 
   }
@@ -67,7 +68,7 @@ export class BulkAddFormComponent implements OnInit {
   private numberBinningValidator() {
     return (control: any) => {
       const group: FormGroup = control as FormGroup;
-      let result : ValidationErrors | null = null;
+      let result: ValidationErrors | null = null;
       const numFramesString = group.get('numFramesControl')!.value;
       const numFrames = numFramesString === '' ? 0 : numFramesString;
 
@@ -80,6 +81,35 @@ export class BulkAddFormComponent implements OnInit {
       if (numFrames > 0) {
         if (!atLeastOneChecked) {
           result = {framesWithoutBinning: {}};
+        }
+      }
+      return result;
+    }
+  }
+
+  //  Create a validation function for the exposure list field in the dark-frames section.
+  //  This field cannot be empty if the "number of frames" is > 0
+  //  If non-empty, this field must be a list of space-separted numbers (decimals ok)
+  private exposureListValidator() {
+    return (control: any) => {
+      const group: FormGroup = control as FormGroup;
+      let result: ValidationErrors | null = null;
+      const numFramesString = group.get('numFramesControl')!.value;
+      const numFrames = numFramesString === '' ? 0 : numFramesString;
+      const valuesField: string = group.get('exposureLengthsControl')!.value;
+
+      if (numFrames > 0) {
+        const tokens: string[] = valuesField.split(/\s+/);
+        if (valuesField.trim().length == 0) {
+          result = {emptyExposuresField: {}};
+        } else {
+          //  Remove any blank tokens produced by the parse
+          const tokensNoBlanks = tokens.filter((item) => item !== '');
+          //  Test if every item in this parsed array is a number
+          const allNumbers = tokensNoBlanks.every((item) =>  !isNaN(Number(item)) );
+          if (!allNumbers) {
+            result = {invalidNumbersInExposures: {}};
+          }
         }
       }
       return result;
