@@ -90,7 +90,9 @@
       >
         <mat-icon>edit</mat-icon>
       </button>
-      <button class="edit-button" mat-button color="primary" matTooltip="Bulk-edit multiple frame sets">
+      <button class="edit-button" mat-button color="primary"
+              (click)="openBulkAddDialog()"
+              matTooltip="Bulk-edit multiple frame sets">
         <mat-icon>library_add</mat-icon>
       </button>
     </div>

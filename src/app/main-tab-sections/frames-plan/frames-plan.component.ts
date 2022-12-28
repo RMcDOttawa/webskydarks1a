@@ -5,6 +5,7 @@ import {FramePlanService} from "../../services/frame-plan/frame-plan.service";
 import {MatDialog} from "@angular/material/dialog";
 import {RowEditCardComponent} from "./row-edit-card/row-edit-card.component";
 import {MAT_CHECKBOX_DEFAULT_OPTIONS} from "@angular/material/checkbox";
+import {BulkAddFormComponent} from "./bulk-add-form/bulk-add-form.component";
 
 @Component({
   selector: 'app-frames-plan',
@@ -259,6 +260,20 @@ export class FramesPlanComponent implements OnInit {
     }
   }
 
+  //  Bulk-Add button has been clicked.  Open the dialog to add multiple frames in a pattern.
+  openBulkAddDialog() {
+    const dialogRef = this.dialog.open(BulkAddFormComponent, {
+      // width: '250px',
+      data: {
+        'refreshCallback': () => {
+          this.frameSetsToDisplay = this.framePlanService.getFrameSets();
+          this.dataSource = new MatTableDataSource<DarkFrameSet>(this.frameSetsToDisplay);
+        }
+      }
+    });
+  }
+
+
   //  Development-only methods to load and clear fake data into the browser store
 
   //  "Store Fake Data" button has been clicked.  Write the fake data into the browser store,
@@ -287,4 +302,5 @@ export class FramesPlanComponent implements OnInit {
     this.dataSource = new MatTableDataSource<DarkFrameSet>(this.frameSetsToDisplay);
     this.checkedItems = this.makeCheckedArray(this.frameSetsToDisplay.length);
   }
+
 }

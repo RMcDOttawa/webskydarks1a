@@ -38,7 +38,7 @@ export class RowEditCardComponent implements OnInit {
       selectedRow: number,
       refreshCallback: () => void }) {
     //  Prevent clicking outside window from closing it
-    // dialogRef.disableClose = true;
+    dialogRef.disableClose = true;
 
     this.isEdit = data.edit;
     this.frameSet = data.frameSet;

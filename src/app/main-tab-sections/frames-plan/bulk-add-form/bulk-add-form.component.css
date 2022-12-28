@@ -1,0 +1,74 @@
+.mat-card {
+  margin: auto;
+  width: 400px;
+}
+
+.mat-card .mat-card-actions {
+  display: flex;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.mat-card .mat-card-content .mat-radio-button {
+  margin-right: 12px;
+}
+
+.mat-card .mat-form-field {
+  display: block;
+  margin-top: 8px;
+}
+
+.mat-card .mat-radio-group {
+  display: block;
+  margin-bottom: 20px;
+}
+
+.validation-error {
+  color: red;
+  padding-bottom: 12px;
+}
+
+.bias-frames{
+  margin-top: 18px;
+}
+
+.dark-frames {
+  margin-top: 24px;
+}
+
+.binning-box {
+  display: block;
+  /*border: solid red;*/
+  margin-left: 12px;
+}
+
+.binning-label {
+
+}
+
+.binning-checkbox {
+  display: block;
+  margin-left: 12px;
+}
+
+.exposure-section {
+  display: grid;
+  grid-template-columns: 2fr 3fr ;
+  column-gap: 8px;
+  /*border: solid red;*/
+  margin-top: 12px;
+}
+
+.exposure-explanation {
+  grid-row: 1;
+  grid-column: 1;
+  /*border: solid green;*/
+}
+
+.exposure-field {
+  grid-row: 1;
+  grid-column: 2;
+  border: solid gray;
+}

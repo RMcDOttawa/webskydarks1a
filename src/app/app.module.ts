@@ -38,6 +38,7 @@ import {MatRadioModule} from "@angular/material/radio";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatButtonModule} from "@angular/material/button";
+import { BulkAddFormComponent } from './main-tab-sections/frames-plan/bulk-add-form/bulk-add-form.component';
 
 
 @NgModule({
@@ -61,6 +62,7 @@ import {MatButtonModule} from "@angular/material/button";
     StartEndSpecsComponent,
     TemperatureSpecsComponent,
     RowEditCardComponent,
+    BulkAddFormComponent,
   ],
   imports: [
     AppRoutingModule,

@@ -1,0 +1,81 @@
+<mat-card>
+  <mat-card-title>Add Multiple Frame Sets</mat-card-title>
+  <mat-card-content>
+    <form>
+
+      <!-- Section specifying how many bias frames, of what binning, to create -->
+      <fieldset class="bias-frames" [formGroup]="biasSectionGroup">
+        <legend>Bias Frames</legend>
+
+        <!-- Number of bias frames wanted (can be zero) -->
+        <mat-form-field>
+          <input matInput placeholder="# Bias Frames"
+                 id="numberBiasWanted"
+                 name="numberBiasWanted"
+                 formControlName="numFramesControl"
+          >
+        </mat-form-field>
+        <div class="validation-error"
+             *ngIf="biasSectionGroup.get('numFramesControl')!.hasError('required')">This field is required
+        </div>
+        <div class="validation-error"
+             *ngIf="biasSectionGroup.get('numFramesControl')!.hasError('pattern')">This field must be an integer
+        </div>
+        <div class="binning-box">
+          <div class="binning-label">Bias Frames Binned:</div>
+          <mat-checkbox class="binning-checkbox" formControlName="binningControl1">1 x 1</mat-checkbox>
+          <mat-checkbox class="binning-checkbox" formControlName="binningControl2" >2 x 2</mat-checkbox>
+          <mat-checkbox class="binning-checkbox" formControlName="binningControl3" >3 x 3</mat-checkbox>
+          <mat-checkbox class="binning-checkbox" formControlName="binningControl4" >4 x 4</mat-checkbox>
+        </div>
+        <div class="validation-error"
+             *ngIf="biasSectionGroup.hasError('framesWithoutBinning')">If frames > 0, at least one binning is required.
+        </div>
+      </fieldset>
+
+      <!-- Section specifying how many dark frames, of what binning and exposure, to create -->
+      <fieldset class="dark-frames" [formGroup]="darkSectionGroup">
+        <legend>Dark Frames</legend>
+
+        <!-- Number of dark frames wanted (can be zero) -->
+        <mat-form-field>
+          <input matInput placeholder="# Dark Frames"
+                 id="numberDarkWanted"
+                 name="numberDarkWanted"
+                 formControlName="numFramesControl"
+          >
+        </mat-form-field>
+        <div class="validation-error"
+             *ngIf="darkSectionGroup.get('numFramesControl')!.hasError('required')">This field is required
+        </div>
+        <div class="validation-error"
+             *ngIf="darkSectionGroup.get('numFramesControl')!.hasError('pattern')">This field must be an integer
+        </div>
+        <div class="binning-box">
+          <div class="binning-label">Dark Frames Binned:</div>
+          <mat-checkbox class="binning-checkbox" formControlName="binningControl1">1 x 1</mat-checkbox>
+          <mat-checkbox class="binning-checkbox" formControlName="binningControl2" >2 x 2</mat-checkbox>
+          <mat-checkbox class="binning-checkbox" formControlName="binningControl3" >3 x 3</mat-checkbox>
+          <mat-checkbox class="binning-checkbox" formControlName="binningControl4" >4 x 4</mat-checkbox>
+        </div>
+        <div class="validation-error"
+             *ngIf="darkSectionGroup.hasError('framesWithoutBinning')">If frames > 0, at least one binning is required.
+        </div>
+        <div class="exposure-section">
+          <div class="exposure-explanation">Exposure lengths, in seconds, separated by blanks:</div>
+          <div class="exposure-field">
+            <textarea matInput placeholder="Enter exposure values here"></textarea>
+          </div>
+        </div>
+      </fieldset>
+
+    </form>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-raised-button color="primary">Cancel</button>
+    <span class="spacer"></span>
+    <button mat-raised-button color="primary"
+    >Save
+    </button>
+  </mat-card-actions>
+</mat-card>
