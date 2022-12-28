@@ -23,7 +23,7 @@ export class BulkAddFormComponent implements OnInit {
       refreshCallback: () => void
     }) {
     //  Prevent clicking outside window from closing it
-    // dialogRef.disableClose = true;
+    dialogRef.disableClose = true;
   }
 
   ngOnInit(): void {
@@ -116,4 +116,8 @@ export class BulkAddFormComponent implements OnInit {
     }
   }
 
+  //  The Cancel button has been clicked.  Close the dialog without doing anything.
+  cancelDialog() {
+    this.dialogRef.close();
+  }
 }
