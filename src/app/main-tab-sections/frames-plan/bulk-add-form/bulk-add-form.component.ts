@@ -72,9 +72,9 @@ export class BulkAddFormComponent implements OnInit {
       const numFrames = numFramesString === '' ? 0 : numFramesString;
 
       const checkBox1 = group.get('binningControl1')!.value;
-      const checkBox2 = group.get('binningControl1')!.value;
-      const checkBox3 = group.get('binningControl1')!.value;
-      const checkBox4 = group.get('binningControl1')!.value;
+      const checkBox2 = group.get('binningControl2')!.value;
+      const checkBox3 = group.get('binningControl3')!.value;
+      const checkBox4 = group.get('binningControl4')!.value;
       const atLeastOneChecked = checkBox1 || checkBox2 || checkBox3 || checkBox4;
 
       if (numFrames > 0) {
