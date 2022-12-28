@@ -11,7 +11,10 @@ h1 {
 table {
   width: 100%;
   border: solid gray;
-  user-select: none;
+  user-select: none;  /* Prevent drag-selecting text in table */
+}
+
+.mat-header-cell .mat-checkbox {
 }
 
 th.mat-sort-header-sorted {

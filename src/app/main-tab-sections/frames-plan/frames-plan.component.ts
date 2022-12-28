@@ -46,11 +46,18 @@ export class FramesPlanComponent implements OnInit {
     return Array(length).fill(false);
   }
 
-  selectOrDeselectAll(event: any) {
-    const checked = event.checked;
-    // Reflect the check visually on the table
-    for (let index = 0; index < this.checkedItems.length; index++) {
-      this.checkedItems[index] = checked;
+  //  The checkbox in the title bar has been clicked.  Toggle all boxes on or off,
+  //  depending on the state this one has received.  We'll count the on and off boxes and
+  //  assume the minority value is the one to be toggled.
+  selectOrDeselectAll() {
+    if (this.checkedItems.length > 0) {
+      const numSelected = this.numSelected();
+      const currentMajority = (numSelected / this.checkedItems.length) > 0.5;
+      const toggledValue = !currentMajority;
+      // Reflect the check visually on the table
+      for (let index = 0; index < this.checkedItems.length; index++) {
+        this.checkedItems[index] = toggledValue;
+      }
     }
   }
 
