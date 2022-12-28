@@ -1,26 +1,26 @@
 <mat-card>
   <mat-card-title>{{isEdit ? 'Edit' : 'New'}} Frame Set {{isEdit ? frameSet.id : ''}}</mat-card-title>
   <mat-card-content>
-    <form>
+    <form [formGroup]="formGroup">
 
       <mat-form-field>
         <input matInput placeholder="# Frames"
                id="numberWanted"
                name="numberWanted"
-               [formControl]="quantityControl"
+               formControlName="quantityControl"
         >
       </mat-form-field>
       <div class="validation-error"
-           *ngIf="quantityControl.hasError('required')">This field is required
+           *ngIf="formGroup.get('quantityControl')!.hasError('required')">This field is required
       </div>
       <div class="validation-error"
-           *ngIf="quantityControl.hasError('pattern')">This field must be an integer
+           *ngIf="formGroup.get('quantityControl')!.hasError('pattern')">This field must be an integer
       </div>
       <div class="validation-error"
-           *ngIf="quantityControl.hasError('min')">This field must be 1 or more
+           *ngIf="formGroup.get('quantityControl')!.hasError('min')">This field must be 1 or more
       </div>
 
-      <mat-radio-group name="frameType" [formControl]="frameTypeControl">
+      <mat-radio-group name="frameType" formControlName="frameTypeControl">
         <mat-radio-button name="bias" value="bias">Bias</mat-radio-button>
         <mat-radio-button name="dark" value="dark">Dark</mat-radio-button>
       </mat-radio-group>
@@ -28,46 +28,46 @@
       <mat-form-field>
         <input matInput placeholder="Exposure Seconds"
                name="exposure"
-               [formControl]="exposureControl"
+               formControlName="exposureControl"
         >
       </mat-form-field>
       <div class="validation-error"
-           *ngIf="exposureControl.hasError('required')">This field is required
+           *ngIf="formGroup.get('exposureControl')!.hasError('required')">This field is required
       </div>
       <div class="validation-error"
-           *ngIf="exposureControl.hasError('invalidFloat')">This must be a number, and can include decimals
+           *ngIf="formGroup.get('exposureControl')!.hasError('invalidFloat')">This must be a number, and can include decimals
       </div>
 
       <mat-form-field>
         <input matInput placeholder="Binning"
                name="binning"
-               [formControl]="binningControl"
+               formControlName="binningControl"
         >
       </mat-form-field>
       <div class="validation-error"
-           *ngIf="binningControl.hasError('required')">This field is required
+           *ngIf="formGroup.get('binningControl')!.hasError('required')">This field is required
       </div>
       <div class="validation-error"
-           *ngIf="binningControl.hasError('pattern')">This field must be an integer
+           *ngIf="formGroup.get('binningControl')!.hasError('pattern')">This field must be an integer
       </div>
       <div class="validation-error"
-           *ngIf="binningControl.hasError('min')">This field must be 1 or more
+           *ngIf="formGroup.get('binningControl')!.hasError('min')">This field must be 1 or more
       </div>
 
       <mat-form-field>
         <input matInput placeholder="# Completed"
                name="completed"
-               [formControl]="completedControl"
+               formControlName="completedControl"
         >
       </mat-form-field>
       <div class="validation-error"
-           *ngIf="completedControl.hasError('required')">This field is required
+           *ngIf="formGroup.get('completedControl')!.hasError('required')">This field is required
       </div>
       <div class="validation-error"
-           *ngIf="completedControl.hasError('pattern')">This field must be an integer
+           *ngIf="formGroup.get('completedControl')!.hasError('pattern')">This field must be an integer
       </div>
       <div class="validation-error"
-           *ngIf="completedControl.hasError('min')">This field must be 0 or more
+           *ngIf="formGroup.get('completedControl')!.hasError('min')">This field must be 0 or more
       </div>
 
     </form>
@@ -76,7 +76,7 @@
     <button mat-raised-button color="primary" (click)="cancelDialog()">Cancel</button>
     <span class="spacer"></span>
     <button mat-raised-button color="primary"
-            [disabled]="binningControl.invalid || quantityControl.invalid || exposureControl.invalid || completedControl.invalid"
+            [disabled]="formGroup.invalid"
             (click)="saveDialog()">Save</button>
   </mat-card-actions>
 </mat-card>

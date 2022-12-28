@@ -21,13 +21,8 @@ export class RowEditCardComponent implements OnInit {
   isEdit: boolean;
   frameSet: DarkFrameSet;
   selectedRow: number;
+  formGroup!: FormGroup;
 
-  //  Validator controls
-  quantityControl!: FormControl;
-  binningControl!: FormControl;
-  completedControl!: FormControl;
-  exposureControl!: FormControl;
-  frameTypeControl!: FormControl;
 
   constructor(
     private dialogRef: MatDialogRef<RowEditCardComponent>,
@@ -48,38 +43,37 @@ export class RowEditCardComponent implements OnInit {
   ngOnInit(): void {
     this.dialogRef.updateSize('360px');
 
-    this.frameTypeControl = new FormControl(this.frameSet.frameSpec.frameType);
+    this.formGroup = new FormGroup({
+      frameTypeControl: new FormControl(this.frameSet.frameSpec.frameType),
 
-    //  Quantity field must be an integer >= 1
-    this.quantityControl = new FormControl(this.frameSet.numberWanted, [
-      Validators.required,    //  Field is required
-      Validators.pattern('[0-9]+'),    //  Digits only, so integer
-      Validators.min(1),
-    ]);
+      quantityControl: new FormControl(this.frameSet.numberWanted, [
+        Validators.required,    //  Field is required
+        Validators.pattern('[0-9]+'),    //  Digits only, so integer
+        Validators.min(1),
+      ]),
 
-    //  Binning field must be an integer >= 1
-    this.binningControl = new FormControl(this.frameSet.frameSpec.binning, [
-      Validators.required,    //  Field is required
-      Validators.pattern('[0-9]+'),    //  Digits only, so integer
-      Validators.min(1),
-    ]);
+      binningControl: new FormControl(this.frameSet.frameSpec.binning, [
+        Validators.required,    //  Field is required
+        Validators.pattern('[0-9]+'),    //  Digits only, so integer
+        Validators.min(1),
+      ]),
 
-    //  Completed field must be an integer >= 0
-    this.completedControl = new FormControl(this.frameSet.numberCaptured, [
-      Validators.required,    //  Field is required
-      Validators.pattern('[0-9]+'),    //  Digits only, so integer
-      Validators.min(0),
-    ]);
+      completedControl: new FormControl(this.frameSet.numberCaptured, [
+        Validators.required,    //  Field is required
+        Validators.pattern('[0-9]+'),    //  Digits only, so integer
+        Validators.min(0),
+      ]),
 
-    //  Exposure field can be any number, including decimals.
-    //  Trying to get all the possible cases with a regular expression was complex and error-ridden,
-    //  so instead we're using a custom validator that just attempts the actual conversion
-    this.exposureControl = new FormControl(this.frameSet.frameSpec.exposure, [
-      Validators.required,    //  Field is required
-      this.floatingPointValidator(),
-    ]);
+      exposureControl: new FormControl(this.frameSet.frameSpec.exposure, [
+        Validators.required,    //  Field is required
+        this.floatingPointValidator(),
+      ])
+    });
+
   }
 
+  //  Exposure field can be any number, including decimals.
+  //  Trying to get all the possible cases with a regular expression was complex and error-ridden,
   //  Create a validation function that test if a form field is a valid floating point
   //  number by trying to convert it
   private floatingPointValidator(): ValidatorFn {
@@ -101,15 +95,15 @@ export class RowEditCardComponent implements OnInit {
   //  inserted at the appropriate point - either before the selected row or at the end of the list
   saveDialog() {
     const updatedFrameSpec: DarkFrame = {
-      frameType: this.frameTypeControl.value,
-      binning: this.binningControl.value,
-      exposure: this.exposureControl.value
+      frameType: this.formGroup.get('frameTypeControl')!.value,
+      binning: this.formGroup.get('binningControl')!.value,
+      exposure: this.formGroup.get('exposureControl')!.value
     };
     const updatedFrameSet: DarkFrameSet = {
       id: this.frameSet.id, // Will be -1 if this is a new frame set
       frameSpec: updatedFrameSpec,
-      numberWanted: this.quantityControl.value,
-      numberCaptured: this.completedControl.value
+      numberWanted: this.formGroup.get('quantityControl')!.value,
+      numberCaptured: this.formGroup.get('completedControl')!.value
     };
     if (this.isEdit) {
       this.framePlanService.updateFrameSet(updatedFrameSet);
