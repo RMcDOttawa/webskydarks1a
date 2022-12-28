@@ -82,6 +82,7 @@
     <button mat-raised-button color="primary" (click)="cancelDialog()">Cancel</button>
     <span class="spacer"></span>
     <button mat-raised-button color="primary"
+            [disabled]="biasSectionGroup.invalid || darkSectionGroup.invalid"
     >Save
     </button>
   </mat-card-actions>
