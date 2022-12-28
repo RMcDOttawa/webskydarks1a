@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {DarkFrameSet} from "../../types";
+import {DarkFrame, DarkFrameSet, DarkFrameType} from "../../types";
 import {SettingsService} from "../settings/settings.service";
 import {fakeFrameSets} from "./fake-frames-plan-data";
 import {max} from "rxjs";
@@ -146,12 +146,59 @@ export class FramePlanService {
   }
 
   private allocateNextIdNumber() {
-    const maximumIdFrame = this.frameSets.reduce(
-      (accumulate, currentValue) => {
-        return accumulate.id > currentValue.id ? accumulate : currentValue
-      }
-    );
-    const nextIdNumber = maximumIdFrame.id + 1;
+    let nextIdNumber = 1; // In case list is empty
+    if (this.frameSets.length > 0) {
+      // List is not empty. Find the maximum ID and go one higher.
+      const maximumIdFrame = this.frameSets.reduce(
+        (accumulate, currentValue) => {
+          return accumulate.id > currentValue.id ? accumulate : currentValue
+        }
+      );
+      nextIdNumber = maximumIdFrame.id + 1;
+    }
     return nextIdNumber;
+  }
+
+  //  Add a bunch of dark or bias frames, per the given bulk specifications.
+  //  We do a given number of frames (dark or bias) with each of the specified binnings
+  //  In the case of dark frames, we also do it for each of the given exposure values
+  bulkAdd(numBiasFrames: number, biasBinnings: number[], numDarkFrames: number, darkBinnings: number[], darkExposures: number[]) {
+
+    //  Bias Frames
+    if (numBiasFrames > 0) {
+      biasBinnings.forEach((binning: number) => {
+         //  Set up bias set, given # frames and this binning
+        this.addBulkedFrameSet(DarkFrameType.biasFrame, numBiasFrames, 0, binning);
+      });
+    }
+
+    //  Dark Frames
+    if (numDarkFrames > 0) {
+      darkExposures.forEach((exposure: number) => {
+        darkBinnings.forEach((binning: number) => {
+          this.addBulkedFrameSet(DarkFrameType.darkFrame, numDarkFrames, exposure, binning);
+        })
+      })
+    }
+
+    //  Store in browser
+    this.settingsService.setFramePlan({frameSets: this.frameSets});
+
+  }
+
+  //  Add a single frame created by the bulk-add method
+  private addBulkedFrameSet(frameType: DarkFrameType, numFrames: number, exposure: number, binning: number) {
+    const newIdNumber = this.allocateNextIdNumber();
+    const frameSet: DarkFrameSet = {
+      id: newIdNumber,
+      numberWanted: numFrames,
+      numberCaptured: 0,
+      frameSpec: {
+        frameType: frameType,
+        binning: binning,
+        exposure: exposure
+      }
+    };
+    this.frameSets.push(frameSet);
   }
 }

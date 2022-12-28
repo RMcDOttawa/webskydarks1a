@@ -1,8 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {FramePlanService} from "../../../services/frame-plan/frame-plan.service";
-import {DarkFrameSet} from "../../../types";
-import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
+import {FormControl, FormGroup, ValidationErrors, Validators} from "@angular/forms";
 
 const defaultNumberBiasFrames = 16;
 const defaultNumberDarkFrames = 16;
@@ -118,6 +117,53 @@ export class BulkAddFormComponent implements OnInit {
 
   //  The Cancel button has been clicked.  Close the dialog without doing anything.
   cancelDialog() {
+    this.dialogRef.close();
+  }
+
+  //  Save dialog has been clicked.  Package up all the request specifications and pass them to the
+  //  Frames service to create the new frames, then close and refresh.  We can assume the fields are all
+  //  valid strings - validation has been done at the interface.
+  saveDialog() {
+
+    //  Get the bias frames info
+    const numBiasFrames: number = parseInt(this.biasSectionGroup.get('numFramesControl')!.value);
+    const biasBinning1: boolean = this.biasSectionGroup.get('binningControl1')!.value;
+    const biasBinning2: boolean = this.biasSectionGroup.get('binningControl2')!.value;
+    const biasBinning3: boolean = this.biasSectionGroup.get('binningControl3')!.value;
+    const biasBinning4: boolean = this.biasSectionGroup.get('binningControl4')!.value;
+
+    //  Array of binning values wanted
+    let biasBinnings: number[] = [];
+    if (biasBinning1) biasBinnings.push(1);
+    if (biasBinning2) biasBinnings.push(2);
+    if (biasBinning3) biasBinnings.push(3);
+    if (biasBinning4) biasBinnings.push(4);
+
+    //  Get the dark frames info
+    const numDarkFrames: number = parseInt(this.darkSectionGroup.get('numFramesControl')!.value);
+    const darkBinning1: boolean = this.darkSectionGroup.get('binningControl1')!.value;
+    const darkBinning2: boolean = this.darkSectionGroup.get('binningControl2')!.value;
+    const darkBinning3: boolean = this.darkSectionGroup.get('binningControl3')!.value;
+    const darkBinning4: boolean = this.darkSectionGroup.get('binningControl4')!.value;
+
+    let darkBinnings: number[] = [];
+    if (darkBinning1) darkBinnings.push(1);
+    if (darkBinning2) darkBinnings.push(2);
+    if (darkBinning3) darkBinnings.push(3);
+    if (darkBinning4) darkBinnings.push(4);
+
+    //  Array of exposure lengths for dark frames
+    let darkExposures: number[] = [];
+    if (numDarkFrames > 0) {
+      const valuesField: string = this.darkSectionGroup.get('exposureLengthsControl')!.value;
+      const tokens: string[] = valuesField.split(/\s+/);
+      const tokensNoBlanks: string[] = tokens.filter((item) => item !== '');
+      darkExposures = tokensNoBlanks.map((str) => Number(str));
+    }
+
+    this.framePlanService.bulkAdd(numBiasFrames, biasBinnings, numDarkFrames, darkBinnings, darkExposures);
+    //  Refresh the table display and close this dialog
+    this.data.refreshCallback();
     this.dialogRef.close();
   }
 }
