@@ -1,7 +1,7 @@
 import {DarkFrameSet, DarkFrameType} from "../../types";
 
 export const fakeFrameSets: DarkFrameSet[] = [
-    {
+    { // Index 0
       frameSpec: {
         frameType: DarkFrameType.biasFrame,
         binning: 1,
@@ -11,7 +11,7 @@ export const fakeFrameSets: DarkFrameSet[] = [
       numberWanted: 161,
       numberCaptured: 16
     },
-    {
+    { // Index 1
       frameSpec: {
         frameType: DarkFrameType.biasFrame,
         binning: 2,
@@ -21,7 +21,7 @@ export const fakeFrameSets: DarkFrameSet[] = [
       numberWanted: 162,
       numberCaptured: 16
     },
-    {
+    { // Index 2
       frameSpec: {
         frameType: DarkFrameType.biasFrame,
         binning: 4,
@@ -31,7 +31,7 @@ export const fakeFrameSets: DarkFrameSet[] = [
       numberWanted: 163,
       numberCaptured: 6
     },
-    {
+    { // Index 3
       frameSpec: {
         frameType: DarkFrameType.darkFrame,
         binning: 1,
@@ -41,7 +41,7 @@ export const fakeFrameSets: DarkFrameSet[] = [
       numberWanted: 164,
       numberCaptured: 0
     },
-    {
+    { // Index 4
       frameSpec: {
         frameType: DarkFrameType.darkFrame,
         binning: 1,
@@ -51,7 +51,7 @@ export const fakeFrameSets: DarkFrameSet[] = [
       numberWanted: 165,
       numberCaptured: 0
     },
-    {
+    { // Index 5
       frameSpec: {
         frameType: DarkFrameType.darkFrame,
         binning: 1,
@@ -61,7 +61,7 @@ export const fakeFrameSets: DarkFrameSet[] = [
       numberWanted: 166,
       numberCaptured: 0
     },
-    {
+    { // Index 6
       frameSpec: {
         frameType: DarkFrameType.darkFrame,
         binning: 2,

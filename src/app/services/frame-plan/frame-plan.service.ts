@@ -145,7 +145,7 @@ export class FramePlanService {
     this.settingsService.setFramePlan({frameSets: this.frameSets});
   }
 
-  private allocateNextIdNumber() {
+   allocateNextIdNumber() {
     let nextIdNumber = 1; // In case list is empty
     if (this.frameSets.length > 0) {
       // List is not empty. Find the maximum ID and go one higher.
