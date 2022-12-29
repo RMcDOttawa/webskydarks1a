@@ -1,7 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AppToolbarComponent } from './app-toolbar.component';
-import {CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
+import {MockComponent, MockDirective} from "ng-mocks";
+import {MatToolbar, MatToolbarRow} from "@angular/material/toolbar";
+import {MatIcon} from "@angular/material/icon";
 
 describe('AppToolbarComponent', () => {
   let component: AppToolbarComponent;
@@ -9,9 +11,13 @@ describe('AppToolbarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AppToolbarComponent ],
-      schemas: [
-        CUSTOM_ELEMENTS_SCHEMA
+      declarations: [
+        AppToolbarComponent,
+        MockDirective(MatToolbarRow),
+      ],
+      imports: [
+        MockComponent(MatToolbar),
+        MockComponent(MatIcon),
       ]
     })
     .compileComponents();
@@ -24,4 +30,11 @@ describe('AppToolbarComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should have expected title and subtitle', () => {
+    const compiled = fixture.nativeElement;
+    expect(compiled.textContent).toContain('Web SkyDarks');
+    expect(compiled.textContent).toContain('by Earwig Haven Observatory');
+  })
+
 });
