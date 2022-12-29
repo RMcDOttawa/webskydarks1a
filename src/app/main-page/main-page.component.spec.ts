@@ -8,6 +8,7 @@ import {TemperatureSpecsComponent} from "../main-tab-sections/temperature-specs/
 import {ServerSpecsComponent} from "../main-tab-sections/server-specs/server-specs.component";
 import {FramesPlanComponent} from "../main-tab-sections/frames-plan/frames-plan.component";
 import {MatDialog} from "@angular/material/dialog";
+import {AppComponent} from "../app.component";
 
 describe('MainPageComponent', () => {
   let component: MainPageComponent;
@@ -48,4 +49,7 @@ describe('MainPageComponent', () => {
   it('null test', () => {
     // expect(component).toBeTruthy();
   });
+
+
+  //  Displays tab bar
 });
