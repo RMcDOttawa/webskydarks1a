@@ -1,55 +1,37 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { MainPageComponent } from './main-page.component';
-import {SettingsService} from "../services/settings/settings.service";
-import {MatTab, MatTabGroup, MatTabHeader} from "@angular/material/tabs";
-import {StartEndSpecsComponent} from "../main-tab-sections/start-end-specs/start-end-specs.component";
-import {TemperatureSpecsComponent} from "../main-tab-sections/temperature-specs/temperature-specs.component";
-import {ServerSpecsComponent} from "../main-tab-sections/server-specs/server-specs.component";
-import {FramesPlanComponent} from "../main-tab-sections/frames-plan/frames-plan.component";
-import {MatDialog} from "@angular/material/dialog";
+import {MainPageComponent} from './main-page.component';
 import {AppComponent} from "../app.component";
+import {SettingsService} from "../services/settings/settings.service";
 
 describe('MainPageComponent', () => {
   let component: MainPageComponent;
   let fixture: ComponentFixture<MainPageComponent>;
+  const mockSettingsService = jasmine.createSpyObj("SettingsService",
+    ["getSelectedMainTab", "setSelectedMainTab"]);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        // MainPageComponent,
-        // MatTab,
-        // MatTabGroup,
-        // StartEndSpecsComponent,
-        // TemperatureSpecsComponent,
-        // ServerSpecsComponent,
-        // FramesPlanComponent,
-        // MatTabHeader,
-      ],
+      declarations: [],
       providers: [
-        // {
-        //   provide: SettingsService,
-        //   useValue: jasmine.createSpyObj('SettingsService',
-        //     ['constructor', 'getSelectedMainTab', 'getFramePlan']),
-        // },
-        // {
-        //   provide: MatDialog,
-        //   useValue: jasmine.createSpyObj('MatDialog',
-        //     ['constructor']),
-        // }
+        {provide: SettingsService, useValue: mockSettingsService},
       ],
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(MainPageComponent);
-    component = fixture.componentInstance;
     fixture.detectChanges();
+    component = fixture.componentInstance;
+    mockSettingsService.getSelectedMainTab.and.returnValue(2);
   });
 
-  it('null test', () => {
-    // expect(component).toBeTruthy();
+  it('should create the component', () => {
+    expect(component).toBeTruthy();
   });
 
+  //  Should fetch default tab index from settings on creation
+  it('Should fetch default tab index', () => {
+    expect(mockSettingsService.getSelectedMainTab).toHaveBeenCalled();
+  });
 
-  //  Displays tab bar
 });
