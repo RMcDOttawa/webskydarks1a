@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RowEditCardComponent } from './row-edit-card.component';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {MatDialogRefMock} from "../../../testingMocks/MatDialogRefMock";
-import {mat_dialog_data_mock} from "../../../testingMocks/MatDialogDataMock";
+import {MAT_DIALOG_DATA_MOCK} from "../../../testingMocks/MAT_DIALOG_DATA_MOCK";
 import {CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA} from "@angular/core";
 import {FormControl} from "@angular/forms";
 
@@ -23,7 +23,7 @@ describe('RowEditCardComponent', () => {
         },
         { // MAT_DIALOG_DATA
           provide: MAT_DIALOG_DATA,
-          useValue: mat_dialog_data_mock,
+          useValue: MAT_DIALOG_DATA_MOCK,
         }
       ],
       schemas: [

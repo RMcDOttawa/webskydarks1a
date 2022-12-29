@@ -64,7 +64,7 @@ export class BulkAddFormComponent implements OnInit {
 
   //  Create a validation function that requires at least one binning checkbox be selected
   //  if the number of frames is > 0.  The created function will be called with the parent group as argument.
-  private numberBinningValidator() {
+  public numberBinningValidator() {
     return (control: any) => {
       const group: FormGroup = control as FormGroup;
       let result: ValidationErrors | null = null;
@@ -89,7 +89,7 @@ export class BulkAddFormComponent implements OnInit {
   //  Create a validation function for the exposure list field in the dark-frames section.
   //  This field cannot be empty if the "number of frames" is > 0
   //  If non-empty, this field must be a list of space-separted numbers (decimals ok)
-  private exposureListValidator() {
+  public exposureListValidator() {
     return (control: any) => {
       const group: FormGroup = control as FormGroup;
       let result: ValidationErrors | null = null;
