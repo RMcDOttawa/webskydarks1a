@@ -22,6 +22,6 @@ getTestBed().initTestEnvironment(
 
 // Then we find all the tests.
 // const context = require.context('./', true, /\.spec\.ts$/);
-const context = require.context('./', true, /row-edit-card\.component\.spec\.ts$/);
+const context = require.context('./', true, /frames-plan\.component\.spec\.ts$/);
 // And load the modules.
 context.keys().forEach(context);
