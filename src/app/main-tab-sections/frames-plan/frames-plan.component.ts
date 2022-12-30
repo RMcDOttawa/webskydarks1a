@@ -24,7 +24,8 @@ import {
 export class FramesPlanComponent implements OnInit {
 
   //  Info to reflect the framePlan on the table on the html page
-  displayedColumns: string[] = ['select', 'id', 'quantity', 'frameType', 'exposure', 'binning', 'complete'];
+  // displayedColumns: string[] = ['select', 'id', 'quantity', 'frameType', 'exposure', 'binning', 'complete'];
+  displayedColumns: string[] = ['select', 'quantity', 'frameType', 'exposure', 'binning', 'complete'];
   dataSource!: MatTableDataSource<DarkFrameSet>;
   checkedItems: boolean[] = [];
   frameSetsToDisplay: DarkFrameSet[] = [];
