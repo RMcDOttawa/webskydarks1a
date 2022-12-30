@@ -27,6 +27,8 @@ export class ServerSpecsComponent implements OnInit {
       portNumberControl: new FormControl(defaultPortNumber, [
         Validators.required,    //  Field is required
         Validators.pattern('[0-9]+'),    //  Digits only, so integer
+        Validators.min(1),
+        Validators.max(65535),
       ]),
     });
   }

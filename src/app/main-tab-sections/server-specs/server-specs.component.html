@@ -32,6 +32,9 @@
         <div class="validation-error"
              *ngIf="formGroup.get('portNumberControl')!.hasError('pattern')">This field must be an integer
         </div>
+        <div class="validation-error"
+             *ngIf="formGroup.get('portNumberControl')!.hasError('min') || formGroup.get('portNumberControl')!.hasError('max')">Must be a number from 1 to 65535
+        </div>
 
       </form>
     </mat-card-content>
