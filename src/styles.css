@@ -8,7 +8,8 @@ body {
   font-size: 100%;
 }
 
-/* Common formatting for all the help pages */
+/*  Styles used by all the help pages */
+
 .help-container {
   margin-top: 30px;
   margin-left: 50px;
@@ -24,4 +25,18 @@ body {
 }
 .help-container a:hover {
   color: red;
+}
+
+.help-nav-footer {
+  display: flex;
+  margin-top: 2em;
+}
+
+.help-nav-header {
+  display: flex;
+  margin-bottom: 1em;
+}
+
+.help-spacer {
+  flex: 1 1 auto;
 }

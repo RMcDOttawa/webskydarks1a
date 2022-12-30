@@ -1,3 +1,85 @@
 <div class="help-container">
-  <p>help-frames-plan works!</p>
+  <div class="help-nav-header">
+    <a routerLink="/help/server"><i>Previous: Server setup</i></a>
+    <span class="help-spacer"></span>
+    <a routerLink="/help/runsession"><i>Next: Running the session</i></a>
+  </div>
+  <h1>The Frames Plan page</h1>
+  <p>The Frames Plan is where you define and manage the list of all the dark and bias frames that will be
+    collected once you start the collection process from the Run Session page. Here is an example:</p>
+  <div class="frame-plan-img-container">
+    <img class="frame-plan-img" src="assets/img/01_FramesPlan.png">
+  </div>
+  <p>Each row in this table is a <i>Frame Set</i>, which is a set of some number of identical frames. For example,
+    a <i>frame set</i> might be "16 bias frames binned 1x1", or "24 dark frames, 60 seconds each, binned 2x2".</p>
+  <p class="indented-comment">If the frames in a frame set are identical, why would you need more than one? That
+    explanation is beyond the scope of this help file, but the quality of your image calibration is improved
+    by having multiple dark or bias frames captured with the same camera settings, and
+    your image processing software will have the ability to accept the multiple frames and average them. Generally,
+    the more frames in a frame set the better, but there are "diminishing returns" that must be balanced
+    against the storage required for the frames. I usually use 16 to 32. (There is no reason the number has
+    to be a power of 2; I just like powers of 2.)</p>
+  <h2>Managing the list of frame sets</h2>
+  <p>You can manipulate the rows in this table as you would expect.</p>
+  <ul>
+    <li>Click on a row to select it. Shift-click to toggle selection.</li>
+    <li>Click the pencil icon, or just double-click a row, to edit it.</li>
+    <li>Click the "-" button to delete selected rows.</li>
+    <li>Click the up- and down-arrows to move rows in the table.</li>
+    <li>To add a row to the table, click the "+" button. If a row is already selected, the new one will be
+      inserted above the selected row. If no row is selected, the new one will go at the end.
+    </li>
+  </ul>
+  <div class="frame-plan-img-container">
+    <img class="frame-plan-img" src="assets/img/02_New_Dialog.png">
+  </div>
+  <h2>Quickly adding multiple frame sets to the list</h2>
+  <p>Defining your list of frame sets one at a time would be tedious, and there is a fast way to
+    generate a large list.</p>
+  <p>Click the "bulk add" button
+    <mat-icon>library_add</mat-icon>
+    to access the "Bulk Add" window:
+  </p>
+  <div class="frame-plan-img-container">
+    <img class="bulk-add-img" src="assets/img/04_Bulk_Dialog_cropped.png">
+  </div>
+  <p>In this window you can quickly specify a large number of frame sets.</p>
+  <h3>To Generate Multiple Bias Frames</h3>
+  <ul>
+    <li>fill in the number you want in the top section, and</li>
+    <li>select one or more checkboxes to indicate what binning you want.</li>
+  </ul>
+  <p>If you don't want any bias frames, be sure to set the number to zero.</p>
+  <h3>To Generate Multiple Dark Frames</h3>
+  <ul>
+    <li>fill in the number you want in the top section,</li>
+    <li>select one or more checkboxes to indicate what binning you want, and</li>
+    <li>list the exposure times you want, separated by spaces, in the exposure lengths field.</li>
+  </ul>
+  <p>If you don't want any dark frames, be sure to set the number to zero.</p>
+  <h3>Example</h3>
+  <p>The example shown above will generate 12 frame sets, requesting:</p>
+  <ul>
+    <li>16 Bias frames binned 1x1,</li>
+    <li>16 Bias frames binned 2x2,</li>
+    <li>16 Dark frames, 30 seconds exposure, binned 1x1,</li>
+    <li>16 Dark frames, 30 seconds exposure, binned 2x2,</li>
+    <li>16 Dark frames, 60 seconds exposure, binned 1x1,</li>
+    <li>16 Dark frames, 60 seconds exposure, binned 2x2,</li>
+    <li>16 Dark frames, 180 seconds exposure, binned 1x1,</li>
+    <li>16 Dark frames, 180 seconds exposure, binned 2x2,</li>
+    <li>16 Dark frames, 300 seconds exposure, binned 1x1,</li>
+    <li>16 Dark frames, 300 seconds exposure, binned 2x2,</li>
+    <li>16 Dark frames, 600 seconds exposure, binned 1x1, and</li>
+    <li>16 Dark frames, 600 seconds exposure, binned 2x2.</li>
+  </ul>
+  <p>When you click "Save" the frames will all be added to the frame plan table, where you can then
+    manipulate it further with the edit buttons described above.</p>
+
+  <div class="help-nav-footer">
+    <a routerLink="/help/server"><i>Previous: Server setup</i></a>
+    <span class="help-spacer"></span>
+    <a routerLink="/help/runsession"><i>Next: Running the session</i></a>
+  </div>
 </div>
+

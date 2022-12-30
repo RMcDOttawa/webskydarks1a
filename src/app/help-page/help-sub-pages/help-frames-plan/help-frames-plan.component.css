@@ -1,0 +1,28 @@
+.frame-plan-img-container {
+  display: flex;
+  border: green;
+}
+
+.frame-plan-img {
+  margin: auto;
+  width: 60%;
+}
+
+.bulk-add-img {
+  margin: auto;
+  width: 40%;
+  margin-bottom: 1em;
+}
+
+.indented-comment {
+  border: solid lightgray thin;
+  padding: 1em;
+  margin-left: 2em;
+  margin-right: 2em;
+  font-style: italic;
+}
+
+h3 {
+  /*font-weight: bold;*/
+  text-decoration: underline;
+}
