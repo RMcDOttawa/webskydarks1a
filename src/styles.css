@@ -40,3 +40,8 @@ body {
 .help-spacer {
   flex: 1 1 auto;
 }
+
+.validation-error {
+  color: red;
+  padding-bottom: 12px;
+}
