@@ -1,6 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ServerSpecsComponent } from './server-specs.component';
+import {MockComponent, MockDirective} from "ng-mocks";
+import {MatCard, MatCardActions, MatCardContent} from "@angular/material/card";
+import {MatCheckbox} from "@angular/material/checkbox";
+import {MatFormField} from "@angular/material/form-field";
+import {MatRadioButton} from "@angular/material/radio";
 
 describe('ServerSpecsComponent', () => {
   let component: ServerSpecsComponent;
@@ -8,7 +13,15 @@ describe('ServerSpecsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ServerSpecsComponent ]
+      declarations: [
+        ServerSpecsComponent,
+        MockDirective(MatCardContent),
+        MockDirective(MatCardActions),
+      ],
+      imports: [
+        MockComponent(MatCard),
+        MockComponent(MatFormField),
+      ],
     })
     .compileComponents();
 
