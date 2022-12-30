@@ -40,8 +40,13 @@ export class FramePlanService {
       //  Load the data from the stored set
       this.frameSets = loadedPlan.frameSets;
     }
-
   }
+
+  //  Load the fake frame plan, ignoring what is in the browser store (used for testing)
+  loadFakeFramePlan() {
+    this.frameSets = fakeFrameSets.map((frameSet) => frameSet);
+  }
+
 
   //  Get the array index for a given id.  -1 = not found
   findIndexById(id: number): number {

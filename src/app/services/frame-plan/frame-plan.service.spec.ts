@@ -49,20 +49,20 @@ describe('FramePlanService', () => {
   });
 
   it ('Should find correct index of a frame, by id number', () => {
-    service.loadFramePlanFromStore();
+    service.loadFakeFramePlan();
     const index = service.findIndexById(3);
     expect(index).toBe(2);
   });
 
   it('Should report index -1 for a frame set not found', () => {
-    service.loadFramePlanFromStore();
+    service.loadFakeFramePlan();
     const index = service.findIndexById(1234);
     expect(index).toBe(-1);
 
   });
 
   it('Should allocate next available ID number', () => {
-    service.loadFramePlanFromStore();
+    service.loadFakeFramePlan();
     const nextId = service.allocateNextIdNumber();
     expect(nextId).toBe(8);
   });
@@ -94,7 +94,7 @@ describe('FramePlanService', () => {
   });
 
   it('Can delete a frameset by ID', () => {
-    service.loadFramePlanFromStore();
+    service.loadFakeFramePlan();
     expect(service.findIndexById(3)).toBe(2);
     service.deleteFrameSetById(3);
     expect(service.findIndexById(3)).toBe(-1);
