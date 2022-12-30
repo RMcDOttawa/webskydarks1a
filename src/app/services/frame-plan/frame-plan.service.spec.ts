@@ -97,9 +97,7 @@ describe('FramePlanService', () => {
     service.loadFakeFramePlan();
     expect(service.findIndexById(3)).toBe(2);
     service.deleteFrameSetById(3);
-    // expect(service.findIndexById(3)).toBe(-1);
-    //  Deliberate failure to test CircleCi integration
-    expect(service.findIndexById(3)).toBe(-10);
+    expect(service.findIndexById(3)).toBe(-1);
   });
 
 });
