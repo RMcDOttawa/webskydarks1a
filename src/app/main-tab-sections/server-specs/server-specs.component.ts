@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FormControl, FormGroup, ValidationErrors, Validators} from "@angular/forms";
 import {of} from "rxjs";
+import {SettingsService} from "../../services/settings/settings.service";
 const isValidIP = require("is-valid-ip");
 const isValidDomain = require('is-valid-domain')
 
@@ -15,22 +16,49 @@ const defaultPortNumber = '3040';
 export class ServerSpecsComponent implements OnInit {
   formGroup!: FormGroup;
 
-  constructor() { }
+  constructor(
+    private settingsService: SettingsService
+  ) { }
 
   ngOnInit(): void {
+    //  Get stored values, use defaults if none available
+    let serverAddress = defaultServerAddress;
+    let serverPort = defaultPortNumber;
+    const serverSpecs = this.settingsService.getServerAddressAndPort();
+    if (serverSpecs) {
+      serverAddress = serverSpecs.address;
+      serverPort = serverSpecs.port.toString();
+    }
+
     this.formGroup = new FormGroup({
 
-      addressControl: new FormControl(defaultServerAddress, [
+      addressControl: new FormControl(serverAddress, [
         Validators.required,    //  Field is required
         this.serverAddressValidator()
       ]),
-      portNumberControl: new FormControl(defaultPortNumber, [
+      portNumberControl: new FormControl(serverPort, [
         Validators.required,    //  Field is required
         Validators.pattern('[0-9]+'),    //  Digits only, so integer
         Validators.min(1),
         Validators.max(65535),
       ]),
     });
+
+    this.formGroup.valueChanges.subscribe(() => this.formValuesChanged(this.formGroup));
+  }
+
+  //  Listener which is called whenever the formgroup's value changes.
+  //  If the form is valid we save it to settings.
+  //  For reasons I don't understand, we have to pass the formgrup in from the lambda in the callback setup.
+  //  Accessing it directly doesn't work - the callback method is not in the right scope.
+
+  formValuesChanged(formGroup: FormGroup): void {
+
+    if (formGroup.valid) {
+      const address: string = formGroup.get('addressControl')!.value;
+      const port: number = formGroup.get('portNumberControl')!.value;
+      this.settingsService.setServerAddressAndPort(address, port);
+    }
   }
 
   //  User has clicked "reset". Restore the fields' default values

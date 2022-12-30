@@ -20,3 +20,7 @@ export interface DarkFrameSet  {
 
 }
 
+export interface ServerCoordinates {
+  address: string;
+  port: number;
+}
