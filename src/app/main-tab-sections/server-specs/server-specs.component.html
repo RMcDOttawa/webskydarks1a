@@ -15,6 +15,9 @@
         <div class="validation-error"
              *ngIf="formGroup.get('addressControl')!.hasError('required')">This field is required
         </div>
+        <div class="validation-error"
+             *ngIf="formGroup.get('addressControl')!.hasError('invalidServerHost')">Must be a domain name or IP address
+        </div>
 
         <mat-form-field>
           <input matInput placeholder="Port Number"
