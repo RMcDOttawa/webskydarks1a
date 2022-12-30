@@ -107,4 +107,8 @@ export class ServerSpecsComponent implements OnInit {
     const isValid = labelRegEx.test(offeredValue);
     return isValid;
   }
+
+  testConnection() {
+    alert('testConnection stub');
+  }
 }
