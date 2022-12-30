@@ -6,6 +6,10 @@ import {MatDialog} from "@angular/material/dialog";
 import {RowEditCardComponent} from "./row-edit-card/row-edit-card.component";
 import {MAT_CHECKBOX_DEFAULT_OPTIONS} from "@angular/material/checkbox";
 import {BulkAddFormComponent} from "./bulk-add-form/bulk-add-form.component";
+import {
+  ConfirmationDialogComponent,
+  ConfirmationDialogModel
+} from "../../confirmation-dialog/confirmation-dialog.component";
 
 @Component({
   selector: 'app-frames-plan',
@@ -209,9 +213,24 @@ export class FramesPlanComponent implements OnInit {
 
   //  Reset the "completed count" of all the frame sets to zero
   resetCompletedCounts() {
-    this.framePlanService.resetCompletedCounts();
-    this.frameSetsToDisplay = this.framePlanService.getFrameSets();
+    const dialogData = new ConfirmationDialogModel("Confirm Reset",
+      "Resetting means your next collection session will start over from scratch. Are you sure?",
+      "Cancel", "Reset Counts");
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent,
+      {maxWidth: "400px",
+      data: dialogData});
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult) {
+        this.framePlanService.resetCompletedCounts();
+        this.frameSetsToDisplay = this.framePlanService.getFrameSets();
+      }
+    });
+
+    // this.framePlanService.resetCompletedCounts();
+    // this.frameSetsToDisplay = this.framePlanService.getFrameSets();
   }
+
 
   //  Open a modal dialog in which user can edit the details of the selected frame set
   openEditDialog() {

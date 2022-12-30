@@ -39,6 +39,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatButtonModule} from "@angular/material/button";
 import { BulkAddFormComponent } from './main-tab-sections/frames-plan/bulk-add-form/bulk-add-form.component';
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 
 
 @NgModule({
@@ -63,6 +64,7 @@ import { BulkAddFormComponent } from './main-tab-sections/frames-plan/bulk-add-f
     TemperatureSpecsComponent,
     RowEditCardComponent,
     BulkAddFormComponent,
+    ConfirmationDialogComponent,
   ],
   imports: [
     AppRoutingModule,
