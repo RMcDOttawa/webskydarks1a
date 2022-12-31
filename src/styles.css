@@ -45,3 +45,27 @@ body {
   color: red;
   padding-bottom: 12px;
 }
+
+.indented-comment {
+  border: solid lightgray thin;
+  padding: 1em;
+  margin-left: 2em;
+  margin-right: 2em;
+  font-style: italic;
+}
+
+.text-image-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr ;
+  column-gap: 8px;
+}
+
+.text-left {
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.image-right {
+  grid-row: 1;
+  grid-column: 2;
+}
