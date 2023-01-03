@@ -23,9 +23,6 @@ describe('FramePlanService', () => {
     // settingsServiceMock.getFramePlan.and.returnValue({frameSets: fakeFrameSets});
 
     TestBed.configureTestingModule({
-      imports: [
-        MockComponent(MatIcon),
-      ],
       providers: [
         FramePlanService,
         {provide: SettingsService, useValue: settingsServiceMock},
