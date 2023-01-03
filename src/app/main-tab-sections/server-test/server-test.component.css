@@ -1,6 +1,11 @@
-.server-specs-container {
+.server-test-container {
   margin: auto;   /* centre table on page */
   width: 80%
+}
+
+h1 {
+  margin-top: 24px;
+  margin-bottom: 24px;
 }
 
 .mat-form-field {
@@ -12,11 +17,6 @@
   margin-left: 3em;
 }
 
-h1 {
-  margin-top: 24px;
-  margin-bottom: 24px;
-}
-
 .mat-card .mat-card-actions {
   display: flex;
 }
@@ -24,19 +24,6 @@ h1 {
 .spacer {
   flex: 1 1 auto;
 }
-
-.connection-test {
-  margin-top: 2em;
-}
-
-.connection-test-result {
-  margin-bottom: 1em;
-}
-
-.connection-success {
-  color: green;
-}
-
-.connection-fail {
-  color: red;
-}
+ textarea {
+   border: solid gray thin;
+ }

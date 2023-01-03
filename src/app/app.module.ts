@@ -40,6 +40,8 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatButtonModule} from "@angular/material/button";
 import { BulkAddFormComponent } from './main-tab-sections/frames-plan/bulk-add-form/bulk-add-form.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { ServerTestComponent } from './main-tab-sections/server-test/server-test.component';
+import {HttpClientModule} from "@angular/common/http";
 
 
 @NgModule({
@@ -65,8 +67,10 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
     RowEditCardComponent,
     BulkAddFormComponent,
     ConfirmationDialogComponent,
+    ServerTestComponent,
   ],
   imports: [
+    HttpClientModule,
     AppRoutingModule,
 
     //  Angular

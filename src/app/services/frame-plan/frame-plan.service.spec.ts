@@ -4,6 +4,8 @@ import {FramePlanService} from './frame-plan.service';
 import {SettingsService} from "../settings/settings.service";
 import {fakeFrameSets} from "./fake-frames-plan-data";
 import {DarkFrameSet, DarkFrameType} from "../../types";
+import {MockComponent} from "ng-mocks";
+import {MatIcon} from "@angular/material/icon";
 
 describe('FramePlanService', () => {
   let service: FramePlanService;
@@ -21,6 +23,9 @@ describe('FramePlanService', () => {
     // settingsServiceMock.getFramePlan.and.returnValue({frameSets: fakeFrameSets});
 
     TestBed.configureTestingModule({
+      imports: [
+        MockComponent(MatIcon),
+      ],
       providers: [
         FramePlanService,
         {provide: SettingsService, useValue: settingsServiceMock},

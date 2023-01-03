@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import {FormControl, FormGroup, ValidationErrors, Validators} from "@angular/forms";
 import {of} from "rxjs";
 import {SettingsService} from "../../services/settings/settings.service";
+import {ServerCommunicationService} from "../../services/server-communication/server-communication.service";
 const isValidIP = require("is-valid-ip");
 const isValidDomain = require('is-valid-domain')
 
 const defaultServerAddress = 'localhost';
-const defaultPortNumber = '3040';
+const defaultPortNumber = '3000';
 
 @Component({
   selector: 'app-server-specs',
@@ -15,8 +16,12 @@ const defaultPortNumber = '3040';
 })
 export class ServerSpecsComponent implements OnInit {
   formGroup!: FormGroup;
+  testsRan: boolean = false;
+  relayTestResult: boolean = false;
+  tsxTestResult: boolean = false;
 
   constructor(
+    private serverCommunication: ServerCommunicationService,
     private settingsService: SettingsService
   ) { }
 
@@ -108,7 +113,14 @@ export class ServerSpecsComponent implements OnInit {
     return isValid;
   }
 
-  testConnection() {
-    alert('testConnection stub');
+  async testConnection() {
+    this.testsRan = true;
+
+    //  See if we can talk to the relay
+    this.relayTestResult = await this.serverCommunication.testRelay();
+
+    //  See if we can talk, via the relay, to TheSkyX
+    this.tsxTestResult = await this.serverCommunication.testTheSkyX();
+
   }
 }

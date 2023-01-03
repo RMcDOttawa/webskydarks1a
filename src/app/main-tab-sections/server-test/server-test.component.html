@@ -1,0 +1,43 @@
+<div class="server-test-container">
+  <h1>Web-to-Sky Relay Server Test</h1>
+  <mat-card>
+    <mat-card-content>
+      <form [formGroup]="formGroup">
+
+        <mat-form-field>
+          <p>Raw text to send to relay:</p>
+          <textarea matInput rows="8"
+                    id="toSend"
+                    name="toSend"
+                    formControlName="toSendControl"
+          ></textarea>
+        </mat-form-field>
+        <div class="validation-error"
+             *ngIf="formGroup.get('toSendControl')!.hasError('required')">This field is required
+        </div>
+        <p>To test more complex API commands, use PostMan.</p>
+
+        <mat-form-field>
+          <p>Server Response:</p>
+          <textarea matInput rows="8" readonly
+                    id="response"
+                    name="response"
+                    formControlName="responseControl"
+          ></textarea>
+        </mat-form-field>
+      </form>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary"
+              [disabled]="isConnected()"
+              (click)="connectClicked()">Connect</button>
+      <button mat-raised-button color="primary"
+              [disabled]="!isConnected() || formGroup.get('toSendControl')!.value===''"
+              (click)="sendClicked()">Send</button>
+      <div class="spacer"></div>
+      <button mat-raised-button color="primary"
+              [disabled]="!isConnected()"
+              (click)="disconnectClicked()">Disconnect</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

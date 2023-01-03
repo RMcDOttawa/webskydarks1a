@@ -1,13 +1,15 @@
 <div class="server-specs-container">
-  <h1>TheSkyX Server Specifications</h1>
-  <p>TheSkyX must be running on your network. These are the settings used to locate it. (<a routerLink="/help/server">Help on this page</a>)</p>
+  <h1>Web-to-Sky Relay Server Specifications</h1>
+  <p>TheSkyX and the "Web-to-Sky Relay" server must be running on your network. The following are the settings used to
+    locate the Relay server. (It, in turn, owns the settings on how to connect to TheSky.)
+    (<a routerLink="/help/server">Help on this page</a>)</p>
 
   <mat-card>
     <mat-card-content>
-      <form [formGroup]="formGroup" >
+      <form [formGroup]="formGroup">
 
         <mat-form-field>
-          <input matInput placeholder="Host Name or IP Address"
+          <input matInput placeholder="Relay Host Name or IP Address"
                  id="address"
                  name="address"
                  formControlName="addressControl"
@@ -21,7 +23,7 @@
         </div>
 
         <mat-form-field>
-          <input matInput placeholder="Port Number"
+          <input matInput placeholder="Relay Port Number"
                  id="portNumber"
                  name="portNumber"
                  formControlName="portNumberControl"
@@ -34,7 +36,8 @@
              *ngIf="formGroup.get('portNumberControl')!.hasError('pattern')">This field must be an integer
         </div>
         <div class="validation-error"
-             *ngIf="formGroup.get('portNumberControl')!.hasError('min') || formGroup.get('portNumberControl')!.hasError('max')">Must be a number from 1 to 65535
+             *ngIf="formGroup.get('portNumberControl')!.hasError('min') || formGroup.get('portNumberControl')!.hasError('max')">
+          Must be a number from 1 to 65535
         </div>
 
       </form>
@@ -44,5 +47,19 @@
       <span class="spacer"></span>
       <button mat-raised-button color="accent" (click)="resetDefaults()">Reset to Defaults</button>
     </mat-card-actions>
+  </mat-card>
+  <!-- Under the buttons, a section that only appears when we do a connection test -->
+  <mat-card *ngIf="testsRan" class="connection-test">
+    <mat-card-content>
+      <h2>Connection Test Results</h2>
+      <div class="connection-test-result">Relay connection:
+        <span *ngIf="relayTestResult" class="connection-success">Success</span>
+        <span *ngIf="!relayTestResult" class="connection-fail">Fail</span>
+      </div>
+      <div class="connection-test-result">TheSkyX connection from relay:
+        <span *ngIf="tsxTestResult" class="connection-success">Success</span>
+        <span *ngIf="!tsxTestResult" class="connection-fail">Fail</span>
+      </div>
+    </mat-card-content>
   </mat-card>
 </div>
