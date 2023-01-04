@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {ServerCommunicationService} from "../../../services/server-communication/server-communication.service";
 
 @Component({
   selector: 'app-camera-autosave',
@@ -7,9 +8,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CameraAutosaveComponent implements OnInit {
 
-  constructor() { }
+  autoSavePath: string | null = null;
 
-  ngOnInit(): void {
+  constructor(
+    private serverCommunicatonService: ServerCommunicationService
+  ) { }
+
+  async ngOnInit(): Promise<void> {
+    //  Attempt to get camera autosave path
+    try {
+      this.autoSavePath = await this.serverCommunicatonService.getAutosavePath();
+      // console.log("Retrieved autosave path: ", this.autoSavePath);
+    } catch (e) {
+      // console.log("unable to get autosave path, setting null. e = ", e);
+      this.autoSavePath = null;
+    }
   }
 
 }

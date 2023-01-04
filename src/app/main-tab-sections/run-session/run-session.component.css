@@ -4,8 +4,9 @@
 }
 
 .autosave-section {
-  border: solid green thin;
+  /*border: solid green thin;*/
   margin-top: 1em;
+  font-size: small;
 }
 
 .dashboard-section {
