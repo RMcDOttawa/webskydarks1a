@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {FramePlanService} from "../../../services/frame-plan/frame-plan.service";
 
 @Component({
   selector: 'app-acquisition-list',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AcquisitionListComponent implements OnInit {
 
-  constructor() { }
+  constructor(public framePlanService: FramePlanService) { }
 
   ngOnInit(): void {
   }

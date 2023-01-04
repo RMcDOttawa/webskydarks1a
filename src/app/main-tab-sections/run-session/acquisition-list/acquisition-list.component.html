@@ -1,32 +1,18 @@
 <table>
   <thead>
-  <td>#</td>
+  <td>Quan.</td>
   <td>Type</td>
-  <td>Exposure</td>
-  <td>Binning</td>
+  <td>Exp.</td>
+  <td>Bin.</td>
   <td>Done</td>
   </thead>
   <tbody>
-  <tr>
-    <Td>16</Td>
-    <Td>Dark</Td>
-    <Td>30</Td>
-    <Td>1</Td>
-    <Td>0</Td>
-  </tr>
-  <tr>
-    <Td>16</Td>
-    <Td>Dark</Td>
-    <Td>30</Td>
-    <Td>2</Td>
-    <Td>0</Td>
-  </tr>
-  <tr>
-    <Td>16</Td>
-    <Td>Bias</Td>
-    <Td>&nbsp;</Td>
-    <Td>1</Td>
-    <Td>0</Td>
+  <tr *ngFor="let frameSet of framePlanService.getFrameSets() ">
+    <Td>{{frameSet.numberWanted}}</Td>
+    <Td>{{frameSet.frameSpec.frameType}}</Td>
+    <Td>{{frameSet.frameSpec.exposure}}</Td>
+    <Td>{{frameSet.frameSpec.binning}}</Td>
+    <Td>{{frameSet.numberCaptured}}</Td>
   </tr>
   </tbody>
 </table>
