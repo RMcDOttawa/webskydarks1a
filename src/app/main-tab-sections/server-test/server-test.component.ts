@@ -25,29 +25,14 @@ export class ServerTestComponent implements OnInit {
     });
   }
 
-  //  Connect button has been clicked.  Ask Server service to establish connection.
-  connectClicked() {
-    const serverSettings = this.settingsService.getServerAddressAndPort();
-    // if (serverSettings) {
-    //   this.serverCommunication.openConnection(serverSettings.address, serverSettings.port);
-    // }
-  }
 
   //  Send the text in the input area to the comms service to encapsulate and send, retrieve the response it
   //  receives, and display that in the response field.
-  sendClicked() {
+  async sendClicked() {
     const commandToSend = this.formGroup.get('toSendControl')!.value;
-    // this.serverCommunication.sendAndResponse(commandToSend, (response) => {
-    //   this.formGroup.get('responseControl')!.setValue(response);
-    // });
+    console.log(`ServerTestComponent/sendClicked: ${commandToSend}`);
+    const response = await this.serverCommunication.sendAndReceive(commandToSend);
+    console.log('  Response received: ', response);
   }
 
-  //  Have the comms service disconnect the socket
-  disconnectClicked() {
-    // this.serverCommunication.closeConnection();
-  }
-
-  isConnected(): boolean {
-    return false;
-  }
 }

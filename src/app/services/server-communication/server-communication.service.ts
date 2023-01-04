@@ -59,4 +59,20 @@ export class ServerCommunicationService {
     }
     return response;
   }
+
+  async sendAndReceive(commandToSend: string): Promise<string> {
+    const {address, port} = this.getServerCoordinates();
+    const url = `http://${address}:${port}/api/testrelay`;
+
+    return new Promise<string>((resolve, reject) => {
+      axios.get(url)
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          resolve('');
+        });
+    });
+
+  }
 }

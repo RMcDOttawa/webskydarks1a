@@ -4,14 +4,13 @@
     <span class="help-spacer"></span>
     <a routerLink="/help/framesplan"><i>Next: Defining the Frames Plan</i></a>
   </div>
-  <h1>TheSkyX Server Setup</h1>
-  <h2>What "Server"?</h2>
+  <h1>TheSkyX Relay Setup</h1>
+  <h2>Using TheSkyX as a Server</h2>
   <p>In the scenario we are supporting with this program,
-    WebSkyDarks does not control your camera - <i>TheSkyX Professional</i> does.
-    TheSkyX Pro must be running on your network
-    and when
-    we say "Server" we are referring to establishing the connection from
-    WebSkyDarks to the running instance of TheSkyX Pro.</p>
+    WebSkyDarks does not control your camera &#8212; <i>TheSkyX Professional</i> does.
+    TheSkyX Pro must be running on your network and we will send it messages to cause
+    it to do the required frame captures.
+    </p>
   <p>To make TheSkyX Pro act like a server, you need to turn on the feature that
     causes it to listen for commands on TCP.</p>
   <p>In TheSkyX Pro, select "TCP Server" from the Tools menu:</p>
@@ -23,25 +22,35 @@
   <div class="server-img-container">
     <img class="server-img-noscale" src="assets/img/02_TCP_Server_Window.png">
   </div>
-  <h2>How to Connect to the Server</h2>
+  <h2>The Need for a Relay</h2>
+  <p>Unfortunately, TheSkyX communicates, in server mode, using a basic, low-level network protocol called TCP Sockets.
+  Modern browsers do not permit the use of this protocol, because it was a source of some security weaknesses in web-based
+  applications. (Those security weaknesses wouldn't apply to this application, but the limitations still affect us.)</p>
+  <p>So, we need to set up an intermediate relay server.  As a separate download from this WebSkyDarks program, you'll find
+  a program called "Web to Sky Relay", which you need to download and have running somewhere on your network.  It is not a
+  web-based program &#8212; it's a low-level server implemented using node.js &#8212; so it can talk to TheSkyX.  It will receive
+  requests from WebSkyDarks, pass them on to TheSkyX, and return the results to us.</p>
+  <h2>How to Connect to the Relay</h2>
   <div class="text-image-grid">
     <div class="text-left">
-      <p>Now we need to tell WebSkyDarks where the TheSkyX server is running: which computer on the network,
+      <p>We need to tell WebSkyDarks where the WebToSkyRelay server is running: which computer on the network,
         and which port on that computer.</p>
-      <p>The computer on which TheSkyX is running can be the same computer where WebSkyDarks is running, or it can be
-        a different computer on the same local network (e.g., a different computer on your home WiFi network).</p>
-      <h3>TheSkyX and WebSkyDarks On the Same Computer</h3>
-      <p>If you are running TheSkyX and WebSkyDarks on the same computer, then you can probably use "localhost" as the
+      <p>The computer on which WebToSkyRelay is running can be the same computer where WebSkyDarks is running, or
+        the computer on which TheSkyX is running, or any other computer on the same network (e.g., a different computer
+        on your home WiFi network). </p>
+      <h3>WebToSkyRelay and WebSkyDarks On the Same Computer</h3>
+      <p>If you are running WebToSkyRelay and WebSkyDarks on the same computer, then you can probably use "localhost" as the
         server
         address, or you can use the IP address "127.0.0.1" (a special IP address, defined by the standard,
         that always refers to "this computer, right here"). You can also use the network domain name of your current
         computer, or its real IP address, if you know them.</p>
       <p class="indented-comment">In general it's a good idea to avoid using real IP addresses, in case you are on a
-        network that uses DHCP to allocate them at start-up time. In such a network, the IP address might be different
+        network that uses DHCP to allocate them at start-up time. In such a network, the IP address
+        of WebToSkyRelay might be different
         next time. On the other hand, if you are using fixed IP addresses on your network, it is safe to
         specify the IP address.</p>
-      <h3>TheSkyX and WebSkyDarks On a Different Computer</h3>
-      <p>If TheSKyX is running on a different computer, enter either the local domain name for that computer,
+      <h3>WebToSkyRelay and WebSkyDarks On Different Computers</h3>
+      <p>If WebToSkyRelay is running on a different computer, enter either the local domain name for that computer,
         or its IP address. Inside a private network, local domain names often have the form "name.local",
         where "name" is specified as the network name of the computer. This name is found in the Sharing settings
         on a Mac, or in the Computer Properties on Windows. You probably need to add ".local" to make the name
@@ -49,21 +58,22 @@
       <p class="indented-comment">Note that network domain names can't contain spaces. So, even though your Mac allows
         you to give your computer
         a sharing name with spaces in it, don't.</p>
-      <p>In the example shown here, I am running WebSkyDarks on my desktop computer, and TheSkyX on the computer in my
+      <p>In the example shown here, I am running WebSkyDarks on my desktop computer, and WebToSkyRelay on the computer in my
         observatory, whose network name is EWHO3, so I enter "ewho3.local" as the address. Domain names are
         not case-sensitive.</p>
       <h3>Port Number</h3>
-      <p>TheSkyX listens on port 3040, so fill that value in for the port number. I've left it as an editable field
-        because I wouldn't be surprised if there is an obscure option buried somewhere deep in TheSkyX that would allow
-        it to listen on a different port. But 3040 is almost certainly the right value.</p>
+      <p>By default, WebToSkyRelay listens on port 3000, so fill that value in for the port number. Or, if you have
+      configured WebToSkyRelay to listen on a different port, fill that in.</p>
     </div>
     <div class="image-right">
       <img src="assets/img/07_Server_Specs_Tab.png" width="100%">
     </div>
   </div>
   <h2>Test Connection</h2>
-  <p>With TheSkyX running on its host computer, you can use the "Test Connection" button to get a
-  quick confirmation that WebSkyDarks is able to establish a connection using the server information you have provided.</p>
+  <p>With WebToSkyRelay running on its host computer, you can use the "Test Connection" button to get a
+  quick confirmation that WebSkyDarks is able to establish a connection using the server information you have provided.
+  It will separately test both the ability to talk to WebToSkyRelay and the ability to talk, through the relay,
+  to TheSkyX.</p>
   <p>Note that you can also test the complete operation of this setup without wear and tear on your camera,
     by configuring TheSkyX to use
     its built-in "Camera Simulator". This will allow you to rehearse using WebSkyDarks to control TheSkyX without

@@ -29,15 +29,9 @@
     </mat-card-content>
     <mat-card-actions>
       <button mat-raised-button color="primary"
-              [disabled]="isConnected()"
-              (click)="connectClicked()">Connect</button>
-      <button mat-raised-button color="primary"
-              [disabled]="!isConnected() || formGroup.get('toSendControl')!.value===''"
+              [disabled]="formGroup.get('toSendControl')!.value===''"
               (click)="sendClicked()">Send</button>
       <div class="spacer"></div>
-      <button mat-raised-button color="primary"
-              [disabled]="!isConnected()"
-              (click)="disconnectClicked()">Disconnect</button>
     </mat-card-actions>
   </mat-card>
 </div>
