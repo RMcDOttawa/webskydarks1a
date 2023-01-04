@@ -1,0 +1,12 @@
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+td {
+  border: solid gray thin;
+}
+
+thead {
+  background-color: #efefef;
+}

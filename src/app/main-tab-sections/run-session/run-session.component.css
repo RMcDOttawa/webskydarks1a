@@ -31,6 +31,8 @@
   grid-row: 1;
   grid-column: 2;
   padding-left: .5em;
+  padding-right: .5em;
+  padding-bottom: .5em;
   border-radius: 6px;
   box-shadow: 1px 1px 4px 1px lightgray;
 }
@@ -44,4 +46,9 @@
 
 .spacer {
   flex: 1 1 auto;
+}
+
+h2 {
+  /*border: solid green;*/
+  margin: 0;
 }
