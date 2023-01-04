@@ -1,1 +1,29 @@
-<p>run-session works!</p>
+<div class="run-session-container">
+  <p style="margin-top: 1em;">(<a routerLink="/help/runsession">Help on this page</a>)</p>
+  <h1>Acquisition Session</h1>
+  <div class="autosave-section">
+    <app-camera-autosave></app-camera-autosave>
+  </div>
+  <div class="dashboard-section">
+    <div class="console-log-section">
+      <h2>Console Log:</h2>
+      <app-console-log></app-console-log>
+    </div>
+    <div class="images-list-section">
+      <h2>Images Being Acquired:</h2>
+      <app-acquisition-list></app-acquisition-list>
+    </div>
+  </div>
+  <mat-card-actions>
+  <div class="buttons-section">
+    <button mat-raised-button color="warn"
+            matTooltip="Cancel the running acquisition session">
+      Cancel Session
+    </button>
+    <span class="spacer"></span>
+    <button mat-raised-button color="primary"
+            matTooltip="Start or resume acquiring frames">
+      Begin Session
+    </button>
+  </div></mat-card-actions>
+</div>

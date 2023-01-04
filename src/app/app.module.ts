@@ -21,6 +21,9 @@ import { HelpServerComponent } from './help-page/help-sub-pages/help-server/help
 import { HelpFramesPlanComponent } from './help-page/help-sub-pages/help-frames-plan/help-frames-plan.component';
 import { HelpRunSessionComponent } from './help-page/help-sub-pages/help-run-session/help-run-session.component';
 import { HelpDeveloperComponent } from './help-page/help-sub-pages/help-developer/help-developer.component';
+import { BulkAddFormComponent } from './main-tab-sections/frames-plan/bulk-add-form/bulk-add-form.component';
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { ServerTestComponent } from './main-tab-sections/server-test/server-test.component';
 
 //  Material
 import {MatCheckboxModule} from "@angular/material/checkbox";
@@ -38,10 +41,9 @@ import {MatRadioModule} from "@angular/material/radio";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatButtonModule} from "@angular/material/button";
-import { BulkAddFormComponent } from './main-tab-sections/frames-plan/bulk-add-form/bulk-add-form.component';
-import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
-import { ServerTestComponent } from './main-tab-sections/server-test/server-test.component';
-import {HttpClientModule} from "@angular/common/http";
+import { ConsoleLogComponent } from './main-tab-sections/run-session/console-log/console-log.component';
+import { AcquisitionListComponent } from './main-tab-sections/run-session/acquisition-list/acquisition-list.component';
+import { CameraAutosaveComponent } from './main-tab-sections/run-session/camera-autosave/camera-autosave.component';
 
 
 @NgModule({
@@ -49,6 +51,7 @@ import {HttpClientModule} from "@angular/common/http";
     //  Angular
     AppComponent,
     AppToolbarComponent,
+
     //  App content
     FramesPlanComponent,
     HelpDeveloperComponent,
@@ -68,9 +71,11 @@ import {HttpClientModule} from "@angular/common/http";
     BulkAddFormComponent,
     ConfirmationDialogComponent,
     ServerTestComponent,
+    ConsoleLogComponent,
+    AcquisitionListComponent,
+    CameraAutosaveComponent,
   ],
   imports: [
-    HttpClientModule,
     AppRoutingModule,
 
     //  Angular

@@ -1,0 +1,46 @@
+.run-session-container {
+  margin: auto;   /* centre table on page */
+  width: 80%
+}
+
+.autosave-section {
+  border: solid green thin;
+  margin-top: 1em;
+}
+
+.dashboard-section {
+  margin-top: 1em;
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  /*border: solid red thin;*/
+}
+
+.console-log-section {
+  border: solid gray thin;
+  grid-row: 1;
+  grid-column: 1;
+  padding-left: .5em;
+  margin-right: 1em;
+  border-radius: 6px;
+  box-shadow: 1px 1px 4px 1px lightgray;
+}
+
+.images-list-section {
+  border: solid gray thin;
+  grid-row: 1;
+  grid-column: 2;
+  padding-left: .5em;
+  border-radius: 6px;
+  box-shadow: 1px 1px 4px 1px lightgray;
+}
+
+.buttons-section {
+  /*border: solid gray thin;*/
+  margin-left: 8px;
+  margin-top: 2em;
+  display: flex;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
