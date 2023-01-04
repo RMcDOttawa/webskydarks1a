@@ -50,6 +50,23 @@ export class ServerCommunicationService {
     });
   }
 
+  //  Ask TheSkyX for its image autosave path
+  async getAutosavePath(): Promise<string> {
+    let autosavePath: string = ''
+    const {address, port} = this.getServerCoordinates();
+    const url = `http://${address}:${port}/api/getautosavepath`;
+
+    return new Promise<string>((resolve, reject) => {
+      axios.get(url)
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          reject('');
+        });
+    });
+  }
+
   getServerCoordinates(): ServerCoordinates {
     let response: ServerCoordinates = {address: defaultAddress, port: defaultPort};
     const savedCoordinates = this.settingsService.getServerAddressAndPort();

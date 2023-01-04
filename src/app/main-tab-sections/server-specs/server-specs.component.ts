@@ -19,6 +19,7 @@ export class ServerSpecsComponent implements OnInit {
   testsRan: boolean = false;
   relayTestResult: boolean = false;
   tsxTestResult: boolean = false;
+  tsxAutosavePath: string = '';
 
   constructor(
     private serverCommunication: ServerCommunicationService,
@@ -121,6 +122,11 @@ export class ServerSpecsComponent implements OnInit {
 
     //  See if we can talk, via the relay, to TheSkyX
     this.tsxTestResult = await this.serverCommunication.testTheSkyX();
+
+    //  If we were able to talk to theSkyX, get the Autosave path
+    if (this.tsxTestResult) {
+      this.tsxAutosavePath = await this.serverCommunication.getAutosavePath();
+    }
 
   }
 }

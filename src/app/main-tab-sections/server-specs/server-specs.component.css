@@ -40,3 +40,15 @@ h1 {
 .connection-fail {
   color: red;
 }
+
+.connection-results-table {
+  border-spacing: 0 1em;
+}
+
+.connection-results-label {
+  width: 30%;
+}
+
+.connection-results-row {
+  vertical-align: top;
+}
