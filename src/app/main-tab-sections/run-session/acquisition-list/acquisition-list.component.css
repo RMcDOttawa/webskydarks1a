@@ -1,7 +1,7 @@
 .scroll-area {
   /*overflow: auto;*/
   max-height: 100%;
-  border: lightcyan solid;
+  /*border: lightcyan solid;*/
 }
 
 table {
@@ -28,4 +28,12 @@ th {
 }
 
 tbody {
+}
+
+.shade-complete {
+  background-color: #efefef;
+}
+
+.shade-in-progress {
+  background-color: rgb(220, 255, 220);
 }

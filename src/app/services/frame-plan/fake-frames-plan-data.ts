@@ -9,7 +9,7 @@ export const fakeFrameSets: DarkFrameSet[] = [
       },
       id: 1,
       numberWanted: 161,
-      numberCaptured: 16
+      numberCaptured: 161
     },
     { // Index 1
       frameSpec: {
@@ -19,7 +19,7 @@ export const fakeFrameSets: DarkFrameSet[] = [
       },
       id: 2,
       numberWanted: 162,
-      numberCaptured: 16
+      numberCaptured: 162
     },
     { // Index 2
       frameSpec: {

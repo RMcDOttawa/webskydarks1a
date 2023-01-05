@@ -204,4 +204,16 @@ export class FramePlanService {
     };
     this.frameSets.push(frameSet);
   }
+
+
+  //  Find the next frameset to acquire: the next one where completed < wanted.
+  //  Return -1 if none left
+  findIndexOfNextSetToAcquire(): number {
+    for (let index = 0; index < this.frameSets.length; index++) {
+      if (this.frameSets[index].numberCaptured < this.frameSets[index].numberWanted) {
+        return index;
+      }
+    }
+    return -1;
+  }
 }

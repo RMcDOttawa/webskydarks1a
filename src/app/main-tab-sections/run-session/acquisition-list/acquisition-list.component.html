@@ -10,7 +10,11 @@
   </tr>
   </thead>
   <tbody>
-  <tr *ngFor="let frameSet of framePlanService.getFrameSets() ">
+  <!-- Rows of table.  Rows are shaded depending on their completion status -->
+  <!-- Complete:  gray.  IN progress: green.  Not started: not shaded -->
+  <tr *ngFor="let frameSet of framesList "
+      [ngClass]="{'shade-complete': setIsComplete(frameSet.id), 'shade-in-progress': setInProgress(frameSet.id)}"
+  >
     <Td>{{frameSet.numberWanted}}</Td>
     <Td>{{frameSet.frameSpec.frameType}}</Td>
     <Td>{{frameSet.frameSpec.exposure}}</Td>

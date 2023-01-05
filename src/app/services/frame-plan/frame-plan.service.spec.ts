@@ -4,8 +4,6 @@ import {FramePlanService} from './frame-plan.service';
 import {SettingsService} from "../settings/settings.service";
 import {fakeFrameSets} from "./fake-frames-plan-data";
 import {DarkFrameSet, DarkFrameType} from "../../types";
-import {MockComponent} from "ng-mocks";
-import {MatIcon} from "@angular/material/icon";
 
 describe('FramePlanService', () => {
   let service: FramePlanService;
@@ -102,4 +100,8 @@ describe('FramePlanService', () => {
     expect(service.findIndexById(3)).toBe(-1);
   });
 
+  it('Should find index of next incomplete frameset', () => {
+    service.loadFakeFramePlan();
+    expect(service.findIndexOfNextSetToAcquire()).toBe(2);
+  })
 });
