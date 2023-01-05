@@ -1,7 +1,7 @@
 .run-session-container {
   margin: auto;   /* centre table on page */
   width: 80%;
-  border: solid green thin;
+  /*border: solid green thin;*/
 }
 
 .autosave-section {
@@ -24,9 +24,11 @@
   grid-row: 1;
   grid-column: 1;
   padding-left: .5em;
+  padding-right: .5em;
   margin-right: 1em;
   border-radius: 6px;
   box-shadow: 1px 1px 4px 1px lightgray;
+  /*overflow: auto;*/
 }
 
 .images-list-section {
