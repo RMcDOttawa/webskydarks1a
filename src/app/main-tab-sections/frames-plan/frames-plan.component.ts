@@ -66,7 +66,7 @@ export class FramesPlanComponent implements OnInit {
     }
   }
 
-  //  Determine if the given dark frame set should be checked.  We use the ID to get the index number then
+  //  Determine if the given dark frame set should be checked.  We use the ID to get the index number and then
   //  check our local "checked" array at that index.
   isChecked(frameSet: DarkFrameSet) {
     const id = frameSet.id;
@@ -106,9 +106,7 @@ export class FramesPlanComponent implements OnInit {
 
   //  A row has been double-clicked.
   //  If this is the only row selected, this is equivalent to the "Edit" button.
-  rowDoubleClicked(frameSet: DarkFrameSet) {
-    const id = frameSet.id;
-    const itemIndex = this.framePlanService.findIndexById(id);
+  rowDoubleClicked() {
     // console.log(`Double-Clicked row ${itemIndex}, id ${id}`);
     if (this.numSelected() == 1) {
       this.openEditDialog();
@@ -241,7 +239,7 @@ export class FramesPlanComponent implements OnInit {
       const selectedIndex = selectedIndices[0];
 
       //  Open an edit dialog with this frame set as data
-      const dialogRef = this.dialog.open(RowEditCardComponent, {
+      this.dialog.open(RowEditCardComponent, {
         width: '250px',
         data: {
           'edit': true,
@@ -265,7 +263,7 @@ export class FramesPlanComponent implements OnInit {
     const selectedIndices = this.getSelectedIndices();
     if (selectedIndices.length < 2) {
       const selectedIndex = (selectedIndices.length == 1) ? selectedIndices[0] : -1;
-      const dialogRef = this.dialog.open(RowEditCardComponent, {
+      this.dialog.open(RowEditCardComponent, {
         width: '250px',
         data: {
           'edit': false,  //Tell component this is a new item
@@ -289,7 +287,7 @@ export class FramesPlanComponent implements OnInit {
 
   //  Bulk-Add button has been clicked.  Open the dialog to add multiple frames in a pattern.
   openBulkAddDialog() {
-    const dialogRef = this.dialog.open(BulkAddFormComponent, {
+    this.dialog.open(BulkAddFormComponent, {
       // width: '250px',
       data: {
         'refreshCallback': () => {

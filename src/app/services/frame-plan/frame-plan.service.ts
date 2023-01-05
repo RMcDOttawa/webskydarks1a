@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
-import {DarkFrame, DarkFrameSet, DarkFrameType} from "../../types";
+import {DarkFrameSet, DarkFrameType} from "../../types";
 import {SettingsService} from "../settings/settings.service";
 import {fakeFrameSets} from "./fake-frames-plan-data";
-import {max} from "rxjs";
 
 //  The complete plan of what we need to acquire
 
@@ -67,7 +66,7 @@ export class FramePlanService {
     this.settingsService.setFramePlan({frameSets: this.frameSets});
   }
 
-  //  Set the frame plan to empty (no frame sets).  Update the stored version so it exists but is empty.
+  //  Set the frame plan to empty (no frame sets).  Update the stored version so that it exists but is empty.
   deleteAllFrameSets() {
     this.frameSets = [];
     this.settingsService.setFramePlan({frameSets: this.frameSets});
@@ -98,8 +97,7 @@ export class FramePlanService {
   //  Move the frame set in the array, at the selected index, by the given amount.
   //  -1 moves it left (toward index 0), while +1 moves it right
   moveFrameSetAtIndex(index: number, increment: number) {
-    let arrayWithShift = this.insertAndShift(this.frameSets, index, index + increment);
-    this.frameSets = arrayWithShift;
+    this.frameSets = this.insertAndShift(this.frameSets, index, index + increment);
     this.settingsService.setFramePlan({frameSets: this.frameSets});
   }
 

@@ -1,3 +1,9 @@
+.scroll-area {
+  /*overflow: auto;*/
+  max-height: 100%;
+  border: lightcyan solid;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -8,5 +14,18 @@ td {
 }
 
 thead {
-  background-color: #efefef;
+  background-color: lavender;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  /*z-index: 1;*/
+}
+
+th {
+  position: sticky;
+  top: 0;
+  /*z-index: 1;*/
+}
+
+tbody {
 }

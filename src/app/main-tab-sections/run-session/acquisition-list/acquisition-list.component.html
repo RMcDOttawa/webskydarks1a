@@ -1,10 +1,13 @@
+<div class="scroll-area">
 <table>
   <thead>
-  <td>Quan.</td>
-  <td>Type</td>
-  <td>Exp.</td>
-  <td>Bin.</td>
-  <td>Done</td>
+  <tr>
+    <th>Quan.</th>
+    <th>Type</th>
+    <th>Exp.</th>
+    <th>Bin.</th>
+    <th>Done</th>
+  </tr>
   </thead>
   <tbody>
   <tr *ngFor="let frameSet of framePlanService.getFrameSets() ">
@@ -16,3 +19,4 @@
   </tr>
   </tbody>
 </table>
+</div>

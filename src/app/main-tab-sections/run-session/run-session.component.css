@@ -1,6 +1,7 @@
 .run-session-container {
   margin: auto;   /* centre table on page */
-  width: 80%
+  width: 80%;
+  border: solid green thin;
 }
 
 .autosave-section {
@@ -14,10 +15,12 @@
   display: grid;
   grid-template-columns: 2fr 1fr;
   /*border: solid red thin;*/
+  height: 60vh;
 }
 
 .console-log-section {
   border: solid gray thin;
+  max-height: 100%;
   grid-row: 1;
   grid-column: 1;
   padding-left: .5em;
@@ -28,6 +31,7 @@
 
 .images-list-section {
   border: solid gray thin;
+  max-height: 100%;
   grid-row: 1;
   grid-column: 2;
   padding-left: .5em;
@@ -35,6 +39,7 @@
   padding-bottom: .5em;
   border-radius: 6px;
   box-shadow: 1px 1px 4px 1px lightgray;
+  overflow: auto;
 }
 
 .buttons-section {
