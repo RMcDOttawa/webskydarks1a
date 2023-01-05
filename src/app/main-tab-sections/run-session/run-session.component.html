@@ -17,12 +17,13 @@
   <mat-card-actions>
   <div class="buttons-section">
     <button mat-raised-button color="warn"
-            disabled
+            [disabled]="!enableCancelButton()"
             matTooltip="Cancel the running acquisition session">
       Cancel Session
     </button>
     <span class="spacer"></span>
     <button mat-raised-button color="primary"
+            [disabled]="!enableBeginButton()"
             matTooltip="Start or resume acquiring frames">
       Begin Session
     </button>

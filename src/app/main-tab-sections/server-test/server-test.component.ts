@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {ServerCommunicationService} from "../../services/server-communication/server-communication.service";
-import {SettingsService} from "../../services/settings/settings.service";
 
 @Component({
   selector: 'app-server-test',
@@ -13,7 +12,6 @@ export class ServerTestComponent implements OnInit {
 
   constructor(
     private serverCommunication: ServerCommunicationService,
-    private settingsService: SettingsService
   ) { }
 
   ngOnInit(): void {
@@ -33,6 +31,7 @@ export class ServerTestComponent implements OnInit {
     console.log(`ServerTestComponent/sendClicked: ${commandToSend}`);
     const response = await this.serverCommunication.sendAndReceive(commandToSend);
     console.log('  Response received: ', response);
+    this.formGroup.get('responseControl')?.setValue(response);
   }
 
 }

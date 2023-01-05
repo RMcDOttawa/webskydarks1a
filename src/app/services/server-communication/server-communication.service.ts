@@ -3,8 +3,12 @@ import {SettingsService} from "../settings/settings.service";
 import {ServerCoordinates} from "../../types";
 import axios from "axios";
 
+const relayTestSuccessString = 'Relay Success';
+const tsxTestSuccessString = 'TSX Success';
+
 const defaultAddress = 'localhost';
 const defaultPort = 3000;
+
 
 @Injectable({
   providedIn: 'root'
@@ -17,16 +21,15 @@ export class ServerCommunicationService {
   //  Test if we can communicate with the relay server.  Return a promise that
   //  will resolve to simple boolean on the success
   async testRelay(): Promise<boolean> {
-    let success = false;
     const {address, port} = this.getServerCoordinates();
     const url = `http://${address}:${port}/api/testrelay`;
 
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<boolean>((resolve) => {
       axios.get(url)
         .then((response) => {
-          resolve(response.data === 'Relay Success');
+          resolve(response.data === relayTestSuccessString);
         })
-        .catch((error) => {
+        .catch(() => {
           resolve(false);
         });
     });
@@ -35,16 +38,15 @@ export class ServerCommunicationService {
   //  Test if we can communicate with theSkyX (via the relay).  Return a promise that
   //  will resolve to simple boolean on the success
   async testTheSkyX(): Promise<boolean> {
-    let success = false;
     const {address, port} = this.getServerCoordinates();
     const url = `http://${address}:${port}/api/testtsx`;
 
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<boolean>((resolve) => {
       axios.get(url)
         .then((response) => {
-          resolve(response.data === 'TSX Success');
+          resolve(response.data === tsxTestSuccessString);
         })
-        .catch((error) => {
+        .catch(() => {
           resolve(false);
         });
     });
@@ -52,7 +54,6 @@ export class ServerCommunicationService {
 
   //  Ask TheSkyX for its image autosave path
   async getAutosavePath(): Promise<string> {
-    let autosavePath: string = ''
     const {address, port} = this.getServerCoordinates();
     const url = `http://${address}:${port}/api/getautosavepath`;
 
@@ -61,7 +62,7 @@ export class ServerCommunicationService {
         .then((response) => {
           resolve(response.data);
         })
-        .catch((error) => {
+        .catch(() => {
           reject('');
         });
     });
@@ -77,19 +78,23 @@ export class ServerCommunicationService {
     return response;
   }
 
+  //  Send the given command thru to theSkyX and pass back any response received
+
   async sendAndReceive(commandToSend: string): Promise<string> {
     const {address, port} = this.getServerCoordinates();
-    const url = `http://${address}:${port}/api/testrelay`;
+    const url = `http://${address}:${port}/api/sendtext`;
 
-    return new Promise<string>((resolve, reject) => {
-      axios.get(url)
+    return new Promise<string>((resolve) => {
+      axios.post(url,
+        {message: commandToSend})
         .then((response) => {
           resolve(response.data);
         })
-        .catch((error) => {
+        .catch(() => {
           resolve('');
         });
     });
 
   }
+
 }
