@@ -4,7 +4,7 @@ import { BulkAddFormComponent } from './bulk-add-form.component';
 import {MatDialogRefMock} from "../../../testingMocks/MatDialogRefMock";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MAT_DIALOG_DATA_MOCK} from "../../../testingMocks/MAT_DIALOG_DATA_MOCK";
-import {MockComponent, MockDeclaration, MockDirective} from "ng-mocks";
+import {MockComponent, MockDirective} from "ng-mocks";
 import {MatCard, MatCardActions, MatCardContent, MatCardTitle} from "@angular/material/card";
 import {MatCheckbox} from "@angular/material/checkbox";
 import {MatFormField} from "@angular/material/form-field";
@@ -112,7 +112,7 @@ describe('BulkAddFormComponent', () => {
     expect(darkFormGroup.valid).toBeTruthy();
   });
 
-  //   ****** Validate the validator that insists #frames>0 comes with some binnings being selected
+  //   ****** Validate the validator that insists #frames>0 comes with some binning levels being selected
 
   it('Should reject Bias section of #frames > 0 but no check boxes checked', () => {
     const biasFormGroup = component.biasSectionGroup;

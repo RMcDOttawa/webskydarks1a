@@ -78,7 +78,7 @@ export class ServerCommunicationService {
     return response;
   }
 
-  //  Send the given command thru to theSkyX and pass back any response received
+  //  Send the given command through to theSkyX and pass back any response received
 
   async sendAndReceive(commandToSend: string): Promise<string> {
     const {address, port} = this.getServerCoordinates();

@@ -19,7 +19,7 @@ export class AcquisitionListComponent implements OnInit {
     this.indexInProgress = this.framePlanService.findIndexOfNextSetToAcquire();
   }
 
-  //  determine if the frameset of given ID is compelte (# wanted = # completed)
+  //  determine if the frameset of given ID is complete (# wanted = # completed)
   setIsComplete(id: number): boolean {
     const index: number = this.framePlanService.findIndexById(id);
     return this.framesList[index].numberCaptured >= this.framesList[index].numberWanted;

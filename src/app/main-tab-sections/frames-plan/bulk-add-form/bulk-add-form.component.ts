@@ -88,7 +88,7 @@ export class BulkAddFormComponent implements OnInit {
 
   //  Create a validation function for the exposure list field in the dark-frames section.
   //  This field cannot be empty if the "number of frames" is > 0
-  //  If non-empty, this field must be a list of space-separted numbers (decimals ok)
+  //  If non-empty, this field must be a list of space-separated numbers (decimals ok)
   public exposureListValidator() {
     return (control: any) => {
       const group: FormGroup = control as FormGroup;

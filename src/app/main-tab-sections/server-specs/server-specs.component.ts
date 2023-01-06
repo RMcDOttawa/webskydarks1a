@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, ValidationErrors, Validators} from "@angular/forms";
-import {of} from "rxjs";
 import {SettingsService} from "../../services/settings/settings.service";
 import {ServerCommunicationService} from "../../services/server-communication/server-communication.service";
+
 const isValidIP = require("is-valid-ip");
 const isValidDomain = require('is-valid-domain')
 
@@ -55,7 +55,7 @@ export class ServerSpecsComponent implements OnInit {
 
   //  Listener which is called whenever the formgroup's value changes.
   //  If the form is valid we save it to settings.
-  //  For reasons I don't understand, we have to pass the formgrup in from the lambda in the callback setup.
+  //  For reasons that I don't understand, we have to pass the formgrup in from the lambda in the callback setup.
   //  Accessing it directly doesn't work - the callback method is not in the right scope.
 
   formValuesChanged(formGroup: FormGroup): void {
@@ -94,15 +94,13 @@ export class ServerSpecsComponent implements OnInit {
   //  Check if the given string is a valid domain name
   //  We'll use a built-in library function.  But a domain name is one or more "labels" separated by periods.
   private isValidHostName(offeredValue: string) {
-    const valid = this.isValidDomainLabel(offeredValue) || isValidDomain(offeredValue);
-    return valid;
+    return this.isValidDomainLabel(offeredValue) || isValidDomain(offeredValue);
   }
 
   //  Check if the given string is a valid IP address.
   //  4 integers < 256, separated by periods.
   private isValidIpAddress(offeredValue: string) {
-    const valid = isValidIP(offeredValue);
-    return valid;
+    return isValidIP(offeredValue);
   }
 
   //  The library "valid domain name" function doesn't consider a single name valid.  But for our
@@ -110,8 +108,7 @@ export class ServerSpecsComponent implements OnInit {
   //  Here we validate a single name
   private isValidDomainLabel(offeredValue: string) {
     const labelRegEx = /^[a-z0-9]+[a-z0-9-_]*$/i;
-    const isValid = labelRegEx.test(offeredValue);
-    return isValid;
+    return labelRegEx.test(offeredValue);
   }
 
   async testConnection() {
