@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import {WebWorkerCommand, WebWorkerMessage, WebWorkerResponse, WebWorkerResponseMessage} from "../../types";
 
-const shutdownSettlingTime = 1000;  //  (1s in ms) how long to give background task to shut down before we terminate
+// noinspection PointlessArithmeticExpressionJS
+const shutdownSettlingTime = 1 * 1000;  //  (1s in ms) how long to give background task to shut down before we terminate
 
 //  Service to manage the actual acquisition of frames.  It spawns the web worker subtask, and provides
 //  input and output feedback to the main session tab
