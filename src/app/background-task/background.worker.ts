@@ -6,8 +6,10 @@ import {WebWorkerCommand, WebWorkerMessage, WebWorkerResponse, WebWorkerResponse
 addEventListener('message', messageListener);
 
 let fakeConsoleTimerId:  ReturnType<typeof setInterval> | null  = null;
-const fakeConsoleInterval = 3 * 1000;
 let fakeConsoleSequence = 0;
+
+// noinspection PointlessArithmeticExpressionJS
+const fakeConsoleInterval = 3 * 1000;
 
 function messageListener (message: any)  {
   const incomingMessage = message.data as WebWorkerMessage;

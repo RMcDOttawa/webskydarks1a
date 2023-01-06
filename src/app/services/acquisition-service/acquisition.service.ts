@@ -90,6 +90,9 @@ export class AcquisitionService {
   //  We've received a console message string from the web worker
   //  This is used primarily in the initial debugging, to create periodic events to log
   private fakeConsoleMessage(message: string) {
-    console.log('AcquisitionService/fakeConsoleMessage: ', message);
+    // console.log('AcquisitionService/fakeConsoleMessage: ', message);
+    if (this.consoleMessageCallback) {
+      this.consoleMessageCallback(message);
+    }
   }
 }

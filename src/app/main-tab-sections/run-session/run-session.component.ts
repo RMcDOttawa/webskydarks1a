@@ -10,6 +10,9 @@ import {FramePlanService} from "../../services/frame-plan/frame-plan.service";
 })
 export class RunSessionComponent implements OnInit {
 
+  //  String contents of console are constructed here and passed to the console component to display
+  public consoleContents: string = '';
+
   constructor(
     private acquisitionService: AcquisitionService,
     private communicationService: ServerCommunicationService,
@@ -40,8 +43,8 @@ export class RunSessionComponent implements OnInit {
 
   //  Begin Acquisition button has been clicked.
   beginAcquisition() {
-    // console.log('Run-Session component Starting acquisition');
-    this.acquisitionService.beginAcquisition(this.consoleMessage);
+    //  Note: bind in callback is so the callback has access to this object and its variables
+    this.acquisitionService.beginAcquisition(this.consoleMessage.bind(this));
   }
 
   //  Cancel Acquisition button has been clicked.
@@ -52,6 +55,14 @@ export class RunSessionComponent implements OnInit {
 
   //  Callback function from the acquisition service when it has something to display on console
   consoleMessage(message: string): void {
-    console.log('RunSessionComponent/consoleMessage callback: ', message);
+    this.consoleContents = this.consoleContents + this.timestampMessage(message) + '<br>';
+  }
+
+  private timestampMessage(message: string): string {
+    const formattedTime = (new Date()).toLocaleTimeString('en-US', {hour12: false});
+    return formattedTime + ' ' + message;
+    // const formattedTime = (new Date()).toLocaleTimeString();
+    // const partsOfFormattedTime = formattedTime.split(' ');
+    // return partsOfFormattedTime[0] + ' ' + message;
   }
 }
