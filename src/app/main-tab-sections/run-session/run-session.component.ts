@@ -37,4 +37,16 @@ export class RunSessionComponent implements OnInit {
    enableBeginButton(): boolean {
     return (!this.acquisitionService.isRunning()) && (this.framePlanService.findIndexOfNextSetToAcquire() !== -1);
   }
+
+  //  Begin Acquisition button has been clicked.
+  beginAcquisition() {
+    console.log('Run-Session component Starting acquisition');
+    this.acquisitionService.beginAcquisition();
+  }
+
+  //  Cancel Acquisition button has been clicked.
+  cancelAcquisition() {
+    console.log('Run-Session component Cancelling acquisition');
+    this.acquisitionService.cancelAcquisition();
+  }
 }

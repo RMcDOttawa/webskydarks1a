@@ -18,12 +18,14 @@
   <div class="buttons-section">
     <button mat-raised-button color="warn"
             [disabled]="!enableCancelButton()"
+            (click)="cancelAcquisition()"
             matTooltip="Cancel the running acquisition session">
       Cancel Session
     </button>
     <span class="spacer"></span>
     <button mat-raised-button color="primary"
             [disabled]="!enableBeginButton()"
+            (click)="beginAcquisition()"
             matTooltip="Start or resume acquiring frames">
       Begin Session
     </button>
