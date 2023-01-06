@@ -40,13 +40,18 @@ export class RunSessionComponent implements OnInit {
 
   //  Begin Acquisition button has been clicked.
   beginAcquisition() {
-    console.log('Run-Session component Starting acquisition');
-    this.acquisitionService.beginAcquisition();
+    // console.log('Run-Session component Starting acquisition');
+    this.acquisitionService.beginAcquisition(this.consoleMessage);
   }
 
   //  Cancel Acquisition button has been clicked.
   cancelAcquisition() {
-    console.log('Run-Session component Cancelling acquisition');
+    // console.log('Run-Session component Cancelling acquisition');
     this.acquisitionService.cancelAcquisition();
+  }
+
+  //  Callback function from the acquisition service when it has something to display on console
+  consoleMessage(message: string): void {
+    console.log('RunSessionComponent/consoleMessage callback: ', message);
   }
 }

@@ -20,7 +20,35 @@ export interface DarkFrameSet  {
 
 }
 
+//  How to specify where the relay server is
 export interface ServerCoordinates {
   address: string;
   port: number;
+}
+
+
+
+//  Messages send from the application to the Web Worker subtask
+
+export enum WebWorkerCommand {
+  start = 'start',
+  shutdown = 'shutdown',
+}
+
+export type WebWorkerMessage = {
+  command: WebWorkerCommand;
+  payload?: any;
+}
+
+
+//  Messages send from the Web Worker back to the application
+
+export enum WebWorkerResponse {
+  debugMessage= 'debug',
+  fakeConsoleResponse = 'console',
+}
+
+export type WebWorkerResponseMessage = {
+  command: WebWorkerResponse;
+  payload?: any;
 }
