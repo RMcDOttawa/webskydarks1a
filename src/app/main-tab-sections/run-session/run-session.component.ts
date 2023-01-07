@@ -62,7 +62,7 @@ export class RunSessionComponent implements OnInit {
 
   //  Callback function from the acquisition service when it has something to display on console
   consoleMessage(message: string): void {
-    this.consoleContents = this.consoleContents + this.timestampMessage(message) + '<br>';
+    this.consoleContents = this.consoleContents + this.timestampMessage(message) + '<br>\n';
   }
 
   //  Callback function to be informed when acquisition is finished.

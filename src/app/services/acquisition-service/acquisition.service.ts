@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 
-const fakeDownloadSeconds = 5;
+const fakeDownloadSeconds = 1;
 const fakeAcquisitionSeconds = 30;
-const fakeConsoleIntervalSeconds = 3;
+const fakeConsoleIntervalSeconds = 1;
 
 const milliseconds = 1000;
 
@@ -35,7 +35,7 @@ export class AcquisitionService {
 
   async beginAcquisition(consoleMessageCallback: (message: string) => void,
                          acquisitionFinishedCallback: () => void) {
-    console.log('AcquisitionService/beginAcquisition entered');
+    // console.log('AcquisitionService/beginAcquisition entered');
     this.acquisitionRunning = true;
     this.consoleMessageCallback = consoleMessageCallback;
     this.acquisitionFinishedCallback = acquisitionFinishedCallback;
@@ -52,22 +52,22 @@ export class AcquisitionService {
     if (!this.acquisitionRunning) return;   // check if cancelled
 
     //  Report that we're done
-    console.log('STUB clean-up');
+    // console.log('STUB clean-up');
     this.consoleMessageCallback('Ending acquisition');
     this.acquisitionFinishedCallback();
     this.acquisitionRunning = false;
     this.shutdown();
 
-    console.log('AcquisitionService/beginAcquisition exits');
+    // console.log('AcquisitionService/beginAcquisition exits');
   }
 
   //  Cancel  any running acquisition tasks
   cancelAcquisition() {
-    console.log('AcquisitionService/cancelAcquisition entered');
+    // console.log('AcquisitionService/cancelAcquisition entered');
     this.consoleMessageCallback!('Acquisition process cancelled');
     if (this.acquisitionFinishedCallback) this.acquisitionFinishedCallback();
     this.shutdown();
-    console.log('AcquisitionService/cancelAcquisition exits');
+    // console.log('AcquisitionService/cancelAcquisition exits');
   }
 
 
@@ -97,19 +97,19 @@ export class AcquisitionService {
   //  Testing stub: just do a delay for now.
 
   private acquireAllImages(): Promise<void> {
-    console.log('Creating acquireAllImages promise');
+    // console.log('Creating acquireAllImages promise');
     this.consoleMessageCallback!('Acquiring images');
     return new Promise<void>((resolve) => {
       //  We use a single timer to end the simulated acquisition after a while
-      console.log(`  Starting ${fakeAcquisitionSeconds}-second timer to fake acquisition`);
+      // console.log(`  Starting ${fakeAcquisitionSeconds}-second timer to fake acquisition`);
       this.fakeAcquisitionTimerId = setTimeout(() => {
-        console.log('  Acquisition fake timer has fired');
+        // console.log('  Acquisition fake timer has fired');
         resolve();
       }, fakeAcquisitionSeconds * milliseconds);
 
       //  Meanwhile, we'll use an interval timer to send periodic console messages back
       this.fakeConsoleTimerId = setInterval(() => {
-        console.log('  Console log timer has fired');
+        // console.log('  Console log timer has fired');
         this.fakeConsoleSequence++;
         this.consoleMessageCallback!(`Simulated console message ${this.fakeConsoleSequence}`);
       }, fakeConsoleIntervalSeconds * milliseconds)
@@ -117,22 +117,22 @@ export class AcquisitionService {
   }
 
   shutdown() {
-    console.log('AcquisitionService/shutdown');
+    // console.log('AcquisitionService/shutdown');
     //  Cancel any running timeout timers
     if (this.fakeDownloadTimerId) {
       clearTimeout(this.fakeDownloadTimerId);
       this.fakeDownloadTimerId = null;
-      console.log('  Download timer cancelled');
+      // console.log('  Download timer cancelled');
     }
     if (this.fakeAcquisitionTimerId) {
       clearTimeout(this.fakeAcquisitionTimerId);
       this.fakeAcquisitionTimerId = null;
-      console.log('  Acquisition timer cancelled');
+      // console.log('  Acquisition timer cancelled');
     }
     if (this.fakeConsoleTimerId) {
       clearInterval(this.fakeConsoleTimerId);
       this.fakeConsoleTimerId = null;
-      console.log('  Fake console interval timer cancelled');
+      // console.log('  Fake console interval timer cancelled');
     }
 
     this.acquisitionRunning = false;
