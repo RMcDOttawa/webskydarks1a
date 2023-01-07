@@ -22,6 +22,7 @@ export class MainPageComponent implements OnInit {
   }
 
   onTabIndexChanged(newIndex: number) {
+    console.log('onTabIndexChanged: ', newIndex);
     this.settingsService.setSelectedMainTab(newIndex);
   }
 
