@@ -79,4 +79,8 @@ export class RunSessionComponent implements OnInit {
     // const partsOfFormattedTime = formattedTime.split(' ');
     // return partsOfFormattedTime[0] + ' ' + message;
   }
+
+  clearConsole() {
+    this.consoleContents = '';
+  }
 }

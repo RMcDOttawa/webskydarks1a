@@ -17,5 +17,4 @@ export class ConsoleLogComponent implements OnInit {
   // ngOnChanges(changes: SimpleChanges) {
   //   // console.log('  ConsoleLogComponent/ngOnChanges fired: ', changes);
   // }
-
 }

@@ -22,6 +22,11 @@
             matTooltip="Cancel the running acquisition session">
       Cancel Session
     </button>
+    <button class="clear-console-button" mat-raised-button color="primary"
+            (click)="clearConsole()"
+            matTooltip="Erase all the lines in the console window">
+      Clear Console
+    </button>
     <span class="spacer"></span>
     <button mat-raised-button color="primary"
             [disabled]="!enableBeginButton()"
