@@ -13,6 +13,7 @@ const fakeAcquisitionSeconds = 15;
 })
 export class AcquisitionService {
   private consoleMessageCallback: ((message: string) => void) | undefined;
+  private acquisitionFinishedCallback: (() => void) | undefined;
   private acquisitionRunning = false;
   fakeDownloadTimerId:  ReturnType<typeof setTimeout> | null  = null;
   fakeAcquisitionTimerId:  ReturnType<typeof setTimeout> | null  = null;
@@ -27,10 +28,12 @@ export class AcquisitionService {
   //  We've been asked to start the acquisition process.
   //  We want to keep the polling of the status of TheSky non-blocking, so we use promises for the major steps
 
-  async beginAcquisition(consoleMessageCallback: (message: string) => void) {
+  async beginAcquisition(consoleMessageCallback: (message: string) => void,
+                         acquisitionFinishedCallback: () => void) {
     // console.log('AcquisitionService/beginAcquisition entered');
     this.acquisitionRunning = true;
     this.consoleMessageCallback = consoleMessageCallback;
+    this.acquisitionFinishedCallback = acquisitionFinishedCallback;
 
     //  Console log that we're starting
     this.consoleMessageCallback('Beginning acquisition');
@@ -46,6 +49,7 @@ export class AcquisitionService {
     //  Report that we're done
     console.log('STUB clean-up');
     this.consoleMessageCallback('Ending acquisition');
+    this.acquisitionFinishedCallback();
     this.acquisitionRunning = false;
 
     // console.log('AcquisitionService/beginAcquisition exits');
@@ -69,6 +73,7 @@ export class AcquisitionService {
     }
 
     this.acquisitionRunning = false;
+    if (this.acquisitionFinishedCallback) this.acquisitionFinishedCallback();
     // console.log('AcquisitionService/cancelAcquisition exits');
   }
 

@@ -11,6 +11,7 @@ import {SettingsService} from "../services/settings/settings.service";
 })
 export class MainPageComponent implements OnInit {
   defaultTabIndex!: number;
+  acquisitionInProgress: boolean = false;
 
   constructor(
     private settingsService: SettingsService
@@ -22,8 +23,13 @@ export class MainPageComponent implements OnInit {
   }
 
   onTabIndexChanged(newIndex: number) {
-    console.log('onTabIndexChanged: ', newIndex);
+    // console.log('onTabIndexChanged: ', newIndex);
     this.settingsService.setSelectedMainTab(newIndex);
   }
 
+  //  The "run acquisition" component has sent up an event about the status of the acquisition
+  receiveAcquisitionEvent(status: boolean) {
+    // console.log('MainPageComponent/receiveAcquisitionEvent, status: ', status);
+    this.acquisitionInProgress = status;
+  }
 }

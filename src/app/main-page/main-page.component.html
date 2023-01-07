@@ -3,26 +3,26 @@
 <mat-tab-group
   [selectedIndex]="defaultTabIndex"
   (selectedIndexChange)="onTabIndexChanged($event)">
-  <mat-tab label="Start & End">
+  <mat-tab label="Start & End" [disabled]="acquisitionInProgress">
     <app-start-end-specs></app-start-end-specs>
   </mat-tab>
   <!-- ID on the following tab is used for unit testing - leave it in place -->
-  <mat-tab id="temperatureTab" label="Temperature">
+  <mat-tab id="temperatureTab" label="Temperature" [disabled]="acquisitionInProgress">
     <app-temperature-specs></app-temperature-specs>
   </mat-tab>
-  <mat-tab label="TheSkyX Server">
+  <mat-tab label="TheSkyX Server" [disabled]="acquisitionInProgress">
     <app-server-specs></app-server-specs>
   </mat-tab>
-  <mat-tab label="Server Test">
+  <mat-tab label="Server Test" [disabled]="acquisitionInProgress">
     <app-server-test></app-server-test>
   </mat-tab>
-  <mat-tab label="Frames Plan">
+  <mat-tab label="Frames Plan" [disabled]="acquisitionInProgress">
     <app-frames-plan></app-frames-plan>
   </mat-tab>
   <mat-tab label="Run Session" >
     <!-- lazy load so we don't try to fetch from server until necessary -->
     <ng-template matTabContent>
-      <app-run-session></app-run-session>
+      <app-run-session (acquisitionEvent)="receiveAcquisitionEvent($event)"></app-run-session>
     </ng-template>
   </mat-tab>
 </mat-tab-group>

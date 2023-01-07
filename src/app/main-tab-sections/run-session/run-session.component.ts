@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {AcquisitionService} from "../../services/acquisition-service/acquisition.service";
 import {ServerCommunicationService} from "../../services/server-communication/server-communication.service";
 import {FramePlanService} from "../../services/frame-plan/frame-plan.service";
@@ -9,6 +9,9 @@ import {FramePlanService} from "../../services/frame-plan/frame-plan.service";
   styleUrls: ['./run-session.component.css']
 })
 export class RunSessionComponent implements OnInit {
+
+  //  Event to tell parent if we are busy acquiring images so it can disable other tabs.
+  @Output() acquisitionEvent = new EventEmitter<boolean>();
 
   //  String contents of console are constructed here and passed to the console component to display
   public consoleContents: string = '';
@@ -21,6 +24,7 @@ export class RunSessionComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.acquisitionEvent.emit(false);  // Not acquiring right now
   }
 
   //  Should the "cancel" button be enabled?
@@ -44,19 +48,29 @@ export class RunSessionComponent implements OnInit {
   //  Begin Acquisition button has been clicked.
   beginAcquisition() {
     //  Note: bind in callback is so the callback has access to this object and its variables
-    this.acquisitionService.beginAcquisition(this.consoleMessage.bind(this));
+    this.acquisitionEvent.emit(true);  // Tell parent we are acquiring frames
+    this.acquisitionService.beginAcquisition(this.consoleMessage.bind(this),
+      this.acquisitionFinished.bind(this));
   }
 
   //  Cancel Acquisition button has been clicked.
   cancelAcquisition() {
     // console.log('Run-Session component Cancelling acquisition');
     this.acquisitionService.cancelAcquisition();
+    this.acquisitionEvent.emit(false);  // Tell parent we are not acquiring frames
   }
 
   //  Callback function from the acquisition service when it has something to display on console
   consoleMessage(message: string): void {
     this.consoleContents = this.consoleContents + this.timestampMessage(message) + '<br>';
   }
+
+  //  Callback function to be informed when acquisition is finished.
+  acquisitionFinished() : void {
+    // console.log('acquisitionFinished callback called');
+    this.acquisitionEvent.emit(false);  // Tell parent we are not acquiring frames
+  }
+
 
   private timestampMessage(message: string): string {
     const formattedTime = (new Date()).toLocaleTimeString('en-US', {hour12: false});
