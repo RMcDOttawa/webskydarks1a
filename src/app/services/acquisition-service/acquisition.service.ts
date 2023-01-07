@@ -1,7 +1,10 @@
 import {Injectable} from '@angular/core';
 
 const fakeDownloadSeconds = 5;
-const fakeAcquisitionSeconds = 15;
+const fakeAcquisitionSeconds = 30;
+const fakeConsoleIntervalSeconds = 3;
+
+const milliseconds = 1000;
 
 
 //  Service to manage the actual acquisition of frames.
@@ -17,6 +20,8 @@ export class AcquisitionService {
   private acquisitionRunning = false;
   fakeDownloadTimerId:  ReturnType<typeof setTimeout> | null  = null;
   fakeAcquisitionTimerId:  ReturnType<typeof setTimeout> | null  = null;
+  fakeConsoleTimerId:  ReturnType<typeof setInterval> | null  = null;
+  fakeConsoleSequence: number = 0;
 
   constructor() { }
 
@@ -30,7 +35,7 @@ export class AcquisitionService {
 
   async beginAcquisition(consoleMessageCallback: (message: string) => void,
                          acquisitionFinishedCallback: () => void) {
-    // console.log('AcquisitionService/beginAcquisition entered');
+    console.log('AcquisitionService/beginAcquisition entered');
     this.acquisitionRunning = true;
     this.consoleMessageCallback = consoleMessageCallback;
     this.acquisitionFinishedCallback = acquisitionFinishedCallback;
@@ -51,30 +56,18 @@ export class AcquisitionService {
     this.consoleMessageCallback('Ending acquisition');
     this.acquisitionFinishedCallback();
     this.acquisitionRunning = false;
+    this.shutdown();
 
-    // console.log('AcquisitionService/beginAcquisition exits');
+    console.log('AcquisitionService/beginAcquisition exits');
   }
 
   //  Cancel  any running acquisition tasks
   cancelAcquisition() {
-    // console.log('AcquisitionService/cancelAcquisition entered');
+    console.log('AcquisitionService/cancelAcquisition entered');
     this.consoleMessageCallback!('Acquisition process cancelled');
-
-    //  Cancel any running timeout timers
-    if (this.fakeDownloadTimerId) {
-      clearTimeout(this.fakeDownloadTimerId);
-      this.fakeDownloadTimerId = null;
-      // console.log('  Download timer cancelled');
-    }
-    if (this.fakeAcquisitionTimerId) {
-      clearTimeout(this.fakeAcquisitionTimerId);
-      this.fakeAcquisitionTimerId = null;
-      // console.log('  Acquisition timer cancelled');
-    }
-
-    this.acquisitionRunning = false;
     if (this.acquisitionFinishedCallback) this.acquisitionFinishedCallback();
-    // console.log('AcquisitionService/cancelAcquisition exits');
+    this.shutdown();
+    console.log('AcquisitionService/cancelAcquisition exits');
   }
 
 
@@ -93,7 +86,7 @@ export class AcquisitionService {
       this.fakeDownloadTimerId = setTimeout(() => {
         // console.log('  Download fake timer has fired');
         resolve();
-      }, fakeDownloadSeconds*1000)
+      }, fakeDownloadSeconds * milliseconds)
     })
   }
 
@@ -104,14 +97,45 @@ export class AcquisitionService {
   //  Testing stub: just do a delay for now.
 
   private acquireAllImages(): Promise<void> {
-    // console.log('Creating acquireAllImages promise');
+    console.log('Creating acquireAllImages promise');
     this.consoleMessageCallback!('Acquiring images');
     return new Promise<void>((resolve) => {
-      // console.log(`  Starting ${fakeAcquisitionSeconds}-second timer to fake acquisition`);
+      //  We use a single timer to end the simulated acquisition after a while
+      console.log(`  Starting ${fakeAcquisitionSeconds}-second timer to fake acquisition`);
       this.fakeAcquisitionTimerId = setTimeout(() => {
-        // console.log('  Acquisition fake timer has fired');
+        console.log('  Acquisition fake timer has fired');
         resolve();
-      }, fakeAcquisitionSeconds*1000)
+      }, fakeAcquisitionSeconds * milliseconds);
+
+      //  Meanwhile, we'll use an interval timer to send periodic console messages back
+      this.fakeConsoleTimerId = setInterval(() => {
+        console.log('  Console log timer has fired');
+        this.fakeConsoleSequence++;
+        this.consoleMessageCallback!(`Simulated console message ${this.fakeConsoleSequence}`);
+      }, fakeConsoleIntervalSeconds * milliseconds)
     })
+  }
+
+  shutdown() {
+    console.log('AcquisitionService/shutdown');
+    //  Cancel any running timeout timers
+    if (this.fakeDownloadTimerId) {
+      clearTimeout(this.fakeDownloadTimerId);
+      this.fakeDownloadTimerId = null;
+      console.log('  Download timer cancelled');
+    }
+    if (this.fakeAcquisitionTimerId) {
+      clearTimeout(this.fakeAcquisitionTimerId);
+      this.fakeAcquisitionTimerId = null;
+      console.log('  Acquisition timer cancelled');
+    }
+    if (this.fakeConsoleTimerId) {
+      clearInterval(this.fakeConsoleTimerId);
+      this.fakeConsoleTimerId = null;
+      console.log('  Fake console interval timer cancelled');
+    }
+
+    this.acquisitionRunning = false;
+
   }
 }
