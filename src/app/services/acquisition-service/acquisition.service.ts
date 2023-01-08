@@ -1,10 +1,12 @@
 import {Injectable} from '@angular/core';
+import {FramePlanService} from "../frame-plan/frame-plan.service";
+import {ServerCommunicationService} from "../server-communication/server-communication.service";
 
-const fakeDownloadSeconds = 1;
 const fakeAcquisitionSeconds = 30;
 const fakeConsoleIntervalSeconds = 1;
 
 const milliseconds = 1000;
+const maxBinningValue = 10;
 
 
 //  Service to manage the actual acquisition of frames.
@@ -23,7 +25,13 @@ export class AcquisitionService {
   fakeConsoleTimerId:  ReturnType<typeof setInterval> | null  = null;
   fakeConsoleSequence: number = 0;
 
-  constructor() { }
+  downloadTimes: number[] = [];
+
+  constructor(
+    private framePlanService: FramePlanService,
+    private communicationService: ServerCommunicationService
+  ) {
+  }
 
   //  Is the acquisiiton task currently running?
   isRunning() {
@@ -44,8 +52,14 @@ export class AcquisitionService {
     this.consoleMessageCallback('Beginning acquisition');
 
     //  Measure the download times for different binning images to predict durations,
-    await this.measureDownloadTimes();
+    this.downloadTimes = await this.measureDownloadTimes();
     if (!this.acquisitionRunning) return;   // check if cancelled
+    //  Debug console output
+    // for (let b = 0; b < this.downloadTimes.length; b++) {
+    //   if (this.downloadTimes[b] !== -1) {
+    //     console.log(`Download binned ${b} took ${this.downloadTimes[b]} seconds.`);
+    //   }
+    // }
 
     //  Do the actual image acquisition
     await this.acquireAllImages();
@@ -78,15 +92,38 @@ export class AcquisitionService {
 
   //  Testing stub: we just do a delay for now.
 
-  private measureDownloadTimes(): Promise<void> {
+  private measureDownloadTimes(): Promise<number[]> {
     // console.log('Creating measureDownloadTimes promise');
     this.consoleMessageCallback!('Measuring download times');
-    return new Promise<void>((resolve) => {
-      // console.log(`  Starting ${fakeDownloadSeconds}-second timer to fake download timer`);
-      this.fakeDownloadTimerId = setTimeout(() => {
-        // console.log('  Download fake timer has fired');
-        resolve();
-      }, fakeDownloadSeconds * milliseconds)
+
+    //  Determine which binning values are used in the acquisition plan
+    // console.log('   Determining which binning values are needed');
+    let binningNeeded: boolean[] = Array(maxBinningValue + 1).fill(false);
+    this.framePlanService.getFrameSets().forEach((frameSet) => {
+      if (frameSet.numberWanted > frameSet.numberCaptured) {
+        binningNeeded[frameSet.frameSpec.binning] = true;
+      }
+    });
+    //  Debug console output
+    // for (let b = 0; b < binningNeeded.length; b++) {
+    //   if (binningNeeded[b]) {
+    //     console.log(`      Need binning ${b}`);
+    //   }
+    // }
+
+    //  Time the downloads of the needed binning values
+    return new Promise<number[]>(async (resolve) => {
+      let resultArray: number[] = Array(maxBinningValue + 1).fill(-1);
+      // console.log('Download timing promise entered');
+      for (let b = 0; b < binningNeeded.length; b++) {
+        if (binningNeeded[b]) {
+          resultArray[b] = await this.communicationService.timeDownload(b);
+          this.consoleMessageCallback!(`  Download binned ${b}x${b}: ${resultArray[b]} seconds.`);
+        }
+      }
+      // console.log('Download timing promise resolves');
+      resolve(resultArray);
+      // console.log('Download timing promise exits');
     })
   }
 

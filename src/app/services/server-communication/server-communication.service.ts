@@ -68,6 +68,25 @@ export class ServerCommunicationService {
     });
   }
 
+  //  Time how long it takes to download a file of the given binning value
+  async timeDownload(binning: number): Promise<number> {
+    // console.log('ServerCommunicationService/timeDownload: ', binning);
+    const {address, port} = this.getServerCoordinates();
+    const url = `http://${address}:${port}/api/timedownload/${binning}`;
+
+    return new Promise<number>((resolve, reject) => {
+      axios.get(url)
+        .then((response) => {
+          const timeReturned = response.data.time;
+          // console.log(`ServerCommunicationService/timeDownload received ${timeReturned}`);
+          resolve(timeReturned);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+
   getServerCoordinates(): ServerCoordinates {
     let response: ServerCoordinates = {address: defaultAddress, port: defaultPort};
     const savedCoordinates = this.settingsService.getServerAddressAndPort();
