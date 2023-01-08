@@ -95,21 +95,7 @@ export class AcquisitionService {
   private measureDownloadTimes(): Promise<number[]> {
     // console.log('Creating measureDownloadTimes promise');
     this.consoleMessageCallback!('Measuring download times');
-
-    //  Determine which binning values are used in the acquisition plan
-    // console.log('   Determining which binning values are needed');
-    let binningNeeded: boolean[] = Array(maxBinningValue + 1).fill(false);
-    this.framePlanService.getFrameSets().forEach((frameSet) => {
-      if (frameSet.numberWanted > frameSet.numberCaptured) {
-        binningNeeded[frameSet.frameSpec.binning] = true;
-      }
-    });
-    //  Debug console output
-    // for (let b = 0; b < binningNeeded.length; b++) {
-    //   if (binningNeeded[b]) {
-    //     console.log(`      Need binning ${b}`);
-    //   }
-    // }
+    const binningNeeded = this.determineBinningsNeeded();
 
     //  Time the downloads of the needed binning values
     return new Promise<number[]>(async (resolve) => {
@@ -127,7 +113,27 @@ export class AcquisitionService {
     })
   }
 
-  //  Acquire all the images that need to be captured.
+  //  Determine which binning values are used in the acquisition plan.
+  //  Return an array of 11 booleans.  Each is true if the binning value at that index is needed. (index 0 ignored)
+  //  e.g., if we need binning 2x2, then the array[2] will be true
+  determineBinningsNeeded(): boolean[] {
+    // console.log('   Determining which binning values are needed');
+    let binningNeeded: boolean[] = Array(maxBinningValue + 1).fill(false);
+    this.framePlanService.getFrameSets().forEach((frameSet) => {
+      if (frameSet.numberWanted > frameSet.numberCaptured) {
+        binningNeeded[frameSet.frameSpec.binning] = true;
+      }
+    });
+    //  Debug console output
+    // for (let b = 0; b < binningNeeded.length; b++) {
+    //   if (binningNeeded[b]) {
+    //     console.log(`      Need binning ${b}`);
+    //   }
+    // }
+    return binningNeeded;
+  }
+
+//  Acquire all the images that need to be captured.
   //  Note that we can tell theSKy to start taking an image, but it doesn't report back when it's done. So we will
   //  calculate how long it should take (including download), then start polling theSky for its status.
 
