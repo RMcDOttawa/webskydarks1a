@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
 import {FramePlanService} from "../frame-plan/frame-plan.service";
 import {ServerCommunicationService} from "../server-communication/server-communication.service";
+import {DarkFrame, DarkFrameSet, DarkFrameType} from "../../types";
 
-const fakeAcquisitionSeconds = 30;
-const fakeConsoleIntervalSeconds = 1;
+// const fakeAcquisitionSeconds = 30;
+// const fakeConsoleIntervalSeconds = 1;
 
 const milliseconds = 1000;
 const maxBinningValue = 10;
@@ -139,24 +140,43 @@ export class AcquisitionService {
 
   //  Testing stub: just do a delay for now.
 
-  private acquireAllImages(): Promise<void> {
-    // console.log('Creating acquireAllImages promise');
-    this.consoleMessageCallback!('Acquiring images');
-    return new Promise<void>((resolve) => {
-      //  We use a single timer to end the simulated acquisition after a while
-      // console.log(`  Starting ${fakeAcquisitionSeconds}-second timer to fake acquisition`);
-      this.fakeAcquisitionTimerId = setTimeout(() => {
-        // console.log('  Acquisition fake timer has fired');
-        resolve();
-      }, fakeAcquisitionSeconds * milliseconds);
+  // private fakeAcquireAllImages(): Promise<void> {
+  //   // console.log('Creating acquireAllImages promise');
+  //   this.consoleMessageCallback!('Acquiring images');
+  //   return new Promise<void>((resolve) => {
+  //     //  We use a single timer to end the simulated acquisition after a while
+  //     // console.log(`  Starting ${fakeAcquisitionSeconds}-second timer to fake acquisition`);
+  //     this.fakeAcquisitionTimerId = setTimeout(() => {
+  //       // console.log('  Acquisition fake timer has fired');
+  //       resolve();
+  //     }, fakeAcquisitionSeconds * milliseconds);
+  //
+  //     //  Meanwhile, we'll use an interval timer to send periodic console messages back
+  //     this.fakeConsoleTimerId = setInterval(() => {
+  //       // console.log('  Console log timer has fired');
+  //       this.fakeConsoleSequence++;
+  //       this.consoleMessageCallback!(`Simulated console message ${this.fakeConsoleSequence}`);
+  //     }, fakeConsoleIntervalSeconds * milliseconds)
+  //   })
+  // }
 
-      //  Meanwhile, we'll use an interval timer to send periodic console messages back
-      this.fakeConsoleTimerId = setInterval(() => {
-        // console.log('  Console log timer has fired');
-        this.fakeConsoleSequence++;
-        this.consoleMessageCallback!(`Simulated console message ${this.fakeConsoleSequence}`);
-      }, fakeConsoleIntervalSeconds * milliseconds)
-    })
+  private acquireAllImages(): Promise<void> {
+    this.consoleMessageCallback!('Acquiring images');
+    return new Promise<void> (async (resolve) => {
+      const frameSets = this.framePlanService.getFrameSets();
+      //  Main loop - get each frame that needs to be acquired (a frame from an incomplete frame set),
+      //  Acquire it, upate the frameset completion counts, and repeat.  Keep an eye on the Cancelled flag too.
+      let frameSetIndex = this.framePlanService.findIndexOfNextSetToAcquire();
+      while (frameSetIndex !== -1 && this.acquisitionRunning) {
+        await this.acquireOneFrame(frameSets[frameSetIndex].numberCaptured + 1, frameSets[frameSetIndex]);
+        frameSets[frameSetIndex].numberCaptured++;
+        //  Get the next place where an image is still needed.
+        frameSetIndex = this.framePlanService.findIndexOfNextSetToAcquire();
+      }
+      //  When we get here, all the frames have been captured, so resolve the promise
+      console.log('  Normal end of acquisition, resolving promise');
+      resolve();
+    });
   }
 
   shutdown() {
@@ -181,4 +201,27 @@ export class AcquisitionService {
     this.acquisitionRunning = false;
 
   }
+
+  //  Acquire one frame from the given frameset.  It will be running asynchronously in TheSkyX.
+  //  We will wait and then poll so that we return only when the acquisition is done (or failed).
+
+  private async acquireOneFrame(counter: number, frameSet: DarkFrameSet) {
+    const frameSpec: DarkFrame = frameSet.frameSpec;
+    console.log(`  acQuireOneFrame: ${frameSpec.frameType}, ${frameSpec.binning}, ${frameSpec.exposure}`);
+    this.consoleMessageCallback!(`  Acquiring image ${counter} of set: ${this.describeFrame(frameSpec)}`);
+    await this.delay(3 * milliseconds);
+  }
+
+  private describeFrame(frameSpec: DarkFrame) {
+    if (frameSpec.frameType === DarkFrameType.darkFrame) {
+      return `Dark, ${frameSpec.exposure} secs binned ${frameSpec.binning}x${frameSpec.binning}`;
+    } else {
+      return `Bias, binned ${frameSpec.binning}x${frameSpec.binning}`;
+    }
+  }
+
+  private  delay(milliseconds: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+  }
+
 }
