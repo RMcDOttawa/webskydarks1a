@@ -16,6 +16,8 @@ export class RunSessionComponent implements OnInit {
   //  String contents of console are constructed here and passed to the console component to display
   public consoleContents: string = '';
 
+  indexInProgress: number = -1;
+
   constructor(
     private acquisitionService: AcquisitionService,
     private communicationService: ServerCommunicationService,
@@ -25,6 +27,7 @@ export class RunSessionComponent implements OnInit {
 
   ngOnInit(): void {
     this.acquisitionEvent.emit(false);  // Not acquiring right now
+    this.indexInProgress = this.framePlanService.findIndexOfNextSetToAcquire();
   }
 
   //  Should the "cancel" button be enabled?
@@ -50,6 +53,7 @@ export class RunSessionComponent implements OnInit {
     //  Note: bind in callback is so the callback has access to this object and its variables
     this.acquisitionEvent.emit(true);  // Tell parent we are acquiring frames
     this.acquisitionService.beginAcquisition(this.consoleMessage.bind(this),
+      this.updateFrameIndex.bind(this),
       this.acquisitionFinished.bind(this));
   }
 
@@ -69,8 +73,13 @@ export class RunSessionComponent implements OnInit {
   acquisitionFinished() : void {
     // console.log('acquisitionFinished callback called');
     this.acquisitionEvent.emit(false);  // Tell parent we are not acquiring frames
+    this.indexInProgress = this.framePlanService.findIndexOfNextSetToAcquire();
   }
 
+  //  Callback to update the frame index being displayed as current
+  updateFrameIndex(frameIndex: number): void {
+    this.indexInProgress = frameIndex;
+  }
 
   private timestampMessage(message: string): string {
     const formattedTime = (new Date()).toLocaleTimeString('en-US', {hour12: false});

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {FramePlanService} from "../../../services/frame-plan/frame-plan.service";
 import {DarkFrameSet} from "../../../types";
 
@@ -10,13 +10,12 @@ import {DarkFrameSet} from "../../../types";
 export class AcquisitionListComponent implements OnInit {
 
   framesList: DarkFrameSet[] = [];
-  indexInProgress = -1;
+  @Input() indexInProgress: number = -1;
 
   constructor(public framePlanService: FramePlanService) { }
 
   ngOnInit(): void {
     this.framesList = this.framePlanService.getFrameSets();
-    this.indexInProgress = this.framePlanService.findIndexOfNextSetToAcquire();
   }
 
   //  determine if the frameset of given ID is complete (# wanted = # completed)
@@ -28,6 +27,7 @@ export class AcquisitionListComponent implements OnInit {
   //  Determine if a given frameset is the one we are currently working on.
   setInProgress(id: number): boolean {
     const index: number = this.framePlanService.findIndexById(id);
+    // console.log(`AcquisitionListComponent/setInProgress. id ${id}, index ${index}, inprogress ${this.indexInProgress}`)
     return index === this.indexInProgress;
   }
 }

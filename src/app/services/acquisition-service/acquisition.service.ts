@@ -20,6 +20,7 @@ const maxBinningValue = 10;
 export class AcquisitionService {
   private consoleMessageCallback: ((message: string) => void) | undefined;
   private acquisitionFinishedCallback: (() => void) | undefined;
+  private workingFrameIndexCallback: ((frameIndex: number) => void) | undefined;
   private acquisitionRunning = false;
   fakeDownloadTimerId:  ReturnType<typeof setTimeout> | null  = null;
   fakeAcquisitionTimerId:  ReturnType<typeof setTimeout> | null  = null;
@@ -43,11 +44,13 @@ export class AcquisitionService {
   //  We want to keep the polling of the status of TheSky non-blocking, so we use promises for the major steps
 
   async beginAcquisition(consoleMessageCallback: (message: string) => void,
+                         workingFrameIndexCallback: (frameIndex: number) => void,
                          acquisitionFinishedCallback: () => void) {
     // console.log('AcquisitionService/beginAcquisition entered');
     this.acquisitionRunning = true;
     this.consoleMessageCallback = consoleMessageCallback;
     this.acquisitionFinishedCallback = acquisitionFinishedCallback;
+    this.workingFrameIndexCallback = workingFrameIndexCallback;
 
     //  Console log that we're starting
     this.consoleMessageCallback('Beginning acquisition');
@@ -125,40 +128,12 @@ export class AcquisitionService {
         binningNeeded[frameSet.frameSpec.binning] = true;
       }
     });
-    //  Debug console output
-    // for (let b = 0; b < binningNeeded.length; b++) {
-    //   if (binningNeeded[b]) {
-    //     console.log(`      Need binning ${b}`);
-    //   }
-    // }
     return binningNeeded;
   }
 
 //  Acquire all the images that need to be captured.
   //  Note that we can tell theSKy to start taking an image, but it doesn't report back when it's done. So we will
   //  calculate how long it should take (including download), then start polling theSky for its status.
-
-  //  Testing stub: just do a delay for now.
-
-  // private fakeAcquireAllImages(): Promise<void> {
-  //   // console.log('Creating acquireAllImages promise');
-  //   this.consoleMessageCallback!('Acquiring images');
-  //   return new Promise<void>((resolve) => {
-  //     //  We use a single timer to end the simulated acquisition after a while
-  //     // console.log(`  Starting ${fakeAcquisitionSeconds}-second timer to fake acquisition`);
-  //     this.fakeAcquisitionTimerId = setTimeout(() => {
-  //       // console.log('  Acquisition fake timer has fired');
-  //       resolve();
-  //     }, fakeAcquisitionSeconds * milliseconds);
-  //
-  //     //  Meanwhile, we'll use an interval timer to send periodic console messages back
-  //     this.fakeConsoleTimerId = setInterval(() => {
-  //       // console.log('  Console log timer has fired');
-  //       this.fakeConsoleSequence++;
-  //       this.consoleMessageCallback!(`Simulated console message ${this.fakeConsoleSequence}`);
-  //     }, fakeConsoleIntervalSeconds * milliseconds)
-  //   })
-  // }
 
   private acquireAllImages(): Promise<void> {
     this.consoleMessageCallback!('Acquiring images');
@@ -168,6 +143,9 @@ export class AcquisitionService {
       //  Acquire it, upate the frameset completion counts, and repeat.  Keep an eye on the Cancelled flag too.
       let frameSetIndex = this.framePlanService.findIndexOfNextSetToAcquire();
       while (frameSetIndex !== -1 && this.acquisitionRunning) {
+        //  Tell the UI what frame index we are on
+        this.workingFrameIndexCallback!(frameSetIndex);
+
         const thisFrameSet = frameSets[frameSetIndex];
         await this.acquireOneFrame(thisFrameSet.numberCaptured + 1, thisFrameSet);
         thisFrameSet.numberCaptured = Number(thisFrameSet.numberCaptured) + 1;
@@ -177,7 +155,7 @@ export class AcquisitionService {
         frameSetIndex = this.framePlanService.findIndexOfNextSetToAcquire();
       }
       //  When we get here, all the frames have been captured, so resolve the promise
-      console.log('  Normal end of acquisition, resolving promise');
+      // console.log('  Normal end of acquisition, resolving promise');
       resolve();
     });
   }
