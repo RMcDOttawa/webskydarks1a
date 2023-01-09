@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {SettingsService} from "../settings/settings.service";
-import {ServerCoordinates} from "../../types";
+import {DarkFrameType, ServerCoordinates} from "../../types";
 import axios from "axios";
 
 const relayTestSuccessString = 'Relay Success';
@@ -116,4 +116,41 @@ export class ServerCommunicationService {
 
   }
 
+  async startImageAcquisition(frameType: DarkFrameType, exposure: number, binning: number): Promise<void> {
+    const {address, port} = this.getServerCoordinates();
+    let url = '';
+    if (frameType === DarkFrameType.biasFrame) {
+      url = `http://${address}:${port}/api/acquire/bias/${binning}`;
+    } else {
+      url = `http://${address}:${port}/api/acquire/dark/${binning}/${exposure}`;
+    }
+    console.log(`startImageAcquisition(${frameType},${exposure},${binning}): `, url);
+    return new Promise<void>((resolve, reject) => {
+      axios.get(url)
+        .then(() => {
+          resolve();
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+
+  }
+
+  async isExposureComplete(): Promise<boolean> {
+    const {address, port} = this.getServerCoordinates();
+    const url = `http://${address}:${port}/api/exposing`;
+    console.log('isExposureComplete: ', url);
+
+    return new Promise<boolean>((resolve, reject) => {
+      axios.get(url)
+        .then((response) => {
+          resolve(!response.data.exposing);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+
+  }
 }

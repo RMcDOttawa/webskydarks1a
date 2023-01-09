@@ -9,6 +9,12 @@ import {DarkFrame, DarkFrameSet, DarkFrameType} from "../../types";
 const milliseconds = 1000;
 const maxBinningValue = 10;
 
+const hedge_multiplier = 0.01;  //  Add 1% to the exposure in case the download lags for some reason
+// const hedge_multiplier = -.15;  //  For testing, force the wait to be 5% too short, to test polling loop
+const hedge_constant = 0.5;     //  And add an additional 1/2 second
+const delay_between_completion_checks = 1;  // seconds
+const max_polling_time_after_exposure = 60; // seconds
+
 
 //  Service to manage the actual acquisition of frames.
 //  Since actual acquisition is done async by theSkyX this service is non-blocking, but
@@ -35,7 +41,7 @@ export class AcquisitionService {
   ) {
   }
 
-  //  Is the acquisiiton task currently running?
+  //  Is the acquisition task currently running?
   isRunning() {
     return this.acquisitionRunning;
   }
@@ -203,12 +209,50 @@ export class AcquisitionService {
   //  Acquire one frame from the given frameset.  It will be running asynchronously in TheSkyX.
   //  We will wait and then poll so that we return only when the acquisition is done (or failed).
 
+  /*  Fake version using a timer to simulate camera activity
   private async acquireOneFrame(counter: number, frameSet: DarkFrameSet) {
     const frameSpec: DarkFrame = frameSet.frameSpec;
     console.log(`  acQuireOneFrame: ${frameSpec.frameType}, ${frameSpec.binning}, ${frameSpec.exposure}`);
     this.consoleMessageCallback!(`  Acquiring image ${counter} of set: ${this.describeFrame(frameSpec)}`);
     await this.delay(3 * milliseconds);
   }
+   */
+
+  private async acquireOneFrame(counter: number, frameSet: DarkFrameSet): Promise<void> {
+    const frameSpec: DarkFrame = frameSet.frameSpec;
+    const expectedDuration = this.calculateExpectedDuration(frameSpec);
+    console.log(`acQuireOneFrame: ${frameSpec.frameType}, ${frameSpec.binning}, ${frameSpec.exposure}`);
+    console.log(`  Estimated duration: ${expectedDuration}`);
+    this.consoleMessageCallback!(`  Acquiring image ${counter} of set: ${this.describeFrame(frameSpec)}`);
+
+    return new Promise<void> (async (resolve, reject) => {
+      try {
+        console.log('   Starting acquisition');
+        await this.communicationService.startImageAcquisition(frameSpec.frameType,
+          frameSpec.exposure, frameSpec.binning);
+        if (!this.acquisitionRunning) return;   // check if cancelled
+
+        //  Wait until it is probably finished
+        console.log('   Waiting for estimated duration: ', expectedDuration * milliseconds);
+        await this.delay(expectedDuration * milliseconds);
+        if (!this.acquisitionRunning) return;   // check if cancelled
+
+        //  Poll until it is definitely finished
+        console.log('   Polling until completion confirmed');
+        if (!this.acquisitionRunning) return;   // check if cancelled
+        await this.pollUntilExposureComplete();
+
+        resolve();
+      } catch (err) {
+        console.log('Image acquisition command failed: ', err);
+        reject(err);
+      }
+
+    })
+    //  Start image acquisition
+  }
+
+
 
   private describeFrame(frameSpec: DarkFrame) {
     if (frameSpec.frameType === DarkFrameType.darkFrame) {
@@ -222,4 +266,38 @@ export class AcquisitionService {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
   }
 
+  //  Calculate an estimate of how long it should take to acquire this frame set.
+  //    Exposure time + download time + a little hedge factor
+  private calculateExpectedDuration(frameSpec: DarkFrame): number {
+    const hedgeFactor = frameSpec.exposure * hedge_multiplier + hedge_constant;
+    return frameSpec.exposure + this.downloadTimes[frameSpec.binning] + hedgeFactor;
+  }
+
+  //  the exposure should be complete - but it might not be, and we don't get feedback from TSX
+  //  except by asking.  So we poll it to see if we're complete.  If not, wait a while and try
+  //  again.  Repeat, with a timeout of "waited too long"
+  private async pollUntilExposureComplete(): Promise<void> {
+    return new Promise<void> (async (resolve, reject) => {
+      let totalTimeWaited = 0;
+      console.log('pollUntilExposureComplete');
+      try {
+        let isComplete = await this.communicationService.isExposureComplete();
+        console.log('Initially, isComplete = ', isComplete);
+        while ((totalTimeWaited < max_polling_time_after_exposure) && !isComplete && this.acquisitionRunning) {
+          console.log('   Waiting: ', delay_between_completion_checks * milliseconds);
+          await this.delay(delay_between_completion_checks * milliseconds);
+          totalTimeWaited += delay_between_completion_checks;
+          isComplete = await this.communicationService.isExposureComplete();
+          console.log(`   After ${totalTimeWaited} seconds, isComplete = ${isComplete}`);
+        }
+        if (isComplete) {
+          resolve();
+        } else {
+          reject('Exposure taking too long');
+        }
+      } catch (err) {
+        reject(err);
+      }
+    })
+  }
 }
