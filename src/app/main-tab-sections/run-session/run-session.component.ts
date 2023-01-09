@@ -65,8 +65,8 @@ export class RunSessionComponent implements OnInit {
   }
 
   //  Callback function from the acquisition service when it has something to display on console
-  consoleMessage(message: string): void {
-    this.consoleContents = this.consoleContents + this.timestampMessage(message) + '<br>\n';
+  consoleMessage(message: string, indentLevel: number = 1): void {
+    this.consoleContents = this.consoleContents + this.timestampMessage(message, indentLevel) + '<br>\n';
   }
 
   //  Callback function to be informed when acquisition is finished.
@@ -81,9 +81,10 @@ export class RunSessionComponent implements OnInit {
     this.indexInProgress = frameIndex;
   }
 
-  private timestampMessage(message: string): string {
+  private timestampMessage(message: string, indentLevel: number): string {
     const formattedTime = (new Date()).toLocaleTimeString('en-US', {hour12: false});
-    return formattedTime + ' ' + message;
+    const leadingSpace = (indentLevel === 1) ? ' ' : '&nbsp;&nbsp;&nbsp;&nbsp;'.repeat(indentLevel - 1);
+    return formattedTime + leadingSpace + message;
     // const formattedTime = (new Date()).toLocaleTimeString();
     // const partsOfFormattedTime = formattedTime.split(' ');
     // return partsOfFormattedTime[0] + ' ' + message;

@@ -24,7 +24,7 @@ const max_polling_time_after_exposure = 60; // seconds
   providedIn: 'root'
 })
 export class AcquisitionService {
-  private consoleMessageCallback: ((message: string) => void) | undefined;
+  private consoleMessageCallback: ((message: string, indentLevel?: number) => void) | undefined;
   private acquisitionFinishedCallback: (() => void) | undefined;
   private workingFrameIndexCallback: ((frameIndex: number) => void) | undefined;
   private acquisitionRunning = false;
@@ -49,7 +49,7 @@ export class AcquisitionService {
   //  We've been asked to start the acquisition process.
   //  We want to keep the polling of the status of TheSky non-blocking, so we use promises for the major steps
 
-  async beginAcquisition(consoleMessageCallback: (message: string) => void,
+  async beginAcquisition(consoleMessageCallback: (message: string, indentLevel?: number) => void,
                          workingFrameIndexCallback: (frameIndex: number) => void,
                          acquisitionFinishedCallback: () => void) {
     // console.log('AcquisitionService/beginAcquisition entered');
@@ -126,7 +126,7 @@ export class AcquisitionService {
           try {
             // console.log('  Try succeeded on timedownload');
             resultArray[b] = await this.communicationService.timeDownload(b);
-            this.consoleMessageCallback!(`  Download binned ${b}x${b}: ${resultArray[b]} seconds.`);
+            this.consoleMessageCallback!(`Download binned ${b}x${b}: ${resultArray[b]} seconds.`, 2);
           } catch (e) {
             // console.log('  Try failed on timedownload');
             reject('download failed');
@@ -224,24 +224,24 @@ export class AcquisitionService {
   private async acquireOneFrame(counter: number, frameSet: DarkFrameSet): Promise<void> {
     const frameSpec: DarkFrame = frameSet.frameSpec;
     const expectedDuration = this.calculateExpectedDuration(frameSpec);
-    console.log(`acQuireOneFrame: ${frameSpec.frameType}, ${frameSpec.binning}, ${frameSpec.exposure}`);
-    console.log(`  Estimated duration: ${expectedDuration}`);
-    this.consoleMessageCallback!(`  Acquiring image ${counter} of set: ${this.describeFrame(frameSpec)}`);
+    // console.log(`acQuireOneFrame: ${frameSpec.frameType}, ${frameSpec.binning}, ${frameSpec.exposure}`);
+    // console.log(`  Estimated duration: ${expectedDuration}`);
+    this.consoleMessageCallback!(`  Acquiring image ${counter} of set: ${this.describeFrame(frameSpec)}`, 2);
 
     return new Promise<void> (async (resolve, reject) => {
       try {
-        console.log('   Starting acquisition');
+        // console.log('   Starting acquisition');
         await this.communicationService.startImageAcquisition(frameSpec.frameType,
           frameSpec.exposure, frameSpec.binning);
         if (!this.acquisitionRunning) return;   // check if cancelled
 
         //  Wait until it is probably finished
-        console.log('   Waiting for estimated duration: ', expectedDuration * milliseconds);
+        // console.log('   Waiting for estimated duration: ', expectedDuration * milliseconds);
         await this.delay(expectedDuration * milliseconds);
         if (!this.acquisitionRunning) return;   // check if cancelled
 
         //  Poll until it is definitely finished
-        console.log('   Polling until completion confirmed');
+        // console.log('   Polling until completion confirmed');
         if (!this.acquisitionRunning) return;   // check if cancelled
         await this.pollUntilExposureComplete();
 
