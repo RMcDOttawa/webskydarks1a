@@ -170,7 +170,7 @@ export class AcquisitionService {
       while (frameSetIndex !== -1 && this.acquisitionRunning) {
         const thisFrameSet = frameSets[frameSetIndex];
         await this.acquireOneFrame(thisFrameSet.numberCaptured + 1, thisFrameSet);
-        thisFrameSet.numberCaptured++;
+        thisFrameSet.numberCaptured = Number(thisFrameSet.numberCaptured) + 1;
         this.framePlanService.updateFrameSet(thisFrameSet);
 
         //  Get the next place where an image is still needed.

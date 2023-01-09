@@ -1,9 +1,8 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {DarkFrame, DarkFrameSet, DarkFrameType} from "../../../types";
+import {DarkFrame, DarkFrameSet} from "../../../types";
 import {
   AbstractControl,
-  FormBuilder,
   FormControl,
   FormGroup,
   ValidationErrors,
@@ -96,14 +95,14 @@ export class RowEditCardComponent implements OnInit {
   saveDialog() {
     const updatedFrameSpec: DarkFrame = {
       frameType: this.formGroup.get('frameTypeControl')!.value,
-      binning: this.formGroup.get('binningControl')!.value,
-      exposure: this.formGroup.get('exposureControl')!.value
+      binning: Number(this.formGroup.get('binningControl')!.value),
+      exposure: Number(this.formGroup.get('exposureControl')!.value)
     };
     const updatedFrameSet: DarkFrameSet = {
       id: this.frameSet.id, // Will be -1 if this is a new frame set
       frameSpec: updatedFrameSpec,
-      numberWanted: this.formGroup.get('quantityControl')!.value,
-      numberCaptured: this.formGroup.get('completedControl')!.value
+      numberWanted: Number(this.formGroup.get('quantityControl')!.value),
+      numberCaptured: Number(this.formGroup.get('completedControl')!.value)
     };
     if (this.isEdit) {
       this.framePlanService.updateFrameSet(updatedFrameSet);
