@@ -59,10 +59,13 @@ export class FramesPlanComponent implements OnInit {
       const numSelected = this.numSelected();
       const currentMajority = (numSelected / this.checkedItems.length) > 0.5;
       const toggledValue = !currentMajority;
+      // console.log(`selectOrDeselectAll: ${this.checkedItems.length} checked Items, numSelected=${numSelected}, majority=${currentMajority}, toggled=${toggledValue}`);
       // Reflect the check visually on the table
       for (let index = 0; index < this.checkedItems.length; index++) {
         this.checkedItems[index] = toggledValue;
       }
+    } else {
+      // console.log(`selectOrDeselectAll: no checked Items, doing nothing.`);
     }
   }
 
@@ -279,6 +282,7 @@ export class FramesPlanComponent implements OnInit {
           'refreshCallback': () => {
             this.frameSetsToDisplay = this.framePlanService.getFrameSets();
             this.dataSource = new MatTableDataSource<DarkFrameSet>(this.frameSetsToDisplay);
+            this.checkedItems = this.makeCheckedArray(this.frameSetsToDisplay.length);
           }
         }
       });
@@ -293,6 +297,7 @@ export class FramesPlanComponent implements OnInit {
         'refreshCallback': () => {
           this.frameSetsToDisplay = this.framePlanService.getFrameSets();
           this.dataSource = new MatTableDataSource<DarkFrameSet>(this.frameSetsToDisplay);
+          this.checkedItems = this.makeCheckedArray(this.frameSetsToDisplay.length);
         }
       }
     });

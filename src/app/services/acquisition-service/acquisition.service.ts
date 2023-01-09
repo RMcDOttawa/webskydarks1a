@@ -103,23 +103,23 @@ export class AcquisitionService {
   //  Testing stub: we just do a delay for now.
 
   private measureDownloadTimes(): Promise<number[]> {
-    console.log('Creating measureDownloadTimes promise');
+    // console.log('Creating measureDownloadTimes promise');
     this.consoleMessageCallback!('Measuring download times');
     const binningNeeded = this.determineBinningsNeeded();
 
     //  Time the downloads of the needed binning values
     return new Promise<number[]>(async (resolve, reject) => {
       let resultArray: number[] = Array(maxBinningValue + 1).fill(-1);
-      console.log('  Download timing promise entered');
+      // console.log('  Download timing promise entered');
       for (let b = 0; b < binningNeeded.length; b++) {
         if (binningNeeded[b]) {
-          console.log('  About to call relay/timedownload/', b);
+          // console.log('  About to call relay/timedownload/', b);
           try {
-            console.log('  Try succeeded on timedownload');
+            // console.log('  Try succeeded on timedownload');
             resultArray[b] = await this.communicationService.timeDownload(b);
             this.consoleMessageCallback!(`  Download binned ${b}x${b}: ${resultArray[b]} seconds.`);
           } catch (e) {
-            console.log('  Try failed on timedownload');
+            // console.log('  Try failed on timedownload');
             reject('download failed');
           }
         }
