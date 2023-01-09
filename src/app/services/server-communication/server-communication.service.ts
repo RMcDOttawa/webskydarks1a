@@ -140,12 +140,27 @@ export class ServerCommunicationService {
   async isExposureComplete(): Promise<boolean> {
     const {address, port} = this.getServerCoordinates();
     const url = `http://${address}:${port}/api/exposing`;
-    console.log('isExposureComplete: ', url);
+    // console.log('isExposureComplete: ', url);
 
     return new Promise<boolean>((resolve, reject) => {
       axios.get(url)
         .then((response) => {
           resolve(!response.data.exposing);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+
+  }
+
+  async abortExposure(): Promise<void> {
+    const {address, port} = this.getServerCoordinates();
+    const url = `http://${address}:${port}/api/abortexposure`;
+    return new Promise<void>((resolve, reject) => {
+      axios.get(url)
+        .then(() => {
+          resolve();
         })
         .catch((err) => {
           reject(err);

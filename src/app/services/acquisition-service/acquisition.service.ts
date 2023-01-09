@@ -92,8 +92,11 @@ export class AcquisitionService {
   }
 
   //  Cancel  any running acquisition tasks
-  cancelAcquisition() {
+  async cancelAcquisition() {
     // console.log('AcquisitionService/cancelAcquisition entered');
+    if (this.acquisitionRunning) {
+      await this.communicationService.abortExposure();
+    }
     this.consoleMessageCallback!('Acquisition process cancelled');
     if (this.acquisitionFinishedCallback) this.acquisitionFinishedCallback();
     this.shutdown();
