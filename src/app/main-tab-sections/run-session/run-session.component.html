@@ -35,4 +35,8 @@
       Begin Session
     </button>
   </div></mat-card-actions>
+  <div class="progress-bar" *ngIf="displayProgressBar">
+    <mat-progress-bar [value]="progressBarProgress"></mat-progress-bar>
+  </div>
+<!--  <button (click)="toggleProgressBar()">TPB</button>-->
 </div>

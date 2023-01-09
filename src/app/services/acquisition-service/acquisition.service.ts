@@ -15,6 +15,9 @@ const hedge_constant = 0.5;     //  And add an additional 1/2 second
 const delay_between_completion_checks = 1;  // seconds
 const max_polling_time_after_exposure = 60; // seconds
 
+const progress_bar_minimum_duration = 5;    //  Progress bar when >= this many seconds exposure
+const progress_bar_update_interval = 0.1;      //  Update the progress bar every this many seconds
+
 
 //  Service to manage the actual acquisition of frames.
 //  Since actual acquisition is done async by theSkyX this service is non-blocking, but
@@ -27,11 +30,21 @@ export class AcquisitionService {
   private consoleMessageCallback: ((message: string, indentLevel?: number) => void) | undefined;
   private acquisitionFinishedCallback: (() => void) | undefined;
   private workingFrameIndexCallback: ((frameIndex: number) => void) | undefined;
+
+  //  Callbacks to make a progress bar visible and update it.  We'll do this only for exposures
+  //  longer than some threshold, and update with a periodic timer
+  private setProgressBarVisibilityCallback: ((visibility: boolean) => void) | undefined;
+  private setProgressBarProgressCallback: ((progress: number) => void) | undefined;
+
   private acquisitionRunning = false;
   fakeDownloadTimerId:  ReturnType<typeof setTimeout> | null  = null;
   fakeAcquisitionTimerId:  ReturnType<typeof setTimeout> | null  = null;
   fakeConsoleTimerId:  ReturnType<typeof setInterval> | null  = null;
   fakeConsoleSequence: number = 0;
+
+  progressBarStartedAt!: Date;
+  progressBarTargetMilliseconds!: number;
+  progressBarIntervalId:  ReturnType<typeof setInterval> | null  = null;
 
   downloadTimes: number[] = [];
 
@@ -48,15 +61,21 @@ export class AcquisitionService {
 
   //  We've been asked to start the acquisition process.
   //  We want to keep the polling of the status of TheSky non-blocking, so we use promises for the major steps
+  // this.setProgressBarVisibility.bind(this),
+  // this.setProgressBarProgress.bin(this)
 
   async beginAcquisition(consoleMessageCallback: (message: string, indentLevel?: number) => void,
                          workingFrameIndexCallback: (frameIndex: number) => void,
-                         acquisitionFinishedCallback: () => void) {
+                         acquisitionFinishedCallback: () => void,
+                         setProgressBarVisibility: (visibility: boolean) => void,
+                         setProgressBarProgress: (progress: number) => void) {
     // console.log('AcquisitionService/beginAcquisition entered');
     this.acquisitionRunning = true;
     this.consoleMessageCallback = consoleMessageCallback;
     this.acquisitionFinishedCallback = acquisitionFinishedCallback;
     this.workingFrameIndexCallback = workingFrameIndexCallback;
+    this.setProgressBarVisibilityCallback = setProgressBarVisibility;
+    this.setProgressBarProgressCallback = setProgressBarProgress;
 
     //  Console log that we're starting
     this.consoleMessageCallback('Beginning acquisition');
@@ -204,6 +223,7 @@ export class AcquisitionService {
       this.fakeConsoleTimerId = null;
       // console.log('  Fake console interval timer cancelled');
     }
+    this.shutDownProgressBar();
 
     this.acquisitionRunning = false;
 
@@ -229,6 +249,7 @@ export class AcquisitionService {
     this.consoleMessageCallback!(`  Acquiring image ${counter} of set: ${this.describeFrame(frameSpec)}`, 2);
 
     return new Promise<void> (async (resolve, reject) => {
+      this.setUpProgressBar(expectedDuration);
       try {
         // console.log('   Starting acquisition');
         await this.communicationService.startImageAcquisition(frameSpec.frameType,
@@ -250,6 +271,7 @@ export class AcquisitionService {
         console.log('Image acquisition command failed: ', err);
         reject(err);
       }
+      this.shutDownProgressBar();
 
     })
     //  Start image acquisition
@@ -282,16 +304,16 @@ export class AcquisitionService {
   private async pollUntilExposureComplete(): Promise<void> {
     return new Promise<void> (async (resolve, reject) => {
       let totalTimeWaited = 0;
-      console.log('pollUntilExposureComplete');
+      // console.log('pollUntilExposureComplete');
       try {
         let isComplete = await this.communicationService.isExposureComplete();
-        console.log('Initially, isComplete = ', isComplete);
+        // console.log('Initially, isComplete = ', isComplete);
         while ((totalTimeWaited < max_polling_time_after_exposure) && !isComplete && this.acquisitionRunning) {
-          console.log('   Waiting: ', delay_between_completion_checks * milliseconds);
+          // console.log('   Waiting: ', delay_between_completion_checks * milliseconds);
           await this.delay(delay_between_completion_checks * milliseconds);
           totalTimeWaited += delay_between_completion_checks;
           isComplete = await this.communicationService.isExposureComplete();
-          console.log(`   After ${totalTimeWaited} seconds, isComplete = ${isComplete}`);
+          // console.log(`   After ${totalTimeWaited} seconds, isComplete = ${isComplete}`);
         }
         if (isComplete) {
           resolve();
@@ -302,5 +324,41 @@ export class AcquisitionService {
         reject(err);
       }
     })
+  }
+
+  //  If the expected duration of the frame we're acquiring is over some threshold, display a progress bar
+  //  and start a timer that will update it periodically
+  private setUpProgressBar(expectedDuration: number) {
+    // console.log('setUpProgressBar, expected duration: ', expectedDuration);
+    if (expectedDuration < progress_bar_minimum_duration) {
+      //  To short a duration for a progress bar to be useful, just a distraction. Don't show it.
+      this.setProgressBarVisibilityCallback!(false);
+    } else {
+      //  A long duration benefits from a progress bar.  Set it visible, start the progress at zero
+      this.setProgressBarVisibilityCallback!(true);
+      this.setProgressBarProgressCallback!(0);
+      this.progressBarStartedAt = new Date();
+      this.progressBarTargetMilliseconds = expectedDuration * milliseconds;
+
+      this.progressBarIntervalId = setInterval(this.updateProgressBar.bind(this),
+        progress_bar_update_interval * milliseconds);
+    }
+  }
+
+  private updateProgressBar() {
+    const timeNow = new Date();
+    // console.log('** Update progress bar. Started ', this.progressBarStartedAt, ', now ', timeNow);
+    const elapsedMilliseconds = timeNow.getTime() - this.progressBarStartedAt.getTime();
+    const percentageComplete = elapsedMilliseconds / this.progressBarTargetMilliseconds * 100;
+    // console.log(`  ${elapsedMilliseconds}ms = ${percentageComplete}%`);
+    this.setProgressBarProgressCallback!(percentageComplete);
+  }
+
+  private shutDownProgressBar() {
+    if (this.progressBarIntervalId) {
+      clearInterval(this.progressBarIntervalId);
+      this.progressBarIntervalId = null;
+    }
+    this.setProgressBarVisibilityCallback!(false);
   }
 }

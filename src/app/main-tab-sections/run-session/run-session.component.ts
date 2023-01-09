@@ -18,6 +18,9 @@ export class RunSessionComponent implements OnInit {
 
   indexInProgress: number = -1;
 
+  displayProgressBar: boolean = false;
+  progressBarProgress: number = 0;
+
   constructor(
     private acquisitionService: AcquisitionService,
     private communicationService: ServerCommunicationService,
@@ -54,8 +57,22 @@ export class RunSessionComponent implements OnInit {
     this.acquisitionEvent.emit(true);  // Tell parent we are acquiring frames
     this.acquisitionService.beginAcquisition(this.consoleMessage.bind(this),
       this.updateFrameIndex.bind(this),
-      this.acquisitionFinished.bind(this));
+      this.acquisitionFinished.bind(this),
+      this.setProgressBarVisibility.bind(this),
+      this.setProgressBarProgress.bind(this)
+    );
   }
+
+  setProgressBarVisibility(visibility: boolean): void {
+    // console.log('setProgressBarVisibility ', visibility);
+    this.displayProgressBar = visibility;
+  }
+
+  setProgressBarProgress(progress: number): void {
+    // console.log('setProgressBarProgress ', progress);
+    this.progressBarProgress = progress;
+  }
+
 
   //  Cancel Acquisition button has been clicked.
   cancelAcquisition() {
@@ -92,5 +109,9 @@ export class RunSessionComponent implements OnInit {
 
   clearConsole() {
     this.consoleContents = '';
+  }
+
+  toggleProgressBar() {
+    this.displayProgressBar = !this.displayProgressBar;
   }
 }

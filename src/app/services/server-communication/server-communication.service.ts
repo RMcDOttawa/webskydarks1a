@@ -124,7 +124,7 @@ export class ServerCommunicationService {
     } else {
       url = `http://${address}:${port}/api/acquire/dark/${binning}/${exposure}`;
     }
-    console.log(`startImageAcquisition(${frameType},${exposure},${binning}): `, url);
+    // console.log(`startImageAcquisition(${frameType},${exposure},${binning}): `, url);
     return new Promise<void>((resolve, reject) => {
       axios.get(url)
         .then(() => {
