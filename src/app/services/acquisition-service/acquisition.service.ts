@@ -168,8 +168,11 @@ export class AcquisitionService {
       //  Acquire it, upate the frameset completion counts, and repeat.  Keep an eye on the Cancelled flag too.
       let frameSetIndex = this.framePlanService.findIndexOfNextSetToAcquire();
       while (frameSetIndex !== -1 && this.acquisitionRunning) {
-        await this.acquireOneFrame(frameSets[frameSetIndex].numberCaptured + 1, frameSets[frameSetIndex]);
-        frameSets[frameSetIndex].numberCaptured++;
+        const thisFrameSet = frameSets[frameSetIndex];
+        await this.acquireOneFrame(thisFrameSet.numberCaptured + 1, thisFrameSet);
+        thisFrameSet.numberCaptured++;
+        this.framePlanService.updateFrameSet(thisFrameSet);
+
         //  Get the next place where an image is still needed.
         frameSetIndex = this.framePlanService.findIndexOfNextSetToAcquire();
       }
