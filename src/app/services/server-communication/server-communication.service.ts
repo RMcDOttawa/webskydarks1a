@@ -22,7 +22,7 @@ export class ServerCommunicationService {
   //  will resolve to simple boolean on the success
   async testRelay(): Promise<boolean> {
     const {address, port} = this.getServerCoordinates();
-    const url = `http://${address}:${port}/api/testrelay`;
+    const url = `https://${address}:${port}/api/testrelay`;
 
     return new Promise<boolean>((resolve) => {
       axios.get(url)
@@ -39,7 +39,7 @@ export class ServerCommunicationService {
   //  will resolve to simple boolean on the success
   async testTheSkyX(): Promise<boolean> {
     const {address, port} = this.getServerCoordinates();
-    const url = `http://${address}:${port}/api/testtsx`;
+    const url = `https://${address}:${port}/api/testtsx`;
 
     return new Promise<boolean>((resolve) => {
       axios.get(url)
@@ -55,7 +55,7 @@ export class ServerCommunicationService {
   //  Ask TheSkyX for its image autosave path
   async getAutosavePath(): Promise<string> {
     const {address, port} = this.getServerCoordinates();
-    const url = `http://${address}:${port}/api/getautosavepath`;
+    const url = `https://${address}:${port}/api/getautosavepath`;
 
     return new Promise<string>((resolve, reject) => {
       axios.get(url)
@@ -72,7 +72,7 @@ export class ServerCommunicationService {
   async timeDownload(binning: number): Promise<number> {
     // console.log('ServerCommunicationService/timeDownload: ', binning);
     const {address, port} = this.getServerCoordinates();
-    const url = `http://${address}:${port}/api/timedownload/${binning}`;
+    const url = `https://${address}:${port}/api/timedownload/${binning}`;
 
     return new Promise<number>((resolve, reject) => {
       axios.get(url)
@@ -101,7 +101,7 @@ export class ServerCommunicationService {
 
   async sendAndReceive(commandToSend: string): Promise<string> {
     const {address, port} = this.getServerCoordinates();
-    const url = `http://${address}:${port}/api/sendtext`;
+    const url = `https://${address}:${port}/api/sendtext`;
 
     return new Promise<string>((resolve) => {
       axios.post(url,
@@ -120,9 +120,9 @@ export class ServerCommunicationService {
     const {address, port} = this.getServerCoordinates();
     let url = '';
     if (frameType === DarkFrameType.biasFrame) {
-      url = `http://${address}:${port}/api/acquire/bias/${binning}`;
+      url = `https://${address}:${port}/api/acquire/bias/${binning}`;
     } else {
-      url = `http://${address}:${port}/api/acquire/dark/${binning}/${exposure}`;
+      url = `https://${address}:${port}/api/acquire/dark/${binning}/${exposure}`;
     }
     // console.log(`startImageAcquisition(${frameType},${exposure},${binning}): `, url);
     return new Promise<void>((resolve, reject) => {
@@ -139,7 +139,7 @@ export class ServerCommunicationService {
 
   async isExposureComplete(): Promise<boolean> {
     const {address, port} = this.getServerCoordinates();
-    const url = `http://${address}:${port}/api/exposing`;
+    const url = `https://${address}:${port}/api/exposing`;
     // console.log('isExposureComplete: ', url);
 
     return new Promise<boolean>((resolve, reject) => {
@@ -156,7 +156,7 @@ export class ServerCommunicationService {
 
   async abortExposure(): Promise<void> {
     const {address, port} = this.getServerCoordinates();
-    const url = `http://${address}:${port}/api/abortexposure`;
+    const url = `https://${address}:${port}/api/abortexposure`;
     return new Promise<void>((resolve, reject) => {
       axios.get(url)
         .then(() => {
