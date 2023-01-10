@@ -13,7 +13,7 @@ jobs:
           command: |
             google-chrome --version
             chromedriver --version
-          name: Check install
+          name: Check install 2
       - checkout
       - run: npm install
       - run: npm run test
