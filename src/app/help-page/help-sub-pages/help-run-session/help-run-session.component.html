@@ -1,3 +1,49 @@
 <div class="help-container">
-  <p>help-run-session works!</p>
+  <div class="help-nav-header">
+    <a routerLink="/help/server"><i>Previous: Frame Plan</i></a>
+    <span class="help-spacer"></span>
+    <a routerLink="/help/startend"><i>Next: Automating Start and End</i></a>
+  </div>
+  <h1>The Run Session page</h1>
+  <p>The Run Session tab is where you begin, monitor, and control the acquisition of your dark and bias frames.
+  </p>
+  <div class="run-session-img-container">
+    <img alt="screen shot of run-session page" class="run-session-img" src="assets/img/01_run_ready.png">
+  </div>
+  <p>There are 3 main sections to this page:</p>
+  <h2>Images Being Acquired</h2>
+  <p>This table shows a summary of your frames plan. This is informatino only - the frames plan cannot be modified from here; you must go back to the Frames Plan tab to do that. The table is annotated to show the progress of the acquisition.</p>
+  <ul>
+    <li>Lines shaded in gray are complete (the frames have been acquired).</li>
+    <li>Lines not shaded have not been started yet.</li>
+    <li>The line shaded in green is the frame set for which acquisition is in progress or which will begin when the Begin button is clicked.</li>
+  </ul>
+  <p>In the example above, the first frame set is complete, the second frame set is in progress, and the rest have not been started.</p>
+  <p>This table is kept up to date as acquisition proceeds, and is saved between sessions. So, if you interrupt acquisition, you can resume later and it will pick up from where it left off.</p>
+  <h2>Console Log</h2>
+  <p>A series of information messages will appear here as acquisition proceeds, giving you status updates on the progress.</p>
+  <h2 style="margin-bottom: 0">Buttons</h2>
+  <table class="buttons-table">
+    <tr class="buttons-row">
+      <td class="button-name">Begin Session</td>
+      <td class="button-description">This button is enabled only if there is a frames plan with images that still need to be acquired.  When it is clicked, acquisition will start or, if a delayed start has been specified, waiting for the start time will begin.</td>
+    </tr>
+    <tr class="buttons-row">
+      <td class="button-name">Cancel Session</td>
+      <td class="button-description">This button is enabled only when an acquisition is running. It will immediately end the image acquisition, and whatever frame is in progress will be lost.  Any work already done is not lost, and the session can be resumed later.</td>
+    </tr>
+    <tr class="buttons-row">
+      <td class="button-name">Clear Console</td>
+      <td class="button-description">This clears the lines from the console log, but has not effect on the acquisition process or frames plan.</td>
+    </tr>
+  </table>
+  <h2>Where Images are Saved</h2>
+  <p>It's important to remember that images are saved by TheSkyX <i>on the computer where TheSkyX is running</i>.  <i>Not</i> the computer where you are running WebSkyDarks (unless they happen to be the same computer).  The TheSkyX does not offer the service of sending acquired images across the network - nor would you want it to, as they are usually very large.</p>
+  <p>If the server and relay are running, the path at which TheSkyX will be saving images is displayed at the top of the run-session page, above the console log. This is for information only. You can't change that location here; you must change it from within TheSkyX.</p>
+
+  <div class="help-nav-footer">
+    <a routerLink="/help/server"><i>Previous: Frame Plan</i></a>
+    <span class="help-spacer"></span>
+    <a routerLink="/help/startend"><i>Next: Automating Start and End</i></a>
+  </div>
 </div>

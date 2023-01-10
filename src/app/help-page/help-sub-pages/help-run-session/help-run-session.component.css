@@ -1,0 +1,24 @@
+.run-session-img-container {
+  display: flex;
+}
+
+.run-session-img {
+  margin: auto;
+  width: 60%;
+}
+
+.buttons-table {
+  border-spacing: 0 1em;
+}
+
+.buttons-row {
+  vertical-align: top;
+}
+
+.button-name {
+  width: 15%;
+}
+
+.button-description {
+
+}
