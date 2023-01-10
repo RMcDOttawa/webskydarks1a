@@ -3,7 +3,7 @@ orbs:
   browser-tools: circleci/browser-tools@1.2.3
 jobs:
   build:
-    working_directory: ~/ng-project
+    working_directory: ~/webskydarks1a/ng-project
     docker:
       - image: cimg/node:16.13.1-browsers
     steps:
@@ -15,7 +15,7 @@ jobs:
             chromedriver --version
           name: Check install
       - checkout:
-            path: ~/ng-project
+          path: ~/webskydarks1a
       - restore_cache:
           key: ng-project-{{ .Branch }}-{{ checksum "package-lock.json" }}
       - run: npm install
