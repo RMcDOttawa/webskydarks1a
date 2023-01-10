@@ -14,7 +14,8 @@ jobs:
             google-chrome --version
             chromedriver --version
           name: Check install
-      - checkout
+      - checkout:
+            path: ~/ng-project
       - restore_cache:
           key: ng-project-{{ .Branch }}-{{ checksum "package-lock.json" }}
       - run: npm install
