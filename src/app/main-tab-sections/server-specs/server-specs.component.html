@@ -66,21 +66,28 @@
       <h2>Connection Test Results</h2>
       <table class="connection-results-table">
         <tr class="connection-results-row">
-          <td class="connection-results-label">Relay connection:&nbsp;</td>
+          <td class="connection-results-label">Relay connection:&nbsp;&nbsp;</td>
           <td>
             <span *ngIf="relayTestResult" class="connection-success">Success</span>
             <span *ngIf="!relayTestResult" class="connection-fail">Fail</span>
           </td>
         </tr>
+        <tr *ngIf="tryAlternateProtocol" class="connection-results-row">
+          <td class="connection-results-label">Trying {{alternateProtocolName}} to relay:&nbsp;&nbsp;</td>
+          <td>
+            <span *ngIf="alternateRelayTestResult" class="connection-success">Success. Changed setting to {{alternateProtocolName}}</span>
+            <span *ngIf="!alternateRelayTestResult" class="connection-fail">Fail</span>
+          </td>
+        </tr>
         <tr class="connection-results-row" >
-          <td class="connection-results-label">TheSkyX connection via relay:&nbsp;</td>
+          <td class="connection-results-label">TheSkyX connection via relay:&nbsp;&nbsp;</td>
           <td>
             <span *ngIf="tsxTestResult" class="connection-success">Success</span>
             <span *ngIf="!tsxTestResult" class="connection-fail">Fail</span>
           </td>
         </tr>
         <tr *ngIf="tsxAutosavePath !== ''"  class="connection-results-row">
-          <td class="connection-results-label">Retrieved TheSkyX autosave path:&nbsp;</td>
+          <td class="connection-results-label">Retrieved TheSkyX autosave path:&nbsp;&nbsp;</td>
           <td>{{tsxAutosavePath}}</td>
         </tr>
       </table>

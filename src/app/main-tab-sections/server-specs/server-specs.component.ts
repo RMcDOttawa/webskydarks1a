@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, ValidationErrors, Validators} from "@angular/forms";
 import {SettingsService} from "../../services/settings/settings.service";
 import {ServerCommunicationService} from "../../services/server-communication/server-communication.service";
+import * as http from "http";
 
 const isValidIP = require("is-valid-ip");
 const isValidDomain = require('is-valid-domain')
@@ -20,6 +21,9 @@ export class ServerSpecsComponent implements OnInit {
   relayTestResult: boolean = false;
   tsxTestResult: boolean = false;
   tsxAutosavePath: string = '';
+  tryAlternateProtocol: boolean = false;
+  alternateRelayTestResult: boolean = false;
+  alternateProtocolName: string = '';
 
   constructor(
     private serverCommunication: ServerCommunicationService,
@@ -116,9 +120,16 @@ export class ServerSpecsComponent implements OnInit {
 
   async testConnection() {
     this.testsRan = true;
+    this.tryAlternateProtocol = false;
 
     //  See if we can talk to the relay
     this.relayTestResult = await this.serverCommunication.testRelay();
+
+    //  If we couldn't contact the relay, the http/https setting may be wrong. Try the other setting
+    //  and, if that works, report they have it wrong and fix it
+    if (!this.relayTestResult) {
+      await this.tryAlternateHttpProtocol();
+    }
 
     //  See if we can talk, via the relay, to TheSkyX
     this.tsxTestResult = await this.serverCommunication.testTheSkyX();
@@ -128,5 +139,21 @@ export class ServerSpecsComponent implements OnInit {
       this.tsxAutosavePath = await this.serverCommunication.getAutosavePath();
     }
 
+  }
+
+  //  If we couldn't contact the relay, the http/https setting may be wrong. Try the other setting
+  //  and, if that works, report they have it wrong and fix it
+
+  private async tryAlternateHttpProtocol() {
+    console.log('tryAlternateHttpProtocol entered');
+    const httpsInUse = this.settingsService.getServerHttps();
+    this.alternateProtocolName = httpsInUse ? 'http' : 'https';
+    this.tryAlternateProtocol = true;
+    this.alternateRelayTestResult = await this.serverCommunication.testRelayWithHttps(!httpsInUse);
+    if (this.alternateRelayTestResult) {
+      //  This worked, which means they have the http setting wrong.  Change it to the other value.
+      this.settingsService.setServerHttps(!httpsInUse);
+      this.formGroup.get('useHttpsControl')?.setValue(!httpsInUse);
+    }
   }
 }

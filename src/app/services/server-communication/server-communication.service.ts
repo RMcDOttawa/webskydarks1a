@@ -26,11 +26,67 @@ export class ServerCommunicationService {
     const url = this.makeUrl('api/testrelay');
 
     return new Promise<boolean>((resolve) => {
+      console.log('Sending ', url);
       axios.get(url)
         .then((response) => {
           resolve(response.data === relayTestSuccessString);
         })
-        .catch(() => {
+        .catch((error) => {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            console.log('Server responded with error code');
+            console.log(error.response.data);
+            console.log(error.response.status);
+            console.log(error.response.headers);
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            console.log('No response received');
+            console.log(error.request);
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            console.log('Config Error', error.message);
+          }
+          console.log(error.config);
+          resolve(false);
+        });
+    });
+  }
+
+  //  Do a relay test, but force the use of https or http depending on the given parameter
+  async testRelayWithHttps(useHttps: boolean): Promise<boolean> {
+    console.log('testRelayWithHttps, useHttps: ', useHttps);
+    const {address, port} = this.getServerCoordinates();
+    const protocol = useHttps ? 'https' : 'http';
+    const url = `${protocol}://${address}:${port}/api/testrelay`;
+
+    return new Promise<boolean>((resolve) => {
+      console.log('Sending ', url);
+      axios.get(url)
+        .then((response) => {
+          resolve(response.data === relayTestSuccessString);
+        })
+        .catch((error) => {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            console.log('Server responded with error code');
+            console.log(error.response.data);
+            console.log(error.response.status);
+            console.log(error.response.headers);
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            console.log('No response received');
+            console.log(error.request);
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            console.log('Config Error', error.message);
+          }
+          console.log(error.config);
           resolve(false);
         });
     });
@@ -184,4 +240,5 @@ export class ServerCommunicationService {
     // console.log(`MakeUrl(${endpoint}) returns ${url}`);
     return `${protocol}://${address}:${port}/${endpoint}`;
   }
+
 }
