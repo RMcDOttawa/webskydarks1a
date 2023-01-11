@@ -15,12 +15,14 @@
     causes it to listen for commands on TCP.</p>
   <p>In TheSkyX Pro, select "TCP Server" from the Tools menu:</p>
   <div class="server-img-container">
-    <img class="server-img" src="assets/img/01_MenuForTCPServercropped.png">
+    <img class="server-img" src="assets/img/01_MenuForTCPServercropped.png"
+    alt="Screenshot of TheSkyX Menu">
   </div>
   <p class="space-above">Then, in the "TCP Server" window that appears, make sure the "Listen for Connections" checkbox
     is on:</p>
   <div class="server-img-container">
-    <img class="server-img-noscale" src="assets/img/02_TCP_Server_Window.png">
+    <img class="server-img-noscale" src="assets/img/02_TCP_Server_Window.png"
+    alt="Screenshot of TheSkyX TCP Server window">
   </div>
   <h2>The Need for a Relay</h2>
   <p>Unfortunately, TheSkyX communicates, in server mode, using a basic, low-level network protocol called TCP Sockets.
@@ -49,7 +51,7 @@
         of WebToSkyRelay might be different
         next time. On the other hand, if you are using fixed IP addresses on your network, it is safe to
         specify the IP address.</p>
-      <h3>WebToSkyRelay and WebSkyDarks On Different Computers</h3>
+      <h3 >WebToSkyRelay and WebSkyDarks On Different Computers</h3>
       <p>If WebToSkyRelay is running on a different computer, enter either the local domain name for that computer,
         or its IP address. Inside a private network, local domain names often have the form "name.local",
         where "name" is specified as the network name of the computer. This name is found in the Sharing settings
@@ -66,9 +68,21 @@
       configured WebToSkyRelay to listen on a different port, fill that in.</p>
     </div>
     <div class="image-right">
-      <img src="assets/img/07_Server_Specs_Tab.png" width="100%">
+      <img src="assets/img/07_Server_Specs_Tab.png"
+      alt="Screenshot of Server Specifications window">
     </div>
   </div>
+  <h2>Relay Security</h2>
+  <p>Depending on where you obtained WebSkyDarks, the configuration of the relay server, and your specific browser,
+  the relay server may need to be configured to use HTTPS security, or it may need to be configured <i>not</i> to
+  use HTTPS.  Whichever the relay is using, WebSkyDarks should use the same.</p>
+  <p>While WebSkyDarks is in development, there are too many variables to get this right for all circumstances,
+    so there is a checkbox to tell WebSkyDarks whether the server is using HTTPS. If this is not set correctly, it
+  will try the other protocol and adjust the setting for you if that works.
+    If it still doesn't work, chances are your browser is interfering with the connection,
+  and you may need to go into the browser settings and add a security exception for the server.</p>
+  <p>If WebSkyDarks is ever deployed to a production service, this configuration requirement will go away. Since this
+  tool is really just a hobby and for my own use, it will probably never reach that stage of maturity.</p>
   <h2>Test Connection</h2>
   <p>With WebToSkyRelay running on its host computer, you can use the "Test Connection" button to get a
   quick confirmation that WebSkyDarks is able to establish a connection using the server information you have provided.

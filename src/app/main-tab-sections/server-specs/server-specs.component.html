@@ -83,7 +83,7 @@
           <td class="connection-results-label">TheSkyX connection via relay:&nbsp;&nbsp;</td>
           <td>
             <span *ngIf="tsxTestResult" class="connection-success">Success</span>
-            <span *ngIf="!tsxTestResult" class="connection-fail">Fail</span>
+            <span *ngIf="!tsxTestResult" class="connection-fail">Fail. TheSkyX not running or not reachable.</span>
           </td>
         </tr>
         <tr *ngIf="tsxAutosavePath !== ''"  class="connection-results-row">
