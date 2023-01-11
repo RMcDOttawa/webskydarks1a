@@ -1,1 +1,44 @@
-<p>start-end-specs works!</p>
+<div class="start-end-container">
+  <h1>Session Start and End</h1>
+  <p>Define whether the frame acquisition session starts when you click "being" and ends when it is finished,
+    if it starts and ends at other specified times.  Sessions that end before complete can be resumed next time.
+    (<a routerLink="/help/startend">Help on this page</a>)</p>
+  <div class="box-set">
+    <div class="start-container">
+      <h2>Session Start</h2>
+      <mat-radio-group name="startgroup">
+        <div class="control-grid">
+          <mat-radio-button name="startnow" value="startnow"
+                            class="single-top-row">
+            Immediately
+          </mat-radio-button>
+          <mat-radio-button name="startlater" value="startlater"
+                            class="double-row-left">
+            Later, at:
+          </mat-radio-button>
+          <div class="double-row-right">
+            <input matInput type="datetime-local" placeholder="start date">
+          </div>
+        </div>
+      </mat-radio-group>
+    </div>
+    <div class="end-container">
+      <h2>Session End</h2>
+      <mat-radio-group name="endgroup">
+        <div class="control-grid">
+          <mat-radio-button name="enddone" value="enddone"
+                            class="single-top-row">
+            When Done
+          </mat-radio-button>
+          <mat-radio-button name="endlater" value="endlater"
+                            class="double-row-left">
+            Later, at:
+          </mat-radio-button>
+          <div class="double-row-right">
+            <input matInput type="datetime-local" placeholder="start date">
+          </div>
+        </div>
+      </mat-radio-group>
+    </div>
+  </div>
+</div>
