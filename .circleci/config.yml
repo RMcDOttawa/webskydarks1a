@@ -13,6 +13,7 @@ jobs:
           command: |
             google-chrome --version
             chromedriver --version
+            ls -ahl ~/ng-project
           name: Check install
       - checkout
       - restore_cache:
