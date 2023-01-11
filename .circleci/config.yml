@@ -13,20 +13,13 @@ jobs:
           command: |
             google-chrome --version
             chromedriver --version
-            ls -alx ~/ng-project
           name: Check install
-      - checkout:
-          command: |
-            ls -alx ~/ng-project
+      - checkout
       - restore_cache:
           key: ng-project-{{ .Branch }}-{{ checksum "package-lock.json" }}
-          command: |
-            ls -alx ~/ng-project
       - run: npm install
       - save_cache:
           key: ng-project-{{ .Branch }}-{{ checksum "package-lock.json" }}
           paths:
             - "node_modules"
-          command: |
-            ls -alx ~/ng-project
       - run: npm run test
