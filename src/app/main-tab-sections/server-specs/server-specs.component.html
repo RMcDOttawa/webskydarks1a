@@ -40,6 +40,18 @@
           Must be a number from 1 to 65535
         </div>
 
+          <mat-checkbox class="https-checkbox" formControlName="useHttpsControl">Relay is using HttpS</mat-checkbox>
+        <div class="validation-error"
+             *ngIf="formGroup.get('portNumberControl')!.hasError('required')">This field is required
+        </div>
+        <div class="validation-error"
+             *ngIf="formGroup.get('portNumberControl')!.hasError('pattern')">This field must be an integer
+        </div>
+        <div class="validation-error"
+             *ngIf="formGroup.get('portNumberControl')!.hasError('min') || formGroup.get('portNumberControl')!.hasError('max')">
+          Must be a number from 1 to 65535
+        </div>
+
       </form>
     </mat-card-content>
     <mat-card-actions>

@@ -21,8 +21,9 @@ export class ServerCommunicationService {
   //  Test if we can communicate with the relay server.  Return a promise that
   //  will resolve to simple boolean on the success
   async testRelay(): Promise<boolean> {
-    const {address, port} = this.getServerCoordinates();
-    const url = `https://${address}:${port}/api/testrelay`;
+    // const {address, port} = this.getServerCoordinates();
+    // const url = `https://${address}:${port}/api/testrelay`;
+    const url = this.makeUrl('api/testrelay');
 
     return new Promise<boolean>((resolve) => {
       axios.get(url)
@@ -38,8 +39,9 @@ export class ServerCommunicationService {
   //  Test if we can communicate with theSkyX (via the relay).  Return a promise that
   //  will resolve to simple boolean on the success
   async testTheSkyX(): Promise<boolean> {
-    const {address, port} = this.getServerCoordinates();
-    const url = `https://${address}:${port}/api/testtsx`;
+    // const {address, port} = this.getServerCoordinates();
+    // const url = `https://${address}:${port}/api/testtsx`;
+    const url = this.makeUrl('api/testtsx');
 
     return new Promise<boolean>((resolve) => {
       axios.get(url)
@@ -54,8 +56,9 @@ export class ServerCommunicationService {
 
   //  Ask TheSkyX for its image autosave path
   async getAutosavePath(): Promise<string> {
-    const {address, port} = this.getServerCoordinates();
-    const url = `https://${address}:${port}/api/getautosavepath`;
+    // const {address, port} = this.getServerCoordinates();
+    // const url = `https://${address}:${port}/api/getautosavepath`;
+    const url = this.makeUrl('api/getautosavepath');
 
     return new Promise<string>((resolve, reject) => {
       axios.get(url)
@@ -71,8 +74,9 @@ export class ServerCommunicationService {
   //  Time how long it takes to download a file of the given binning value
   async timeDownload(binning: number): Promise<number> {
     // console.log('ServerCommunicationService/timeDownload: ', binning);
-    const {address, port} = this.getServerCoordinates();
-    const url = `https://${address}:${port}/api/timedownload/${binning}`;
+    // const {address, port} = this.getServerCoordinates();
+    // const url = `https://${address}:${port}/api/timedownload/${binning}`;
+    const url = this.makeUrl(`api/timedownload/${binning}`);
 
     return new Promise<number>((resolve, reject) => {
       axios.get(url)
@@ -87,21 +91,12 @@ export class ServerCommunicationService {
     });
   }
 
-  getServerCoordinates(): ServerCoordinates {
-    let response: ServerCoordinates = {address: defaultAddress, port: defaultPort};
-    const savedCoordinates = this.settingsService.getServerAddressAndPort();
-    if (savedCoordinates) {
-      response.address = savedCoordinates.address;
-      response.port = savedCoordinates.port;
-    }
-    return response;
-  }
-
   //  Send the given command through to theSkyX and pass back any response received
 
   async sendAndReceive(commandToSend: string): Promise<string> {
-    const {address, port} = this.getServerCoordinates();
-    const url = `https://${address}:${port}/api/sendtext`;
+    // const {address, port} = this.getServerCoordinates();
+    // const url = `https://${address}:${port}/api/sendtext`;
+    const url = this.makeUrl(`api/sendtext`);
 
     return new Promise<string>((resolve) => {
       axios.post(url,
@@ -117,12 +112,12 @@ export class ServerCommunicationService {
   }
 
   async startImageAcquisition(frameType: DarkFrameType, exposure: number, binning: number): Promise<void> {
-    const {address, port} = this.getServerCoordinates();
+    // const {address, port} = this.getServerCoordinates();
     let url = '';
     if (frameType === DarkFrameType.biasFrame) {
-      url = `https://${address}:${port}/api/acquire/bias/${binning}`;
+      url = this.makeUrl(`api/acquire/bias/${binning}`);
     } else {
-      url = `https://${address}:${port}/api/acquire/dark/${binning}/${exposure}`;
+      url = this.makeUrl(`api/acquire/dark/${binning}/${exposure}`);
     }
     // console.log(`startImageAcquisition(${frameType},${exposure},${binning}): `, url);
     return new Promise<void>((resolve, reject) => {
@@ -134,12 +129,12 @@ export class ServerCommunicationService {
           reject(err);
         });
     });
-
   }
 
   async isExposureComplete(): Promise<boolean> {
-    const {address, port} = this.getServerCoordinates();
-    const url = `https://${address}:${port}/api/exposing`;
+    // const {address, port} = this.getServerCoordinates();
+    // const url = `https://${address}:${port}/api/exposing`;
+    const url = this.makeUrl(`api/exposing`);
     // console.log('isExposureComplete: ', url);
 
     return new Promise<boolean>((resolve, reject) => {
@@ -151,12 +146,12 @@ export class ServerCommunicationService {
           reject(err);
         });
     });
-
   }
 
   async abortExposure(): Promise<void> {
-    const {address, port} = this.getServerCoordinates();
-    const url = `https://${address}:${port}/api/abortexposure`;
+    // const {address, port} = this.getServerCoordinates();
+    // const url = `https://${address}:${port}/api/abortexposure`;
+    const url = this.makeUrl(`api/abortexposure`);
     return new Promise<void>((resolve, reject) => {
       axios.get(url)
         .then(() => {
@@ -166,6 +161,27 @@ export class ServerCommunicationService {
           reject(err);
         });
     });
+  }
 
+
+  getServerCoordinates(): ServerCoordinates {
+    let response: ServerCoordinates = {address: defaultAddress, port: defaultPort};
+    const savedCoordinates = this.settingsService.getServerAddressAndPort();
+    if (savedCoordinates) {
+      response.address = savedCoordinates.address;
+      response.port = savedCoordinates.port;
+    }
+    return response;
+  }
+
+  //  Make an appropriate URL for the given endpoint. It will be one of:
+  //    http://<address>:<port>/endpoint
+  //    https://<address>:<port>/endpoint
+
+  private makeUrl(endpoint: string): string {
+    const {address, port} = this.getServerCoordinates();
+    const protocol = this.settingsService.getServerHttps() ? 'https' : 'http';
+    // console.log(`MakeUrl(${endpoint}) returns ${url}`);
+    return `${protocol}://${address}:${port}/${endpoint}`;
   }
 }

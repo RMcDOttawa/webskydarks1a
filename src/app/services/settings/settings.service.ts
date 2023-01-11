@@ -12,6 +12,7 @@ const testSettingKey = 'WebSkyDarks test setting key do not use';
 const selectedMainTabKey = 'WebSkyDarks selected main tab';
 const framePlanKey = 'WebSkyDarks frame plan';
 const serverCoordsKey = 'WebSkyDarks Server Coordinates';
+const serverHttpsKey = 'Server HTTPS';
 
 @Injectable({
   providedIn: 'root'
@@ -65,5 +66,16 @@ export class SettingsService {
   public getServerAddressAndPort(): ServerCoordinates | null {
     return this.localStorage.getObject(serverCoordsKey);
 
+  }
+
+  getServerHttps(): boolean {
+    const retrieved = this.localStorage.getString(serverHttpsKey);
+    if (retrieved === null) return false;
+    return retrieved.toLowerCase() === 'true';
+  }
+
+  setServerHttps(useHttps: boolean) {
+    console.log('Set server HTTPS to ', useHttps);
+    this.localStorage.setString(serverHttpsKey, String(useHttps));
   }
 }

@@ -48,6 +48,7 @@ export class ServerSpecsComponent implements OnInit {
         Validators.min(1),
         Validators.max(65535),
       ]),
+      useHttpsControl: new FormControl(this.settingsService.getServerHttps()),
     });
 
     this.formGroup.valueChanges.subscribe(() => this.formValuesChanged(this.formGroup));
@@ -63,7 +64,9 @@ export class ServerSpecsComponent implements OnInit {
     if (formGroup.valid) {
       const address: string = formGroup.get('addressControl')!.value;
       const port: number = formGroup.get('portNumberControl')!.value;
+      const useHttps: boolean = formGroup.get('useHttpsControl')!.value;
       this.settingsService.setServerAddressAndPort(address, port);
+      this.settingsService.setServerHttps(useHttps);
     }
   }
 
