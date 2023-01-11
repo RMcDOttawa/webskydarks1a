@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/webskydarks",
+            "outputPath": "docs",
             "allowedCommonJsDependencies": [
               "form-data"
             ],
