@@ -13,6 +13,7 @@ jobs:
           command: |
             google-chrome --version
             chromedriver --version
+            rm ~/ng-project/*
             ls -ahl ~/ng-project
           name: Check install
       - checkout
