@@ -26,4 +26,14 @@ export interface ServerCoordinates {
   port: number;
 }
 
+//  When to start an acquisition session
+export interface SessionStart {
+  immediate: boolean;       //  Start immediately?
+  laterDate: Date | null;   //  If immediate=false, then when?
+}
 
+//  When to stop an acquisition session
+export interface SessionEnd {
+  whenDone: boolean;       //  Run to completion, then stop?
+  laterDate: Date | null;  //  If whenDone=false, then when?
+}

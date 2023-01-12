@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {LocalStorageService} from "../local-storage/local-storage.service";
 import {FramePlanType} from "../frame-plan/frame-plan.service";
-import {ServerCoordinates} from "../../types";
+import {ServerCoordinates, SessionEnd, SessionStart} from "../../types";
 
 //  Service to store application settings, abstracting away how that is done.
 //  All settings are set and retrieved through public methods in this service.
@@ -13,6 +13,8 @@ const selectedMainTabKey = 'WebSkyDarks selected main tab';
 const framePlanKey = 'WebSkyDarks frame plan';
 const serverCoordsKey = 'WebSkyDarks Server Coordinates';
 const serverHttpsKey = 'Server HTTPS';
+const sessionStartKey = 'Session Start';
+const sessionEndKey = 'Session End';
 
 @Injectable({
   providedIn: 'root'
@@ -68,6 +70,7 @@ export class SettingsService {
 
   }
 
+  //  Whether the server is using HTTPS
   getServerHttps(): boolean {
     const retrieved = this.localStorage.getString(serverHttpsKey);
     if (retrieved === null) return false;
@@ -75,7 +78,24 @@ export class SettingsService {
   }
 
   setServerHttps(useHttps: boolean) {
-    console.log('Set server HTTPS to ', useHttps);
     this.localStorage.setString(serverHttpsKey, String(useHttps));
   }
+
+  //  When should the acquisition session start?
+  getSessionStart(): SessionStart | null {
+    return this.localStorage.getObject(sessionStartKey);
+  }
+
+  setSessionStart(startSpecs: SessionStart) {
+    this.localStorage.setObject(sessionStartKey, startSpecs);
+  }
+  //  When should the acquisition session end?
+  getSessionEnd(): SessionEnd | null {
+    return this.localStorage.getObject(sessionEndKey);
+  }
+
+  setSessionEnd(startSpecs: SessionEnd) {
+    this.localStorage.setObject(sessionEndKey, startSpecs);
+  }
+
 }

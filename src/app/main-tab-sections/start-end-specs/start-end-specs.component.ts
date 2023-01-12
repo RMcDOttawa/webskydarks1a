@@ -1,5 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, ValidationErrors, ValidatorFn} from "@angular/forms";
+import {SettingsService} from "../../services/settings/settings.service";
+import {SessionEnd, SessionStart} from "../../types";
 
 @Component({
   selector: 'app-start-end-specs',
@@ -11,29 +13,68 @@ export class StartEndSpecsComponent implements OnInit {
   formGroupEnd!: FormGroup;
 
   constructor(
-  ) { }
+    private settingsService: SettingsService
+  ) {
+  }
 
   ngOnInit(): void {
     //  Redo this - need to try to retrieve from settings first, then do these calculations only
     //  if there is no setting or if it is in the past
-    let oneHourInFuture = new Date();
-    oneHourInFuture.setHours(oneHourInFuture.getHours() + 1);
-    const oneHourInFutureAsString = this.localDateTimeString(oneHourInFuture);
+    const startValue: SessionStart = this.getStartValue();
     this.formGroupStart = new FormGroup({
-      startGroupControl: new FormControl('startnow'),
+      startGroupControl: new FormControl(startValue.immediate ? 'startnow' : 'startlater'),
       startWhenControl: new FormControl({
-          value: oneHourInFutureAsString,
-        disabled: true},
+          value: this.localDateTimeString(startValue.laterDate!),
+          disabled: startValue.immediate
+        },
         this.minimumDateTimeValidator()),
     });
+    this.formGroupStart.valueChanges.subscribe(this.startGroupChanged.bind(this));
+
+    const endValue: SessionEnd = this.getEndValue();
     this.formGroupEnd = new FormGroup({
-      endGroupControl: new FormControl('enddone'),
-      endWhenControl: new FormControl(
-        {
-          value: oneHourInFutureAsString,
-          disabled: true},
+      endGroupControl: new FormControl(endValue.whenDone ? 'enddone' : 'endlater'),
+      endWhenControl: new FormControl({
+          value: this.localDateTimeString(endValue.laterDate!),
+          disabled: endValue.whenDone
+        },
         this.minimumDateTimeValidator()),
     });
+    this.formGroupEnd.valueChanges.subscribe(this.endGroupChanged.bind(this));
+  }
+
+  private minimumDateTimeValidator(): ValidatorFn {
+    return (control: any) => {
+      // console.log('minimumDateTimeValidator. control value = ', control.value);
+      const localDate: Date | null = this.parseDateStringAsLocal(control.value);
+      // console.log('  Parsed proposed datetime as: ', localDate);
+      let result: ValidationErrors | null = null;
+      if (!localDate) {
+        result = {invalidDate: {}};
+      } else if (localDate < new Date()) {
+        result = {minimumDateTime: {}};
+      }
+      return result;
+    }
+  }
+
+  //  Highly targetd set of enabled or disabled for a control, called from the html
+  setEnabled(controlGroupName: string, controlName: string, enabled: boolean) {
+    const group: FormGroup = controlGroupName === 'startGroupControl' ?
+      this.formGroupStart : this.formGroupEnd;
+    const control = group.get(controlName);
+    if (enabled) {
+      control!.enable();
+    } else {
+      control!.disable();
+    }
+  }
+
+  //  convert the string to a Date object, assuming local time
+  private parseDateStringAsLocal(stringToParse: string): Date | null {
+    // console.log('parseDateStringAsLocal: ', stringToParse);
+    // console.log('   Parsed as: ', parsedDateTime);
+    return new Date(stringToParse);
   }
 
   //  Return the date and time, converted to local time, in the form yyyy-mm-ddThh:mm
@@ -52,36 +93,73 @@ export class StartEndSpecsComponent implements OnInit {
       ':' + String(localMinute).padStart(2, '0');
   }
 
-  private minimumDateTimeValidator(): ValidatorFn {
-    return (control: any) => {
-      // console.log('minimumDateTimeValidator. control value = ', control.value);
-      const localDate: Date | null = this.parseDateStringAsLocal(control.value);
-      // console.log('  Parsed proposed datetime as: ', localDate);
-      let result: ValidationErrors | null = null;
-      if (!localDate) {
-        result = {invalidDate: {}};
-      } else if (localDate < new Date()) {
-        result = {minimumDateTime: {}};
+  startGroupChanged() {
+    if (this.formGroupStart.valid) {
+      const immediate = this.formGroupStart.get('startGroupControl')!.value === 'startnow';
+      const when = this.parseDateStringAsLocal(this.formGroupStart.get('startWhenControl')!.value);
+      this.settingsService.setSessionStart({
+        immediate: immediate,
+        laterDate: when
+      })
+    }
+  }
+
+  endGroupChanged() {
+    if (this.formGroupEnd.valid) {
+      const whenDone = this.formGroupEnd.get('endGroupControl')!.value === 'enddone';
+      const when = this.parseDateStringAsLocal(this.formGroupEnd.get('endWhenControl')!.value);
+      this.settingsService.setSessionEnd({
+        whenDone: whenDone,
+        laterDate: when
+      })
+    }
+  }
+
+  //  Get the starting setup for the "Start" section.
+  //  If values are stored, we try to use them.
+  //    If stored Start Time is not in the future, we'll generate a new future date
+  //  If no value stored, we'll use now, but preset the start date to a future date
+  private getStartValue(): SessionStart {
+    let oneHourInFuture = new Date();
+    oneHourInFuture.setHours(oneHourInFuture.getHours() + 1);
+    let result: SessionStart = {immediate: true, laterDate: oneHourInFuture};
+    const storedStartSettings = this.settingsService.getSessionStart();
+    if (storedStartSettings) {
+      const now = new Date();
+      result.immediate = storedStartSettings.immediate;
+      if (storedStartSettings.laterDate) {
+        const parsedLaterDate = new Date(storedStartSettings.laterDate);
+        if (parsedLaterDate > now) {
+          result.laterDate = parsedLaterDate;
+        } else {
+          result.laterDate = oneHourInFuture;
+        }
+      } else {
+        result.laterDate = oneHourInFuture;
       }
-      return result;
     }
+    return result;
   }
 
-  private parseDateStringAsLocal(stringToParse: string): Date | null {
-    // console.log('parseDateStringAsLocal: ', stringToParse);
-    // console.log('   Parsed as: ', parsedDateTime);
-    return new Date(stringToParse);
-  }
-
-  //  Highly targetd set of enabled or disabled for a control, called from the html
-  setEnabled(controlGroupName: string, controlName: string, enabled: boolean) {
-    const group: FormGroup = controlGroupName === 'startGroupControl' ?
-      this.formGroupStart : this.formGroupEnd;
-    const control = group.get(controlName);
-    if (enabled) {
-      control!.enable();
-    } else {
-      control!.disable();
+  private getEndValue(): SessionEnd {
+    let oneHourInFuture = new Date();
+    oneHourInFuture.setHours(oneHourInFuture.getHours() + 1);
+    let result: SessionEnd = {whenDone: true, laterDate: oneHourInFuture};
+    const storedEndSettings = this.settingsService.getSessionEnd();
+    if (storedEndSettings) {
+      const now = new Date();
+      result.whenDone = storedEndSettings.whenDone;
+      if (storedEndSettings.laterDate) {
+        const parsedLaterDate = new Date(storedEndSettings.laterDate);
+        if (parsedLaterDate > now) {
+          result.laterDate = parsedLaterDate;
+        } else {
+          result.laterDate = oneHourInFuture;
+        }
+      } else {
+        result.laterDate = oneHourInFuture;
+      }
     }
+    return result;
   }
 }
