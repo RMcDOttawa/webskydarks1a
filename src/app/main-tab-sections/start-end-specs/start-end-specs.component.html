@@ -18,8 +18,16 @@
             Later, at:
           </mat-radio-button>
           <div class="double-row-right" >
-            <input matInput [disabled]="formGroupStart.get('startGroupControl')!.value === 'startnow'"
-                   type="datetime-local" placeholder="start date">
+            <input matInput name="startwhen"
+                   formControlName="startWhenControl"
+                   type="datetime-local"
+                   placeholder="start date">
+            <div class="validation-error"
+                 *ngIf="formGroupStart.get('startWhenControl')!.hasError('minimumDateTime')">Date and time must be in the future
+            </div>
+            <div class="validation-error"
+                 *ngIf="formGroupStart.get('startWhenControl')!.hasError('invalidDate')">Internal error: date or time are invalid
+            </div>
           </div>
         </div>
       </mat-radio-group>
@@ -39,8 +47,15 @@
             Later, at:
           </mat-radio-button>
           <div class="double-row-right">
-            <input matInput [disabled]="formGroupEnd.get('endGroupControl')!.value === 'enddone'"
+            <input matInput name="endwhen"
+                   formControlName="endWhenControl"
                    type="datetime-local" placeholder="start date">
+            <div class="validation-error"
+                 *ngIf="formGroupEnd.get('endWhenControl')!.hasError('minimumDateTime')">Date and time must be in the future
+            </div>
+            <div class="validation-error"
+                 *ngIf="formGroupEnd.get('endWhenControl')!.hasError('invalidDate')">Internal error: date or time are invalid
+            </div>
           </div>
         </div>
       </mat-radio-group>
