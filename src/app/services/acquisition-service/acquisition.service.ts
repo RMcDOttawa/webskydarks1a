@@ -16,8 +16,8 @@ const hedge_constant = 0.5;     //  And add an additional 1/2 second
 const delay_between_completion_checks = 1;  // seconds
 const max_polling_time_after_exposure = 60; // seconds
 
-const progress_bar_minimum_duration = 5;    //  Progress bar when >= this many seconds exposure
-const progress_bar_update_interval = 0.1;      //  Update the progress bar every this many seconds
+const progress_bar_minimum_duration_secs = 5;    //  Progress bar when >= this many seconds exposure
+const progress_bar_update_interval_secs = 0.1;      //  Update the progress bar every this many seconds
 
 
 //  Service to manage the actual acquisition of frames.
@@ -360,8 +360,8 @@ export class AcquisitionService {
   //  If the expected duration of the frame we're acquiring is over some threshold, display a progress bar
   //  and start a timer that will update it periodically
   private setUpProgressBar(expectedDuration: number) {
-    // console.log('setUpProgressBar, expected duration: ', expectedDuration);
-    if (expectedDuration < progress_bar_minimum_duration) {
+    console.log('setUpProgressBar, expected duration: ', expectedDuration);
+    if (expectedDuration < progress_bar_minimum_duration_secs) {
       //  To short a duration for a progress bar to be useful, just a distraction. Don't show it.
       this.setProgressBarVisibilityCallback!(false);
     } else {
@@ -372,7 +372,7 @@ export class AcquisitionService {
       this.progressBarTargetMilliseconds = expectedDuration * milliseconds;
 
       this.progressBarIntervalId = setInterval(this.updateProgressBar.bind(this),
-        progress_bar_update_interval * milliseconds);
+        progress_bar_update_interval_secs * milliseconds);
     }
   }
 
@@ -412,7 +412,7 @@ export class AcquisitionService {
             if (parsedStartDate > now) {
               delay = parsedStartDate.getTime() - now.getTime();
               // console.log('  Stored start date is in the future, delay ', delay);
-              // console.log(`    ${delay/1000} seconds = ${delay/1000/60} minutes = ${delay/1000/60/60} hours`);
+              // console.log(`    ${delay/milliseconds} seconds = ${delay/milliseconds/60} minutes = ${delay/milliseconds/60/60} hours`);
             }
           }
         }
@@ -424,7 +424,9 @@ export class AcquisitionService {
       } else {
         const startTimeString = parsedStartDate?.toLocaleTimeString();
         this.consoleMessageCallback!('Delaying until requested start time ' + startTimeString);
+        this.setUpProgressBar(delay / milliseconds);
         this.delayedStartTimerId = setTimeout(() => {
+          this.shutDownProgressBar();
           resolve();
         }, delay)
       }
