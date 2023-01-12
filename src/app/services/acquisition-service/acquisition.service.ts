@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import {FramePlanService} from "../frame-plan/frame-plan.service";
 import {ServerCommunicationService} from "../server-communication/server-communication.service";
-import {DarkFrame, DarkFrameSet, DarkFrameType} from "../../types";
+import {DarkFrame, DarkFrameSet, DarkFrameType, SessionStart} from "../../types";
+import {SettingsService} from "../settings/settings.service";
 
 // const fakeAcquisitionSeconds = 30;
 // const fakeConsoleIntervalSeconds = 1;
@@ -37,20 +38,27 @@ export class AcquisitionService {
   private setProgressBarProgressCallback: ((progress: number) => void) | undefined;
 
   private acquisitionRunning = false;
-  fakeDownloadTimerId:  ReturnType<typeof setTimeout> | null  = null;
-  fakeAcquisitionTimerId:  ReturnType<typeof setTimeout> | null  = null;
-  fakeConsoleTimerId:  ReturnType<typeof setInterval> | null  = null;
+  private exposuresHaveBegun = false;
+
+  fakeDownloadTimerId: ReturnType<typeof setTimeout> | null = null;
+  fakeAcquisitionTimerId: ReturnType<typeof setTimeout> | null = null;
+  fakeConsoleTimerId: ReturnType<typeof setInterval> | null = null;
   fakeConsoleSequence: number = 0;
+
+  //  Timers used for delayed start
+  delayedStartTimerId: ReturnType<typeof setTimeout> | null = null;
+  // delayBlipIntervalId: ReturnType<typeof setInterval> | null = null;
 
   progressBarStartedAt!: Date;
   progressBarTargetMilliseconds!: number;
-  progressBarIntervalId:  ReturnType<typeof setInterval> | null  = null;
+  progressBarIntervalId: ReturnType<typeof setInterval> | null = null;
 
   downloadTimes: number[] = [];
 
   constructor(
     private framePlanService: FramePlanService,
-    private communicationService: ServerCommunicationService
+    private communicationService: ServerCommunicationService,
+    private settingsService: SettingsService
   ) {
   }
 
@@ -70,16 +78,25 @@ export class AcquisitionService {
                          setProgressBarVisibility: (visibility: boolean) => void,
                          setProgressBarProgress: (progress: number) => void) {
     // console.log('AcquisitionService/beginAcquisition entered');
-    this.acquisitionRunning = true;
     this.consoleMessageCallback = consoleMessageCallback;
     this.acquisitionFinishedCallback = acquisitionFinishedCallback;
     this.workingFrameIndexCallback = workingFrameIndexCallback;
     this.setProgressBarVisibilityCallback = setProgressBarVisibility;
     this.setProgressBarProgressCallback = setProgressBarProgress;
+    this.acquisitionRunning = true;
+    this.exposuresHaveBegun = false;
+
+    //  We may need to wait awhile, depending on startup settings
+    await this.waitIfNecessary();
+    if (this.delayedStartTimerId) {
+      clearTimeout(this.delayedStartTimerId);
+      this.delayedStartTimerId = null;
+      console.log('  Delayed start timer cancelled');
+    }
 
     //  Console log that we're starting
     this.consoleMessageCallback('Beginning acquisition');
-
+    this.exposuresHaveBegun = true;
     //  Measure the download times for different binning images to predict durations,
     try {
       this.downloadTimes = await this.measureDownloadTimes();
@@ -112,14 +129,19 @@ export class AcquisitionService {
 
   //  Cancel  any running acquisition tasks
   async cancelAcquisition() {
-    // console.log('AcquisitionService/cancelAcquisition entered');
-    if (this.acquisitionRunning) {
-      await this.communicationService.abortExposure();
+    console.log('AcquisitionService/cancelAcquisition entered');
+    if (this.acquisitionRunning && this.exposuresHaveBegun) {
+      if (await this.communicationService.isExposureComplete()) {
+        console.log('  Nothing to abort');
+      } else {
+        console.log('  Aborting in-progress exposure');
+        await this.communicationService.abortExposure();
+      }
     }
     this.consoleMessageCallback!('Acquisition process cancelled');
     if (this.acquisitionFinishedCallback) this.acquisitionFinishedCallback();
     this.shutdown();
-    // console.log('AcquisitionService/cancelAcquisition exits');
+    console.log('AcquisitionService/cancelAcquisition exits');
   }
 
 
@@ -178,7 +200,7 @@ export class AcquisitionService {
 
   private acquireAllImages(): Promise<void> {
     this.consoleMessageCallback!('Acquiring images');
-    return new Promise<void> (async (resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       const frameSets = this.framePlanService.getFrameSets();
       //  Main loop - get each frame that needs to be acquired (a frame from an incomplete frame set),
       //  Acquire it, upate the frameset completion counts, and repeat.  Keep an eye on the Cancelled flag too.
@@ -223,6 +245,11 @@ export class AcquisitionService {
       this.fakeConsoleTimerId = null;
       // console.log('  Fake console interval timer cancelled');
     }
+    if (this.delayedStartTimerId) {
+      clearTimeout(this.delayedStartTimerId);
+      this.delayedStartTimerId = null;
+      // console.log('  Delayed start timer cancelled');
+    }
     this.shutDownProgressBar();
 
     this.acquisitionRunning = false;
@@ -248,22 +275,27 @@ export class AcquisitionService {
     // console.log(`  Estimated duration: ${expectedDuration}`);
     this.consoleMessageCallback!(`  Acquiring image ${counter} of set: ${this.describeFrame(frameSpec)}`, 2);
 
-    return new Promise<void> (async (resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       this.setUpProgressBar(expectedDuration);
       try {
         // console.log('   Starting acquisition');
         await this.communicationService.startImageAcquisition(frameSpec.frameType,
           frameSpec.exposure, frameSpec.binning);
-        if (!this.acquisitionRunning) return;   // check if cancelled
+        if (!this.acquisitionRunning) {
+          resolve();
+          return;
+        }
 
         //  Wait until it is probably finished
         // console.log('   Waiting for estimated duration: ', expectedDuration * milliseconds);
         await this.delay(expectedDuration * milliseconds);
-        if (!this.acquisitionRunning) return;   // check if cancelled
+        if (!this.acquisitionRunning) {
+          resolve();
+          return;
+        }
 
         //  Poll until it is definitely finished
         // console.log('   Polling until completion confirmed');
-        if (!this.acquisitionRunning) return;   // check if cancelled
         await this.pollUntilExposureComplete();
 
         resolve();
@@ -278,7 +310,6 @@ export class AcquisitionService {
   }
 
 
-
   private describeFrame(frameSpec: DarkFrame) {
     if (frameSpec.frameType === DarkFrameType.darkFrame) {
       return `Dark, ${frameSpec.exposure} secs binned ${frameSpec.binning}x${frameSpec.binning}`;
@@ -287,7 +318,7 @@ export class AcquisitionService {
     }
   }
 
-  private  delay(milliseconds: number): Promise<void> {
+  private delay(milliseconds: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
   }
 
@@ -302,7 +333,7 @@ export class AcquisitionService {
   //  except by asking.  So we poll it to see if we're complete.  If not, wait a while and try
   //  again.  Repeat, with a timeout of "waited too long"
   private async pollUntilExposureComplete(): Promise<void> {
-    return new Promise<void> (async (resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       let totalTimeWaited = 0;
       // console.log('pollUntilExposureComplete');
       try {
@@ -360,5 +391,44 @@ export class AcquisitionService {
       this.progressBarIntervalId = null;
     }
     this.setProgressBarVisibilityCallback!(false);
+  }
+
+  //  Determine if we should be starting right away or after a delay.
+  //  If after a delay, do the delay.  If it's a long delay, provider occasional updates
+  private async waitIfNecessary(): Promise<void> {
+    return new Promise<void>(async (resolve) => {
+      let parsedStartDate: Date | null = null;
+      const sessionStart: SessionStart | null = this.settingsService.getSessionStart();
+      let delay = 0;
+      if (sessionStart) {
+        if (!sessionStart.immediate) {
+          // console.log('  Not immediate, so check start date');
+          const now = new Date();
+          const storedDate = sessionStart.laterDate;
+          if (storedDate) {
+            parsedStartDate = new Date(storedDate);
+            // console.log('  Stored start date: ', storedDate);
+            // console.log('  Parsed start date: ', parsedStartDate);
+            if (parsedStartDate > now) {
+              delay = parsedStartDate.getTime() - now.getTime();
+              // console.log('  Stored start date is in the future, delay ', delay);
+              // console.log(`    ${delay/1000} seconds = ${delay/1000/60} minutes = ${delay/1000/60/60} hours`);
+            }
+          }
+        }
+      }
+
+      if (delay === 0) {
+        // console.log('  No delay needed');
+        resolve();
+      } else {
+        const startTimeString = parsedStartDate?.toLocaleTimeString();
+        this.consoleMessageCallback!('Delaying until requested start time ' + startTimeString);
+        this.delayedStartTimerId = setTimeout(() => {
+          resolve();
+        }, delay)
+      }
+    })
+
   }
 }

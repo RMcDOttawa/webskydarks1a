@@ -26,7 +26,7 @@ export class ServerCommunicationService {
     const url = this.makeUrl('api/testrelay');
 
     return new Promise<boolean>((resolve) => {
-      console.log('Sending ', url);
+      console.log('testRelay: Sending ', url);
       axios.get(url)
         .then((response) => {
           resolve(response.data === relayTestSuccessString);
@@ -63,7 +63,7 @@ export class ServerCommunicationService {
     const url = `${protocol}://${address}:${port}/api/testrelay`;
 
     return new Promise<boolean>((resolve) => {
-      console.log('Sending ', url);
+      console.log('testRelayWithHttps Sending ', url);
       axios.get(url)
         .then((response) => {
           resolve(response.data === relayTestSuccessString);
@@ -98,6 +98,7 @@ export class ServerCommunicationService {
     // const {address, port} = this.getServerCoordinates();
     // const url = `https://${address}:${port}/api/testtsx`;
     const url = this.makeUrl('api/testtsx');
+    console.log('testTheSkyX Sending ', url);
 
     return new Promise<boolean>((resolve) => {
       axios.get(url)
@@ -115,6 +116,7 @@ export class ServerCommunicationService {
     // const {address, port} = this.getServerCoordinates();
     // const url = `https://${address}:${port}/api/getautosavepath`;
     const url = this.makeUrl('api/getautosavepath');
+    console.log('getAutosavePath Sending ', url);
 
     return new Promise<string>((resolve, reject) => {
       axios.get(url)
@@ -133,6 +135,7 @@ export class ServerCommunicationService {
     // const {address, port} = this.getServerCoordinates();
     // const url = `https://${address}:${port}/api/timedownload/${binning}`;
     const url = this.makeUrl(`api/timedownload/${binning}`);
+    console.log('timeDownload Sending ', url);
 
     return new Promise<number>((resolve, reject) => {
       axios.get(url)
@@ -153,6 +156,7 @@ export class ServerCommunicationService {
     // const {address, port} = this.getServerCoordinates();
     // const url = `https://${address}:${port}/api/sendtext`;
     const url = this.makeUrl(`api/sendtext`);
+    console.log('sendAndReceive Sending ', url);
 
     return new Promise<string>((resolve) => {
       axios.post(url,
@@ -175,7 +179,7 @@ export class ServerCommunicationService {
     } else {
       url = this.makeUrl(`api/acquire/dark/${binning}/${exposure}`);
     }
-    // console.log(`startImageAcquisition(${frameType},${exposure},${binning}): `, url);
+    console.log(`startImageAcquisition(${frameType},${exposure},${binning}): `, url);
     return new Promise<void>((resolve, reject) => {
       axios.get(url)
         .then(() => {
@@ -191,7 +195,7 @@ export class ServerCommunicationService {
     // const {address, port} = this.getServerCoordinates();
     // const url = `https://${address}:${port}/api/exposing`;
     const url = this.makeUrl(`api/exposing`);
-    // console.log('isExposureComplete: ', url);
+    console.log('isExposureComplete Sending ', url);
 
     return new Promise<boolean>((resolve, reject) => {
       axios.get(url)
@@ -208,6 +212,7 @@ export class ServerCommunicationService {
     // const {address, port} = this.getServerCoordinates();
     // const url = `https://${address}:${port}/api/abortexposure`;
     const url = this.makeUrl(`api/abortexposure`);
+    console.log('abortExposure Sending ', url);
     return new Promise<void>((resolve, reject) => {
       axios.get(url)
         .then(() => {

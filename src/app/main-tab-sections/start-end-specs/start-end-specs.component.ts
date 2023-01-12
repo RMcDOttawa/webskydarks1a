@@ -123,7 +123,7 @@ export class StartEndSpecsComponent implements OnInit {
     let oneHourInFuture = new Date();
     oneHourInFuture.setHours(oneHourInFuture.getHours() + 1);
     let result: SessionStart = {immediate: true, laterDate: oneHourInFuture};
-    const storedStartSettings = this.settingsService.getSessionStart();
+    const storedStartSettings: SessionStart | null = this.settingsService.getSessionStart();
     if (storedStartSettings) {
       const now = new Date();
       result.immediate = storedStartSettings.immediate;
