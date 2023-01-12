@@ -10,11 +10,13 @@
       <mat-radio-group name="startgroup" formControlName="startGroupControl">
         <div class="control-grid">
           <mat-radio-button name="startnow" value="startnow"
+                            (click)="setEnabled('startGroupControl', 'startWhenControl', false)"
                             class="single-top-row">
             Immediately
           </mat-radio-button>
           <mat-radio-button name="startlater" value="startlater"
-                            class="double-row-left">
+                            (click)="setEnabled('startGroupControl', 'startWhenControl', true)"
+                           class="double-row-left">
             Later, at:
           </mat-radio-button>
           <div class="double-row-right" >
@@ -39,10 +41,12 @@
       <mat-radio-group name="endgroup" formControlName="endGroupControl">
         <div class="control-grid">
           <mat-radio-button name="enddone" value="enddone"
+                            (click)="setEnabled('endGroupControl', 'endWhenControl', false)"
                             class="single-top-row">
             When Done
           </mat-radio-button>
           <mat-radio-button name="endlater" value="endlater"
+                            (click)="setEnabled('endGroupControl', 'endWhenControl', true)"
                             class="double-row-left">
             Later, at:
           </mat-radio-button>

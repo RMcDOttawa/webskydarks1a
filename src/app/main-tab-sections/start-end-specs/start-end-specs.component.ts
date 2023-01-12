@@ -21,13 +21,17 @@ export class StartEndSpecsComponent implements OnInit {
     const oneHourInFutureAsString = this.localDateTimeString(oneHourInFuture);
     this.formGroupStart = new FormGroup({
       startGroupControl: new FormControl('startnow'),
-      startWhenControl: new FormControl(oneHourInFutureAsString,
+      startWhenControl: new FormControl({
+          value: oneHourInFutureAsString,
+        disabled: true},
         this.minimumDateTimeValidator()),
     });
     this.formGroupEnd = new FormGroup({
-      endGroupControl: new FormControl('endlater'),
+      endGroupControl: new FormControl('enddone'),
       endWhenControl: new FormControl(
-        oneHourInFutureAsString,
+        {
+          value: oneHourInFutureAsString,
+          disabled: true},
         this.minimumDateTimeValidator()),
     });
   }
@@ -67,5 +71,17 @@ export class StartEndSpecsComponent implements OnInit {
     // console.log('parseDateStringAsLocal: ', stringToParse);
     // console.log('   Parsed as: ', parsedDateTime);
     return new Date(stringToParse);
+  }
+
+  //  Highly targetd set of enabled or disabled for a control, called from the html
+  setEnabled(controlGroupName: string, controlName: string, enabled: boolean) {
+    const group: FormGroup = controlGroupName === 'startGroupControl' ?
+      this.formGroupStart : this.formGroupEnd;
+    const control = group.get(controlName);
+    if (enabled) {
+      control!.enable();
+    } else {
+      control!.disable();
+    }
   }
 }
