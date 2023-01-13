@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
 import {SettingsService} from "../../services/settings/settings.service";
+import {TemperatureControl} from "../../types";
 
 @Component({
   selector: 'app-temperature-specs',
@@ -113,6 +114,29 @@ export class TemperatureSpecsComponent implements OnInit {
         inputField!.disable();
       }
     });
+
+    //  Set up listener on entire form, so we can update settings when it changes
+    this.formGroup!.valueChanges.subscribe (() => {
+      // console.log('Formgroup changed, parm = ', parm);
+      // console.log('  Formgroup valid = ', this.formGroup.valid);
+      const g = this.formGroup;
+      if (g.valid) {
+        // console.log('  Form has changed and is still valid, update settings.');
+        const newSettings: TemperatureControl = {
+          enabled: g.get('useTemperatureControl')!.value,
+          target: g.get('targetTemperatureControl')!.value,
+          within: g.get('targetToleranceControl')!.value,
+          checkInterval: g.get('coolingCheckIntervalControl')!.value,
+          maxTime: g.get('coolingMaxTimeControl')!.value,
+          retries: g.get('coolingRetriesControl')!.value,
+          retryDelay: g.get('coolingRetriesDelayControl')!.value,
+          abortOnRise: g.get('abortTemperatureControl')!.value,
+          abortThreshold: g.get('temperatureAbortThresholdControl')!.value,
+        };
+        // console.log('  Saving settings: ', newSettings);
+        this.settingsService.setTemperatureControl(newSettings);
+      }
+    })
   }
 
   //  Several fields can be any number, including decimals.
