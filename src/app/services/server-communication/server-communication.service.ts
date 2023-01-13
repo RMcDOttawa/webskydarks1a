@@ -123,8 +123,8 @@ export class ServerCommunicationService {
         .then((response) => {
           resolve(response.data);
         })
-        .catch(() => {
-          reject('');
+        .catch((err) => {
+          reject(err.message);
         });
     });
   }
@@ -164,8 +164,8 @@ export class ServerCommunicationService {
         .then((response) => {
           resolve(response.data);
         })
-        .catch(() => {
-          resolve('');
+        .catch((err) => {
+          resolve(err);
         });
     });
 
