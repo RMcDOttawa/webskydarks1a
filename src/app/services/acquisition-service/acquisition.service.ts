@@ -130,18 +130,23 @@ export class AcquisitionService {
   //  Cancel  any running acquisition tasks
   async cancelAcquisition() {
     console.log('AcquisitionService/cancelAcquisition entered');
-    if (this.acquisitionRunning && this.exposuresHaveBegun) {
-      if (await this.communicationService.isExposureComplete()) {
-        console.log('  Nothing to abort');
-      } else {
-        console.log('  Aborting in-progress exposure');
-        await this.communicationService.abortExposure();
+    try {
+      if (this.acquisitionRunning && this.exposuresHaveBegun) {
+        if (await this.communicationService.isExposureComplete()) {
+          console.log('  Nothing to abort');
+        } else {
+          console.log('  Aborting in-progress exposure');
+          await this.communicationService.abortExposure();
+        }
       }
+    } catch (e) {
+      console.log('Error cancelling acquisition: ', e);
+    } finally {
+      this.consoleMessageCallback!('Acquisition process cancelled');
+      if (this.acquisitionFinishedCallback) this.acquisitionFinishedCallback();
+      this.shutdown();
+      console.log('AcquisitionService/cancelAcquisition exits');
     }
-    this.consoleMessageCallback!('Acquisition process cancelled');
-    if (this.acquisitionFinishedCallback) this.acquisitionFinishedCallback();
-    this.shutdown();
-    console.log('AcquisitionService/cancelAcquisition exits');
   }
 
 
@@ -259,14 +264,6 @@ export class AcquisitionService {
   //  Acquire one frame from the given frameset.  It will be running asynchronously in TheSkyX.
   //  We will wait and then poll so that we return only when the acquisition is done (or failed).
 
-  /*  Fake version using a timer to simulate camera activity
-  private async acquireOneFrame(counter: number, frameSet: DarkFrameSet) {
-    const frameSpec: DarkFrame = frameSet.frameSpec;
-    console.log(`  acQuireOneFrame: ${frameSpec.frameType}, ${frameSpec.binning}, ${frameSpec.exposure}`);
-    this.consoleMessageCallback!(`  Acquiring image ${counter} of set: ${this.describeFrame(frameSpec)}`);
-    await this.delay(3 * milliseconds);
-  }
-   */
 
   private async acquireOneFrame(counter: number, frameSet: DarkFrameSet): Promise<void> {
     const frameSpec: DarkFrame = frameSet.frameSpec;
@@ -302,8 +299,9 @@ export class AcquisitionService {
       } catch (err) {
         console.log('Image acquisition command failed: ', err);
         reject(err);
+      } finally {
+        this.shutDownProgressBar();
       }
-      this.shutDownProgressBar();
 
     })
     //  Start image acquisition
