@@ -19,6 +19,8 @@ const max_polling_time_after_exposure = 60; // seconds
 const progress_bar_minimum_duration_secs = 5;    //  Progress bar when >= this many seconds exposure
 const progress_bar_update_interval_secs = 0.1;      //  Update the progress bar every this many seconds
 
+const max_possible_date = new Date(8640000000000000); // from Date documentation
+
 
 //  Service to manage the actual acquisition of frames.
 //  Since actual acquisition is done async by theSkyX this service is non-blocking, but
@@ -199,18 +201,27 @@ export class AcquisitionService {
     return binningNeeded;
   }
 
-//  Acquire all the images that need to be captured.
+  //  Acquire all the images that need to be captured.
   //  Note that we can tell theSKy to start taking an image, but it doesn't report back when it's done. So we will
   //  calculate how long it should take (including download), then start polling theSky for its status.
 
+  //  Acquisition runs until either all images are acquired, or an optional end date and time is passed
+  //  We handle the "optionality" of the end time by just using an infinite future if it isn't specified
+
   private acquireAllImages(): Promise<void> {
-    this.consoleMessageCallback!('Acquiring images');
+    const acquisitionEndTime = this.getAcquisitionEndTime();
+    const endTimeString = acquisitionEndTime.toLocaleTimeString();
+    if (acquisitionEndTime === max_possible_date) {
+      this.consoleMessageCallback!('Acquiring images.');
+    } else {
+      this.consoleMessageCallback!(`Acquiring images until ${endTimeString}.`);
+    }
     return new Promise<void>(async (resolve, reject) => {
       const frameSets = this.framePlanService.getFrameSets();
       //  Main loop - get each frame that needs to be acquired (a frame from an incomplete frame set),
       //  Acquire it, upate the frameset completion counts, and repeat.  Keep an eye on the Cancelled flag too.
       let frameSetIndex = this.framePlanService.findIndexOfNextSetToAcquire();
-      while (frameSetIndex !== -1 && this.acquisitionRunning) {
+      while (frameSetIndex !== -1 && this.acquisitionRunning && this.withinDefinedRunTime(acquisitionEndTime)) {
         //  Tell the UI what frame index we are on
         this.workingFrameIndexCallback!(frameSetIndex);
 
@@ -226,8 +237,11 @@ export class AcquisitionService {
           reject(err);
         }
       }
-      //  When we get here, all the frames have been captured, so resolve the promise
-      // console.log('  Normal end of acquisition, resolving promise');
+      if (!this.withinDefinedRunTime(acquisitionEndTime)) {
+        this.consoleMessageCallback!(`Defined end time (${endTimeString}) has passed, stopping acquisition`, 1);
+      }
+      //  When we get here, all the frames have been captured or the time has expired, so resolve the promise
+
       resolve();
     });
   }
@@ -358,7 +372,7 @@ export class AcquisitionService {
   //  If the expected duration of the frame we're acquiring is over some threshold, display a progress bar
   //  and start a timer that will update it periodically
   private setUpProgressBar(expectedDuration: number) {
-    console.log('setUpProgressBar, expected duration: ', expectedDuration);
+    // console.log('setUpProgressBar, expected duration: ', expectedDuration);
     if (expectedDuration < progress_bar_minimum_duration_secs) {
       //  To short a duration for a progress bar to be useful, just a distraction. Don't show it.
       this.setProgressBarVisibilityCallback!(false);
@@ -430,5 +444,28 @@ export class AcquisitionService {
       }
     })
 
+  }
+
+  //  Get an end time for the acquisition run.  It's either specified in the settings or, if the settings say
+  //  "when done", we'll use the far future to ensure acquisition can run to completion.
+
+  private getAcquisitionEndTime(): Date {
+    let endTime: Date = max_possible_date;
+    const endSettings = this.settingsService.getSessionEnd();
+    if (endSettings) {
+      if (!endSettings.whenDone) {
+        const storedDate = endSettings.laterDate;
+        if (storedDate) {
+          endTime = new Date(storedDate);
+        }
+      }
+    }
+    // console.log('getAcquisitionEndTime returning: ', endTime);
+    return endTime;
+  }
+
+  private withinDefinedRunTime(acuisitionEndTime: Date): boolean {
+    // console.log(`withinDefinedRunTime(${acuisitionEndTime}, ${new Date()})`);
+    return  acuisitionEndTime > new Date();
   }
 }
