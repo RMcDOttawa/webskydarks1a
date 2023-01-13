@@ -1,1 +1,47 @@
-<p>temperature-specs works!</p>
+<div class="temperature-container">
+  <h1>Camera Temperature Control</h1>
+  <div class="temperature-box">
+      <form >
+        <table>
+          <tr>
+            <td colspan="3"><mat-checkbox>Camera is temperature controlled</mat-checkbox></td>
+          </tr>
+          <tr>
+            <td>Target Temperature:</td>
+            <td><input matInput placeholder="temperature"></td>
+            <td>° C</td>
+          </tr>
+          <tr>
+            <td>Within +/-:</td>
+            <td><input matInput placeholder="temp tolerance"></td>
+            <td>° C</td>
+          </tr>
+          <tr>
+            <td>Cooling Check Interval:</td>
+            <td><input matInput placeholder="interval"></td>
+            <td>seconds</td>
+          </tr>
+          <tr>
+            <td>Max Time to Try Cooling:</td>
+            <td><input matInput placeholder="duration"></td>
+            <td>seconds</td>
+          </tr>
+          <tr>
+            <td>Cooling Retries:</td>
+            <td><input matInput placeholder="attempts"></td>
+            <td>times</td>
+          </tr>
+          <tr>
+            <td>Delay between retries:</td>
+            <td><input matInput placeholder="delay"></td>
+            <td>seconds</td>
+          </tr>
+          <tr>
+            <td><mat-checkbox>Abort if Temperature Rises</mat-checkbox></td>
+            <td><input matInput placeholder="threshold"></td>
+            <td>° C</td>
+          </tr>
+        </table>
+      </form>
+  </div>
+</div>

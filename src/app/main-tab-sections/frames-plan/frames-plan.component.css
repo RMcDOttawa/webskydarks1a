@@ -10,7 +10,9 @@ h1 {
 
 table {
   width: 100%;
-  border: solid gray;
+  border: solid gray thin;
+  border-radius: 6px;
+  box-shadow: 1px 1px 4px 1px lightgray;
   user-select: none;  /* Prevent drag-selecting text in table */
 }
 
