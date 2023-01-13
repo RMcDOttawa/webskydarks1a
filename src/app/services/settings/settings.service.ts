@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {LocalStorageService} from "../local-storage/local-storage.service";
 import {FramePlanType} from "../frame-plan/frame-plan.service";
-import {ServerCoordinates, SessionEnd, SessionStart} from "../../types";
+import {ServerCoordinates, SessionEnd, SessionStart, TemperatureControl} from "../../types";
 
 //  Service to store application settings, abstracting away how that is done.
 //  All settings are set and retrieved through public methods in this service.
@@ -15,6 +15,7 @@ const serverCoordsKey = 'WebSkyDarks Server Coordinates';
 const serverHttpsKey = 'Server HTTPS';
 const sessionStartKey = 'Session Start';
 const sessionEndKey = 'Session End';
+const temperatureControlKey = 'Temperature Control';
 
 @Injectable({
   providedIn: 'root'
@@ -98,4 +99,12 @@ export class SettingsService {
     this.localStorage.setObject(sessionEndKey, startSpecs);
   }
 
+  //  Information about temperature control
+  getTemperatureControl(): TemperatureControl | null {
+    return this.localStorage.getObject(temperatureControlKey);
+  }
+
+  setTemperatureControl(temperatureSpecs: TemperatureControl) {
+    this.localStorage.setObject(temperatureControlKey, temperatureSpecs);
+  }
 }

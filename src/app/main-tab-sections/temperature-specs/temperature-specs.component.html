@@ -5,7 +5,7 @@
       <table>
         <tr>
           <td colspan="3">
-            <mat-checkbox>Camera is temperature controlled</mat-checkbox>
+            <mat-checkbox formControlName="useTemperatureControl">Camera is temperature controlled</mat-checkbox>
           </td>
         </tr>
         <tr>
@@ -125,7 +125,7 @@
         </tr>
         <tr>
           <td>
-            <mat-checkbox formControlName="abortTemperatureControl">Abort if Temperature Rises</mat-checkbox>
+            <mat-checkbox formControlName="abortTemperatureControl">Abort if Temperature Changes</mat-checkbox>
           </td>
           <td><input matInput id="temperatureAbort" name="temperatureAbort"
                      formControlName="temperatureAbortThresholdControl"
@@ -134,10 +134,10 @@
                  *ngIf="formGroup.get('temperatureAbortThresholdControl')!.hasError('required')">This field is required
             </div>
             <div class="validation-error"
-                 *ngIf="formGroup.get('temperatureAbortThresholdControl')!.hasError('min')">Must be between -100 and 100}
+                 *ngIf="formGroup.get('temperatureAbortThresholdControl')!.hasError('min')">Must be between .1 and 100}
             </div>
             <div class="validation-error"
-                 *ngIf="formGroup.get('temperatureAbortThresholdControl')!.hasError('max')">Must be between -100 and 100}
+                 *ngIf="formGroup.get('temperatureAbortThresholdControl')!.hasError('max')">Must be between .1 and 100}
             </div>
             <div class="validation-error"
                  *ngIf="formGroup.get('temperatureAbortThresholdControl')!.hasError('invalidFloat')">This must be a number, and can include decimals
