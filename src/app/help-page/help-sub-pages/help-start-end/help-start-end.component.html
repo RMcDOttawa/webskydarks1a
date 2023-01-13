@@ -1,3 +1,44 @@
 <div class="help-container">
-  <p>help-start-end works!</p>
+  <div class="help-nav-header">
+    &nbsp;
+    <span class="help-spacer"></span>
+    <a routerLink="/help/temperature"><i>Next: Temperature Control</i></a>
+  </div>
+  <h1>Start and End Times</h1>
+  <p>Dark and Bias frames can be acquired any time - after all, the camera shutter is closed. In fact, there is
+    a school of thought that they <i>should</i> be acquired during daylight hours, so you are not wasting
+    dark time when you could be acquiring real images. With a temperature-controlled camera this is certainly
+    feasible. Without temperature control, darks should be acquired at about the same time of night as you will
+    be imaging, so that the temperature-related dark noise is similar.</p>
+  <p>On the other hand, I personally like to take my dark frames at night, when it's cloudy. There are a few
+    reasons for this:</p>
+  <ul>
+    <li>First, it's often cloudy where I live, so I'm not wasting good imaging time.</li>
+    <li>Taking dark frames at night makes me more confident that no light is leaking through the camera shutter or
+      housing.
+    </li>
+    <li>Taking dark frames at night makes the camera cooling easier.</li>
+  </ul>
+  <p>Whatever your reasons, if you want your dark frames to be taken during a specific time period, it can be convenient
+  to automate the start and end, rather than having to be present to click "begin".  The "Start & End" settings can
+  control this</p>
+  <div class="timer-img-container">
+    <img class="timer-img" src="assets/img/Start-end.png"
+         alt="Screenshot of the Start-End page">
+  </div>
+  <p>You can specify either or both of these properties:</p>
+  <ul>
+    <li><i><b>Start Time:</b></i> The session can start immediately, when you click Begin Session on the Run page, or it can start at some specified
+    date and time in the future.  <p>In this latter case, when you click Begin Session, a delay timer starts.  You must leave
+    the WebSkyDarks program running for the timer to complete and acquisition to begin.</p></li>
+    <li><i><b>End Time:</b></i> The session can run until it is finished, or it can run until a specified date and time in the future.
+    <p>In this latter case, the session will complete whatever image is in progress at the specified end time, then stop.
+    The status of the acquisition is recorded, so you can pick it up on a future night and it will continue with whatever
+    images still need to be acquired.</p></li>
+  </ul>
+  <div class="help-nav-footer">
+    &nbsp;
+    <span class="help-spacer"></span>
+    <a routerLink="/help/temperature"><i>Next: Temperature Control</i></a>
+  </div>
 </div>

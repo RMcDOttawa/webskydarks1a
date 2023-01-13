@@ -1,0 +1,13 @@
+.timer-img-container {
+  display: flex;
+  margin-top: 0;
+}
+
+.timer-img {
+  margin: auto;
+  width: 60%;
+}
+
+li p {
+  margin-top: 1em;
+}
