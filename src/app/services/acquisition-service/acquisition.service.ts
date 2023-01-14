@@ -238,11 +238,15 @@ export class AcquisitionService {
       this.consoleMessageCallback!(`Acquiring images until ${endTimeString}.`);
     }
     return new Promise<void>(async (resolve, reject) => {
-      const frameSets = this.framePlanService.getFrameSets();
+      const frameSets: DarkFrameSet[] = this.framePlanService.getFrameSets();
       //  Main loop - get each frame that needs to be acquired (a frame from an incomplete frame set),
       //  Acquire it, upate the frameset completion counts, and repeat.  Keep an eye on the Cancelled flag too.
-      let frameSetIndex = this.framePlanService.findIndexOfNextSetToAcquire();
-      while (frameSetIndex !== -1 && this.acquisitionRunning && this.withinDefinedRunTime(acquisitionEndTime)) {
+      let frameSetIndex: number = this.framePlanService.findIndexOfNextSetToAcquire();
+      let temperatureOk: boolean = true;
+      while (frameSetIndex !== -1
+          && this.acquisitionRunning
+          && this.withinDefinedRunTime(acquisitionEndTime)
+          && temperatureOk) {
         //  Tell the UI what frame index we are on
         this.workingFrameIndexCallback!(frameSetIndex);
 
@@ -256,8 +260,12 @@ export class AcquisitionService {
           frameSetIndex = this.framePlanService.findIndexOfNextSetToAcquire();
         } catch (err) {
           reject(err);
+        } //end try
+        temperatureOk = await this.temperatureOkOrIgnored();
+        if (!temperatureOk) {
+          this.consoleMessageCallback!('Temperature has risen more than allowed, aborting acquisition', 1);
         }
-      }
+      } //end while
       if (!this.withinDefinedRunTime(acquisitionEndTime)) {
         this.consoleMessageCallback!(`Defined end time (${endTimeString}) has passed, stopping acquisition`, 1);
       }
@@ -363,7 +371,8 @@ export class AcquisitionService {
       this.delayTimerId = setTimeout(() => {
         this.delayTimerId = null;
         resolve();
-      }, milliseconds)});
+      }, milliseconds)
+    });
   }
 
   //  Calculate an estimate of how long it should take to acquire this frame set.
@@ -594,5 +603,32 @@ export class AcquisitionService {
   private tempWithinTolerance(cameraTemperature: number, target: number, within: number): boolean {
     const difference: number = Math.abs(cameraTemperature - target);
     return difference <= within;
+  }
+
+  //  Determine if the temperature is still OK.
+  //  If we're not enforcing temperature, then it's OK automatically
+  //  Otherwise, get the temperature from the camera and check if it's in the acceptable range
+  private temperatureOkOrIgnored(): Promise<boolean> {
+    return new Promise<boolean>(async (resolve, reject) => {
+      const temperatureSettings = this.settingsService.getTemperatureControl()!;
+      let resultOk: boolean = true;
+      if (temperatureSettings.enabled) {
+        if (temperatureSettings.abortOnRise) {
+          try {
+            const currentTemperature:Number = Number(await this.communicationService.getTemperature());
+            const maximumBeforeAbort = Number(temperatureSettings.target) + Number(temperatureSettings.abortThreshold);
+            resultOk = currentTemperature <= maximumBeforeAbort;
+            if (!resultOk) {
+              this.consoleMessageCallback!(`Temperature ${currentTemperature} has risen more than ${temperatureSettings.abortThreshold} above ${temperatureSettings.target}`);
+            }
+            // console.log(`Checking for temperature ${currentTemperature} > ${maximumBeforeAbort}: OK = ${resultOk}`);
+          } catch (err) {
+            console.log('temperatureOkOrIgnored failed on temperature check: ', err);
+            reject(err);
+          }
+        }
+      }
+      resolve(resultOk);
+    })
   }
 }
