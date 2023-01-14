@@ -9,7 +9,7 @@ const tsxTestSuccessString = 'TSX Success';
 const defaultAddress = 'localhost';
 const defaultPort = 3000;
 
-const fakeTemperatureReduction = 3;
+// const fakeTemperatureReduction = 3;
 
 @Injectable({
   providedIn: 'root'
@@ -132,9 +132,6 @@ export class ServerCommunicationService {
 
   //  Time how long it takes to download a file of the given binning value
   async timeDownload(binning: number): Promise<number> {
-    // console.log('ServerCommunicationService/timeDownload: ', binning);
-    // const {address, port} = this.getServerCoordinates();
-    // const url = `https://${address}:${port}/api/timedownload/${binning}`;
     const url = this.makeUrl(`api/timedownload/${binning}`);
     console.log('timeDownload Sending ', url);
 
@@ -252,25 +249,36 @@ export class ServerCommunicationService {
     const url = this.makeUrl(`api/setcooling/${coolingOn ? 'on' : 'off'}/${temperature}`);
     console.log('setCooling Sending ', url);
 
-    return new Promise<void>((resolve) => {
+    return new Promise<void>((resolve, reject) => {
       axios.get(url)
         .then(() => {
+          console.log('  setCooling returned successfully, resolving');
           resolve();
         })
         .catch((err) => {
-          resolve(err);
+          console.log('  setCooling failed, rejecting: ', err);
+          reject(err);
         });
     });
   }
 
-  fakeTemperature: number = -5;  //  Use to test cooling without real camera
+  // fakeTemperature: number = -5;  //  Use to test cooling without real camera
 
   //  Get the current chip temperature from the camera
   async getTemperature(): Promise<number> {
-    return new Promise<number>((resolve) => {
-      this.fakeTemperature -= fakeTemperatureReduction;
-      console.log(`STUB getTemperature, returning ${this.fakeTemperature}`);
-      resolve(this.fakeTemperature);
-    })
+    const url = this.makeUrl('api/gettemperature');
+    console.log('getTemperature Sending ', url);
+
+    return new Promise<number>((resolve, reject) => {
+      axios.get(url)
+        .then((response) => {
+          console.log('  getTemperature received ', response.data);
+          resolve(Number(response.data));
+        })
+        .catch((err) => {
+          console.log('  getTemperature failed, rejecting: ', err);
+          reject(err.message);
+        });
+    });
   }
 }

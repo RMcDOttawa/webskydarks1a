@@ -111,9 +111,11 @@ export class AcquisitionService {
       await this.cancelAcquisition();
       return;
     }
+    if (!this.acquisitionRunning) return;   // check if cancelled
 
     //  Console log that we're starting
     this.consoleMessageCallback('Beginning acquisition');
+    //  Flag that, as of now, the camera might be exposing something, so we know to abort on a cancel or fail
     this.exposuresHaveBegun = true;
     //  Measure the download times for different binning images to predict durations,
     try {
@@ -503,7 +505,6 @@ export class AcquisitionService {
   //  Return a "should abort" indicator.  We should abort only if we fail to cool to the given target
   private async coolCameraIfRequested(): Promise<boolean> {
     return new Promise<boolean>(async (resolve, reject) => {
-      console.log('coolCameraIfRequested STUB');
       let shouldAbort: boolean = false;
       const temperature = this.settingsService.getTemperatureControl();
       if (temperature) {
@@ -527,19 +528,19 @@ export class AcquisitionService {
                              checkIntervalSeconds: number,
                              maxTimeSeconds: number, retries: number, retryDelaySeconds: number): Promise<boolean> {
     return new Promise<boolean>(async (resolve, reject) => {
-      console.log(`Cool camera to ${target} within ${within}, checking every ${checkIntervalSeconds} seconds`);
-      console.log(`  Allow at least ${maxTimeSeconds} to cool`);
-      console.log(`  If necessary, retry up to ${retries} times, every ${retryDelaySeconds} seconds.`);
+      // console.log(`Cool camera to ${target} within ${within}, checking every ${checkIntervalSeconds} seconds`);
+      // console.log(`  Allow at least ${maxTimeSeconds} to cool`);
+      // console.log(`  If necessary, retry up to ${retries} times, every ${retryDelaySeconds} seconds.`);
       let shouldAbort: boolean = false;
       try {
         let success: boolean = await this.oneCoolingAttempt(target, within, checkIntervalSeconds, maxTimeSeconds);
         let retryCount = retries;
         while ((retryCount-- > 0) && !success && this.acquisitionRunning) {
-          console.log('   Unable to cool to desired temperature, waiting to try again');
-          console.log(`   ${retryCount} retries left`);
-          console.log(`   delaying ${retryDelaySeconds} seconds`);
+          // console.log('   Unable to cool to desired temperature, waiting to try again');
+          // console.log(`   ${retryCount} retries left`);
+          // console.log(`   delaying ${retryDelaySeconds} seconds`);
           await this.delay(retryDelaySeconds * milliseconds);
-          console.log('   Delay done, trying again');
+          // console.log('   Delay done, trying again');
           if (this.acquisitionRunning) success = await this.oneCoolingAttempt(target, within, checkIntervalSeconds, maxTimeSeconds);
         }
         shouldAbort = !success;
@@ -577,7 +578,11 @@ export class AcquisitionService {
             console.log(`   This is ${success ? '' : 'not'} within the given tolerance`);
           }
         }
-        //  Success if we reached the target temperature
+        //  If we didn't reach the target, turn of cooling while we wait to retry
+        if (!success) {
+          await this.communicationService.setCooling(false, 0);
+        }
+        //  Success if we reached the target temperature.
         resolve(success);
       } catch (err) {
         reject(err);
