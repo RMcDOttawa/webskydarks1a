@@ -56,6 +56,7 @@ export class AcquisitionService {
   progressBarIntervalId: ReturnType<typeof setInterval> | null = null;
 
   downloadTimes: number[] = [];
+  private delayTimerId: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private framePlanService: FramePlanService,
@@ -96,6 +97,21 @@ export class AcquisitionService {
       console.log('  Delayed start timer cancelled');
     }
 
+    //  Now, if requested, we will turn on camera cooling and wait until it reaches the target temperature
+    //  This might fail, so abort if we don't get there.
+    try {
+      const abortForCoolingFailure = await this.coolCameraIfRequested();
+      if (abortForCoolingFailure) {
+        this.consoleMessageCallback(`Unable to cool camera to target, aborting session.`);
+        await this.cancelAcquisition();
+        return;
+      }
+    } catch (err) {
+      this.consoleMessageCallback(`Unable to cool camera to target, aborting session.`);
+      await this.cancelAcquisition();
+      return;
+    }
+
     //  Console log that we're starting
     this.consoleMessageCallback('Beginning acquisition');
     this.exposuresHaveBegun = true;
@@ -104,7 +120,7 @@ export class AcquisitionService {
       this.downloadTimes = await this.measureDownloadTimes();
     } catch (err) {
       this.consoleMessageCallback(`Unable to time downloads: ${err}`);
-      this.cancelAcquisition();
+      await this.cancelAcquisition();
       return;
     }
     if (!this.acquisitionRunning) return;   // check if cancelled
@@ -114,7 +130,7 @@ export class AcquisitionService {
       await this.acquireAllImages();
     } catch (err) {
       this.consoleMessageCallback(`Unable to acquire images: ${err}`);
-      this.cancelAcquisition();
+      await this.cancelAcquisition();
       return;
     }
     if (!this.acquisitionRunning) return;   // check if cancelled
@@ -130,25 +146,28 @@ export class AcquisitionService {
   }
 
   //  Cancel  any running acquisition tasks
-  async cancelAcquisition() {
-    console.log('AcquisitionService/cancelAcquisition entered');
-    try {
-      if (this.acquisitionRunning && this.exposuresHaveBegun) {
-        if (await this.communicationService.isExposureComplete()) {
-          console.log('  Nothing to abort');
-        } else {
-          console.log('  Aborting in-progress exposure');
-          await this.communicationService.abortExposure();
+  async cancelAcquisition(): Promise<void> {
+    return new Promise<void>(async (resolve) => {
+      console.log('AcquisitionService/cancelAcquisition entered');
+      try {
+        if (this.acquisitionRunning && this.exposuresHaveBegun) {
+          if (await this.communicationService.isExposureComplete()) {
+            console.log('  Nothing to abort');
+          } else {
+            console.log('  Aborting in-progress exposure');
+            await this.communicationService.abortExposure();
+          }
         }
+      } catch (e) {
+        console.log('Error cancelling acquisition: ', e);
+      } finally {
+        this.consoleMessageCallback!('Acquisition process cancelled');
+        if (this.acquisitionFinishedCallback) this.acquisitionFinishedCallback();
+        this.shutdown();
+        console.log('AcquisitionService/cancelAcquisition exits');
+        resolve();
       }
-    } catch (e) {
-      console.log('Error cancelling acquisition: ', e);
-    } finally {
-      this.consoleMessageCallback!('Acquisition process cancelled');
-      if (this.acquisitionFinishedCallback) this.acquisitionFinishedCallback();
-      this.shutdown();
-      console.log('AcquisitionService/cancelAcquisition exits');
-    }
+    })
   }
 
 
@@ -252,22 +271,27 @@ export class AcquisitionService {
     if (this.fakeDownloadTimerId) {
       clearTimeout(this.fakeDownloadTimerId);
       this.fakeDownloadTimerId = null;
-      // console.log('  Download timer cancelled');
+      console.log('  Fake Download timer cancelled');
     }
     if (this.fakeAcquisitionTimerId) {
       clearTimeout(this.fakeAcquisitionTimerId);
       this.fakeAcquisitionTimerId = null;
-      // console.log('  Acquisition timer cancelled');
+      console.log('  Fake Acquisition timer cancelled');
     }
     if (this.fakeConsoleTimerId) {
       clearInterval(this.fakeConsoleTimerId);
       this.fakeConsoleTimerId = null;
-      // console.log('  Fake console interval timer cancelled');
+      console.log('  Fake console interval timer cancelled');
     }
     if (this.delayedStartTimerId) {
       clearTimeout(this.delayedStartTimerId);
       this.delayedStartTimerId = null;
-      // console.log('  Delayed start timer cancelled');
+      console.log('  Delayed start timer cancelled');
+    }
+    if (this.delayTimerId) {
+      clearTimeout(this.delayTimerId);
+      this.delayTimerId = null;
+      console.log('  Generic delay timer cancelled');
     }
     this.shutDownProgressBar();
 
@@ -330,8 +354,14 @@ export class AcquisitionService {
     }
   }
 
+  //  Just a simple delay of given milliseconds.
+  //  We will reserve the timerId as a class variable, so we can cancel it if interrupted
   private delay(milliseconds: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, milliseconds));
+    return new Promise((resolve) => {
+      this.delayTimerId = setTimeout(() => {
+        this.delayTimerId = null;
+        resolve();
+      }, milliseconds)});
   }
 
   //  Calculate an estimate of how long it should take to acquire this frame set.
@@ -466,6 +496,98 @@ export class AcquisitionService {
 
   private withinDefinedRunTime(acuisitionEndTime: Date): boolean {
     // console.log(`withinDefinedRunTime(${acuisitionEndTime}, ${new Date()})`);
-    return  acuisitionEndTime > new Date();
+    return acuisitionEndTime > new Date();
+  }
+
+  //  Cool the camera to the requested temperature, if cooling is enabled.
+  //  Return a "should abort" indicator.  We should abort only if we fail to cool to the given target
+  private async coolCameraIfRequested(): Promise<boolean> {
+    return new Promise<boolean>(async (resolve, reject) => {
+      console.log('coolCameraIfRequested STUB');
+      let shouldAbort: boolean = false;
+      const temperature = this.settingsService.getTemperatureControl();
+      if (temperature) {
+        if (temperature.enabled) {
+          console.log(`  Cooling to ${temperature.target} requested.`);
+          this.consoleMessageCallback!(`Cooling camera to ${temperature.target} degrees (&plusmn; ${temperature.within} degree).`, 1);
+          try {
+            shouldAbort = await this.coolCameraTo(temperature.target, temperature.within,
+              temperature.checkInterval, temperature.maxTime,
+              temperature.retries, temperature.retryDelay);
+          } catch (err) {
+            reject(err);
+          }
+        }
+      }
+      resolve(shouldAbort);
+    })
+  }
+
+  private async coolCameraTo(target: number, within: number,
+                             checkIntervalSeconds: number,
+                             maxTimeSeconds: number, retries: number, retryDelaySeconds: number): Promise<boolean> {
+    return new Promise<boolean>(async (resolve, reject) => {
+      console.log(`Cool camera to ${target} within ${within}, checking every ${checkIntervalSeconds} seconds`);
+      console.log(`  Allow at least ${maxTimeSeconds} to cool`);
+      console.log(`  If necessary, retry up to ${retries} times, every ${retryDelaySeconds} seconds.`);
+      let shouldAbort: boolean = false;
+      try {
+        let success: boolean = await this.oneCoolingAttempt(target, within, checkIntervalSeconds, maxTimeSeconds);
+        let retryCount = retries;
+        while ((retryCount-- > 0) && !success && this.acquisitionRunning) {
+          console.log('   Unable to cool to desired temperature, waiting to try again');
+          console.log(`   ${retryCount} retries left`);
+          console.log(`   delaying ${retryDelaySeconds} seconds`);
+          await this.delay(retryDelaySeconds * milliseconds);
+          console.log('   Delay done, trying again');
+          if (this.acquisitionRunning) success = await this.oneCoolingAttempt(target, within, checkIntervalSeconds, maxTimeSeconds);
+        }
+        shouldAbort = !success;
+        resolve(shouldAbort);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  //  Take one attempt at cooling the camera to the target within the given time.
+  //  Return a success indicator
+  private async oneCoolingAttempt(target: number, within: number, checkIntervalSeconds: number, maxTimeSeconds: number): Promise<boolean> {
+    return new Promise<boolean>(async (resolve, reject) => {
+      let success: boolean = false;
+
+      //  Set up a time limit for how long we'll wait
+      const giveUpTime: Date = new Date(new Date().getTime() + (maxTimeSeconds * milliseconds));
+      console.log(`It is ${new Date()}, will try cooling until ${giveUpTime}`);
+
+      try {
+        //  Start the camera cooling
+        await this.communicationService.setCooling(true, target);
+
+        //  Loop to check it at regular intervals until temperature reached or time expired
+        while (new Date() < giveUpTime && !success && this.acquisitionRunning) {
+          console.log(`   Waiting ${checkIntervalSeconds} seconds before checking temperature`);
+          await this.delay(checkIntervalSeconds * milliseconds);
+          if (this.acquisitionRunning) {
+            //  Get temperature from camera and see if we have reached target
+            const cameraTemperature: number = await this.communicationService.getTemperature();
+            this.consoleMessageCallback!(`Camera temperature is ${cameraTemperature}.`, 2);
+            console.log(`   Camera reports temperature is ${cameraTemperature}`);
+            success = this.tempWithinTolerance(cameraTemperature, target, within);
+            console.log(`   This is ${success ? '' : 'not'} within the given tolerance`);
+          }
+        }
+        //  Success if we reached the target temperature
+        resolve(success);
+      } catch (err) {
+        reject(err);
+      }
+    })
+  }
+
+  //  Determine if the given temperature is close enough to the target
+  private tempWithinTolerance(cameraTemperature: number, target: number, within: number): boolean {
+    const difference: number = Math.abs(cameraTemperature - target);
+    return difference <= within;
   }
 }

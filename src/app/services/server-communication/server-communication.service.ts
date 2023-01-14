@@ -9,6 +9,7 @@ const tsxTestSuccessString = 'TSX Success';
 const defaultAddress = 'localhost';
 const defaultPort = 3000;
 
+const fakeTemperatureReduction = 3;
 
 @Injectable({
   providedIn: 'root'
@@ -246,4 +247,30 @@ export class ServerCommunicationService {
     return `${protocol}://${address}:${port}/${endpoint}`;
   }
 
+  //  Set the camera cooling on or off.  Return a promise to await completion, but no value associated
+  async setCooling(coolingOn: boolean, temperature: number): Promise<void> {
+    const url = this.makeUrl(`api/setcooling/${coolingOn ? 'on' : 'off'}/${temperature}`);
+    console.log('setCooling Sending ', url);
+
+    return new Promise<void>((resolve) => {
+      axios.get(url)
+        .then(() => {
+          resolve();
+        })
+        .catch((err) => {
+          resolve(err);
+        });
+    });
+  }
+
+  fakeTemperature: number = -5;  //  Use to test cooling without real camera
+
+  //  Get the current chip temperature from the camera
+  async getTemperature(): Promise<number> {
+    return new Promise<number>((resolve) => {
+      this.fakeTemperature -= fakeTemperatureReduction;
+      console.log(`STUB getTemperature, returning ${this.fakeTemperature}`);
+      resolve(this.fakeTemperature);
+    })
+  }
 }
