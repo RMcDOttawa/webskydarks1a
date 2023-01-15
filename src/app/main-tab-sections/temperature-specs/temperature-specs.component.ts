@@ -30,7 +30,8 @@ export class TemperatureSpecsComponent implements OnInit {
         retries: 3,
         retryDelay: 20 * 60,
         abortOnRise: false,
-        abortThreshold: 5
+        abortThreshold: 5,
+        offAfterSession: false
       }
     }
 
@@ -83,6 +84,7 @@ export class TemperatureSpecsComponent implements OnInit {
         Validators.min(0.1),
         Validators.max(100),
       ]),
+      offAfterSessionControl: new FormControl({value: defaults.offAfterSession, disabled: !defaults.enabled}),
     });
 
     //  Set up listener on main checkbox to enable or disable all the fields
@@ -132,6 +134,7 @@ export class TemperatureSpecsComponent implements OnInit {
           retryDelay: g.get('coolingRetriesDelayControl')!.value,
           abortOnRise: g.get('abortTemperatureControl')!.value,
           abortThreshold: g.get('temperatureAbortThresholdControl')!.value,
+          offAfterSession: g.get('offAfterSessionControl')!.value
         };
         // console.log('  Saving settings: ', newSettings);
         this.settingsService.setTemperatureControl(newSettings);

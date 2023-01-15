@@ -40,15 +40,16 @@ export interface SessionEnd {
 
 //  Information about camera temperature control
 export interface TemperatureControl {
-  enabled: boolean,         //  Use temperature control?
-  target: number,           //  Cool to this temperature
-  within: number,           //    target temp is plus-or-minus this amount
-  checkInterval: number,    //  Check this often (seconds) while cooling
-  maxTime: number,          //  Max time to attempt to reach target temp
-  retries: number,          //  If cooling failed, try again this many times
-  retryDelay: number,       //      ... waiting this long between retries
-  abortOnRise: boolean,     //  Abort session if temperature deviates
-  abortThreshold: number    //      ... by this much
+  enabled: boolean,             //  Use temperature control?
+  target: number,               //  Cool to this temperature
+  within: number,               //    target temp is plus-or-minus this amount
+  checkInterval: number,        //  Check this often (seconds) while cooling
+  maxTime: number,              //  Max time to attempt to reach target temp
+  retries: number,              //  If cooling failed, try again this many times
+  retryDelay: number,           //      ... waiting this long between retries
+  abortOnRise: boolean,         //  Abort session if temperature deviates
+  abortThreshold: number,       //      ... by this much
+  offAfterSession: boolean      //  Turn cooler off at end of acquisition session
 }
 
 //  Information about the status of the camera cooling system

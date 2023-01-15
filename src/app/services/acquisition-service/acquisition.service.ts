@@ -146,9 +146,13 @@ export class AcquisitionService {
     }
     if (!this.acquisitionRunning) return;   // check if cancelled
 
+
     //  Report that we're done
     // console.log('STUB clean-up');
     this.consoleMessageCallback('Ending acquisition');
+    //  If cooling is to be turned off
+    await this.turnCoolingOffIfRequested();
+
     this.acquisitionFinishedCallback();
     this.acquisitionRunning = false;
     this.shutdown();
@@ -678,6 +682,26 @@ export class AcquisitionService {
       } finally {
         resolve();
       }
+    })
+  }
+
+  //  If the camera is cooled, and the user has asked to turn cooling off after a session, do so
+  private async turnCoolingOffIfRequested(): Promise<void> {
+    return new Promise<void> (async (resolve) => {
+      const temperatureSettings = this.settingsService.getTemperatureControl();
+      if (temperatureSettings) {
+        if (temperatureSettings.enabled) {
+          if (temperatureSettings.offAfterSession) {
+            try {
+              await this.communicationService.setCooling(false, 0);
+              this.consoleMessageCallback!('Cooling turned off as requested', 1);
+            } catch (err) {
+              console.log('failed to turn cooling off after session: ', err);
+            }
+          }
+        }
+      }
+      resolve();
     })
   }
 }
