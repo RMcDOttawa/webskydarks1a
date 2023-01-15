@@ -1,0 +1,19 @@
+.layout {
+  display: inline-flex;
+  padding: 0;
+}
+
+.temp-label {
+}
+
+.temp-value {
+  margin-left: .5em;
+  width: 2em;
+}
+.power-label {
+  margin-left: 1em;
+}
+.power-value {
+  margin-left: .5em;
+  width: 2em;
+}

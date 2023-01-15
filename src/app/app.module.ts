@@ -46,6 +46,7 @@ import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatTableModule} from "@angular/material/table";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatDatepickerModule} from "@angular/material/datepicker";
+import { CoolingStatusComponent } from './main-tab-sections/run-session/cooling-status/cooling-status.component';
 
 
 @NgModule({
@@ -76,6 +77,7 @@ import {MatDatepickerModule} from "@angular/material/datepicker";
     ConsoleLogComponent,
     AcquisitionListComponent,
     CameraAutosaveComponent,
+    CoolingStatusComponent,
   ],
   imports: [
     AppRoutingModule,

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {FramePlanService} from "../frame-plan/frame-plan.service";
 import {ServerCommunicationService} from "../server-communication/server-communication.service";
-import {DarkFrame, DarkFrameSet, DarkFrameType, SessionStart} from "../../types";
+import {CoolingStatus, DarkFrame, DarkFrameSet, DarkFrameType, SessionStart} from "../../types";
 import {SettingsService} from "../settings/settings.service";
 
 // const fakeAcquisitionSeconds = 30;
@@ -21,6 +21,8 @@ const progress_bar_update_interval_secs = 0.1;      //  Update the progress bar 
 
 const max_possible_date = new Date(8640000000000000); // from Date documentation
 
+const cooling_status_update_interval_seconds = 33;
+
 
 //  Service to manage the actual acquisition of frames.
 //  Since actual acquisition is done async by theSkyX this service is non-blocking, but
@@ -38,6 +40,7 @@ export class AcquisitionService {
   //  longer than some threshold, and update with a periodic timer
   private setProgressBarVisibilityCallback: ((visibility: boolean) => void) | undefined;
   private setProgressBarProgressCallback: ((progress: number) => void) | undefined;
+  private setCoolingStatusCallback: ((coolingStatus: CoolingStatus) => void) | undefined;
 
   private acquisitionRunning = false;
   private exposuresHaveBegun = false;
@@ -54,6 +57,9 @@ export class AcquisitionService {
   progressBarStartedAt!: Date;
   progressBarTargetMilliseconds!: number;
   progressBarIntervalId: ReturnType<typeof setInterval> | null = null;
+
+  //  Interval used to periodically update coooling status while using the cooler
+  coolingUpdateIntervalId: ReturnType<typeof setInterval> | null = null;
 
   downloadTimes: number[] = [];
   private delayTimerId: ReturnType<typeof setTimeout> | null = null;
@@ -79,13 +85,16 @@ export class AcquisitionService {
                          workingFrameIndexCallback: (frameIndex: number) => void,
                          acquisitionFinishedCallback: () => void,
                          setProgressBarVisibility: (visibility: boolean) => void,
-                         setProgressBarProgress: (progress: number) => void) {
+                         setProgressBarProgress: (progress: number) => void,
+                         setCoolingStatus: (coolingStatus: CoolingStatus) => void,
+  ) {
     // console.log('AcquisitionService/beginAcquisition entered');
     this.consoleMessageCallback = consoleMessageCallback;
     this.acquisitionFinishedCallback = acquisitionFinishedCallback;
     this.workingFrameIndexCallback = workingFrameIndexCallback;
     this.setProgressBarVisibilityCallback = setProgressBarVisibility;
     this.setProgressBarProgressCallback = setProgressBarProgress;
+    this.setCoolingStatusCallback = setCoolingStatus;
     this.acquisitionRunning = true;
     this.exposuresHaveBegun = false;
 
@@ -244,9 +253,9 @@ export class AcquisitionService {
       let frameSetIndex: number = this.framePlanService.findIndexOfNextSetToAcquire();
       let temperatureOk: boolean = true;
       while (frameSetIndex !== -1
-          && this.acquisitionRunning
-          && this.withinDefinedRunTime(acquisitionEndTime)
-          && temperatureOk) {
+      && this.acquisitionRunning
+      && this.withinDefinedRunTime(acquisitionEndTime)
+      && temperatureOk) {
         //  Tell the UI what frame index we are on
         this.workingFrameIndexCallback!(frameSetIndex);
 
@@ -292,6 +301,11 @@ export class AcquisitionService {
       clearInterval(this.fakeConsoleTimerId);
       this.fakeConsoleTimerId = null;
       console.log('  Fake console interval timer cancelled');
+    }
+    if (this.coolingUpdateIntervalId) {
+      clearInterval(this.coolingUpdateIntervalId);
+      this.coolingUpdateIntervalId = null;
+      console.log('  Cooling status interval timer cancelled');
     }
     if (this.delayedStartTimerId) {
       clearTimeout(this.delayedStartTimerId);
@@ -542,6 +556,7 @@ export class AcquisitionService {
       // console.log(`  If necessary, retry up to ${retries} times, every ${retryDelaySeconds} seconds.`);
       let shouldAbort: boolean = false;
       try {
+        await this.startCoolingTimer();
         let success: boolean = await this.oneCoolingAttempt(target, within, checkIntervalSeconds, maxTimeSeconds);
         let retryCount = retries;
         while ((retryCount-- > 0) && !success && this.acquisitionRunning) {
@@ -615,7 +630,7 @@ export class AcquisitionService {
       if (temperatureSettings.enabled) {
         if (temperatureSettings.abortOnRise) {
           try {
-            const currentTemperature:Number = Number(await this.communicationService.getTemperature());
+            const currentTemperature: Number = Number(await this.communicationService.getTemperature());
             const maximumBeforeAbort = Number(temperatureSettings.target) + Number(temperatureSettings.abortThreshold);
             resultOk = currentTemperature <= maximumBeforeAbort;
             if (!resultOk) {
@@ -629,6 +644,40 @@ export class AcquisitionService {
         }
       }
       resolve(resultOk);
+    })
+  }
+
+  //  Start an interval timer to update the cooling information displayed.
+  private async startCoolingTimer(): Promise<void> {
+    return new Promise<void>(async (resolve) => {
+      try {
+        this.coolingUpdateIntervalId = setInterval(this.coolingUpdateHandler.bind(this),
+          cooling_status_update_interval_seconds * milliseconds);
+        resolve();
+      } catch (err) {
+        // Allow it to fail - it's not critical
+        console.log('startCoolingTimer failed: ', err);
+      }
+    })
+  }
+
+  //
+
+  private async coolingUpdateHandler(): Promise<void> {
+    return new Promise<void>(async (resolve) => {
+      try {
+        // console.log('Cooling interval handler');
+        if (this.setCoolingStatusCallback) {
+          const coolingStatus = await this.communicationService.getCoolingStatus();
+          // console.log('  Using callback to set cooling status: ', coolingStatus);
+          this.setCoolingStatusCallback(coolingStatus);
+        }
+      } catch (err) {
+        // Allow it to fail - may be unable to get cooling if busy with an image acquisition
+        console.log('Cooling update timer handler failed: ', err);
+      } finally {
+        resolve();
+      }
     })
   }
 }

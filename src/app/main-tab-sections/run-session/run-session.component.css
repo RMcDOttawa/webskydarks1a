@@ -10,6 +10,12 @@
   font-size: small;
 }
 
+.cooling-section {
+  /*border: solid green thin;*/
+  margin-top: 0;
+  font-size: small;
+}
+
 .dashboard-section {
   margin-top: 1em;
   display: grid;

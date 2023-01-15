@@ -1,0 +1,6 @@
+<div class="layout" *ngIf="coolingStatus !== null">
+    <div class="temp-label">Cooler temperature</div>
+    <div class="temp-value">{{coolingStatus.temperature}}</div>
+    <div class="power-label">Power</div>
+    <div class="power-value">{{coolingStatus.coolerPower}}%</div>
+</div>

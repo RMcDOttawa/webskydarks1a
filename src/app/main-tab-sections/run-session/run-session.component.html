@@ -1,8 +1,13 @@
 <div class="run-session-container">
   <p style="margin-top: 1em;">(<a routerLink="/help/runsession">Help on this page</a>)</p>
   <h1>Acquisition Session</h1>
+  <!-- Feedback on the camera autosave path, only appearing when it is available -->
   <div class="autosave-section">
     <app-camera-autosave></app-camera-autosave>
+  </div>
+  <!-- Feedback on the camera cooler: temperature and power, only appearing when it is available -->
+  <div class="cooling-section">
+    <app-cooling-status [coolingStatus]="coolingStatus"></app-cooling-status>
   </div>
   <div class="dashboard-section">
     <div class="console-log-section">

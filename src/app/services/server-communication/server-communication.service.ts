@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {SettingsService} from "../settings/settings.service";
-import {DarkFrameType, ServerCoordinates} from "../../types";
+import {CoolingStatus, DarkFrameType, ServerCoordinates} from "../../types";
 import axios from "axios";
 
 const relayTestSuccessString = 'Relay Success';
@@ -26,7 +26,7 @@ export class ServerCommunicationService {
     // const url = `https://${address}:${port}/api/testrelay`;
     const url = this.makeUrl('api/testrelay');
 
-    return new Promise<boolean>((resolve) => {
+    return new Promise<boolean>(async (resolve) => {
       console.log('testRelay: Sending ', url);
       axios.get(url)
         .then((response) => {
@@ -63,7 +63,7 @@ export class ServerCommunicationService {
     const protocol = useHttps ? 'https' : 'http';
     const url = `${protocol}://${address}:${port}/api/testrelay`;
 
-    return new Promise<boolean>((resolve) => {
+    return new Promise<boolean>(async (resolve) => {
       console.log('testRelayWithHttps Sending ', url);
       axios.get(url)
         .then((response) => {
@@ -101,7 +101,7 @@ export class ServerCommunicationService {
     const url = this.makeUrl('api/testtsx');
     console.log('testTheSkyX Sending ', url);
 
-    return new Promise<boolean>((resolve) => {
+    return new Promise<boolean>(async (resolve) => {
       axios.get(url)
         .then((response) => {
           resolve(response.data === tsxTestSuccessString);
@@ -119,7 +119,7 @@ export class ServerCommunicationService {
     const url = this.makeUrl('api/getautosavepath');
     console.log('getAutosavePath Sending ', url);
 
-    return new Promise<string>((resolve, reject) => {
+    return new Promise<string>(async (resolve, reject) => {
       axios.get(url)
         .then((response) => {
           resolve(response.data);
@@ -135,7 +135,7 @@ export class ServerCommunicationService {
     const url = this.makeUrl(`api/timedownload/${binning}`);
     console.log('timeDownload Sending ', url);
 
-    return new Promise<number>((resolve, reject) => {
+    return new Promise<number>(async (resolve, reject) => {
       axios.get(url)
         .then((response) => {
           const timeReturned = response.data.time;
@@ -156,7 +156,7 @@ export class ServerCommunicationService {
     const url = this.makeUrl(`api/sendtext`);
     console.log('sendAndReceive Sending ', url);
 
-    return new Promise<string>((resolve) => {
+    return new Promise<string>(async (resolve) => {
       axios.post(url,
         {message: commandToSend})
         .then((response) => {
@@ -178,7 +178,7 @@ export class ServerCommunicationService {
       url = this.makeUrl(`api/acquire/dark/${binning}/${exposure}`);
     }
     console.log(`startImageAcquisition(${frameType},${exposure},${binning}): `, url);
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       axios.get(url)
         .then(() => {
           resolve();
@@ -195,7 +195,7 @@ export class ServerCommunicationService {
     const url = this.makeUrl(`api/exposing`);
     console.log('isExposureComplete Sending ', url);
 
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<boolean>(async (resolve, reject) => {
       axios.get(url)
         .then((response) => {
           resolve(!response.data.exposing);
@@ -211,7 +211,7 @@ export class ServerCommunicationService {
     // const url = `https://${address}:${port}/api/abortexposure`;
     const url = this.makeUrl(`api/abortexposure`);
     console.log('abortExposure Sending ', url);
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       axios.get(url)
         .then(() => {
           resolve();
@@ -249,10 +249,10 @@ export class ServerCommunicationService {
     const url = this.makeUrl(`api/setcooling/${coolingOn ? 'on' : 'off'}/${temperature}`);
     console.log('setCooling Sending ', url);
 
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       axios.get(url)
         .then(() => {
-          console.log('  setCooling returned successfully, resolving');
+          // console.log('  setCooling returned successfully, resolving');
           resolve();
         })
         .catch((err) => {
@@ -269,10 +269,10 @@ export class ServerCommunicationService {
     const url = this.makeUrl('api/gettemperature');
     console.log('getTemperature Sending ', url);
 
-    return new Promise<number>((resolve, reject) => {
+    return new Promise<number>(async (resolve, reject) => {
       axios.get(url)
         .then((response) => {
-          console.log('  getTemperature received ', response.data);
+          // console.log('  getTemperature received ', response.data);
           resolve(Number(response.data));
         })
         .catch((err) => {
@@ -280,5 +280,23 @@ export class ServerCommunicationService {
           reject(err.message);
         });
     });
+  }
+
+  async getCoolingStatus(): Promise<CoolingStatus> {
+    const url = this.makeUrl('api/coolerinfo');
+    console.log('getCoolingStatus Sending ', url);
+
+    return new Promise<CoolingStatus>(async (resolve, reject) => {
+      axios.get(url)
+        .then((response) => {
+          // console.log('  getCoolingStatus received ', response.data);
+          resolve({temperature: response.data.temperature, coolerPower: response.data.power});
+        })
+        .catch((err) => {
+          console.log('  getCoolingStatus failed, rejecting: ', err);
+          reject(err.message);
+        });
+    });
+
   }
 }

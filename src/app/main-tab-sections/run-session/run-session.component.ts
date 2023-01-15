@@ -2,6 +2,7 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {AcquisitionService} from "../../services/acquisition-service/acquisition.service";
 import {ServerCommunicationService} from "../../services/server-communication/server-communication.service";
 import {FramePlanService} from "../../services/frame-plan/frame-plan.service";
+import {CoolingStatus} from "../../types";
 
 @Component({
   selector: 'app-run-session',
@@ -10,7 +11,7 @@ import {FramePlanService} from "../../services/frame-plan/frame-plan.service";
 })
 export class RunSessionComponent implements OnInit {
 
-  //  Event to tell parent if we are busy acquiring images so it can disable other tabs.
+  //  Event to tell parent if we are busy acquiring images, so it can disable other tabs.
   @Output() acquisitionEvent = new EventEmitter<boolean>();
 
   //  String contents of console are constructed here and passed to the console component to display
@@ -20,6 +21,10 @@ export class RunSessionComponent implements OnInit {
 
   displayProgressBar: boolean = false;
   progressBarProgress: number = 0;
+
+  //  Keep track of the cooling status, so it can be displayed
+  coolingStatus: CoolingStatus | null = null;
+  // coolingStatus: CoolingStatus | null = {temperature: -10, coolerPower: 80};
 
   constructor(
     private acquisitionService: AcquisitionService,
@@ -59,7 +64,8 @@ export class RunSessionComponent implements OnInit {
       this.updateFrameIndex.bind(this),
       this.acquisitionFinished.bind(this),
       this.setProgressBarVisibility.bind(this),
-      this.setProgressBarProgress.bind(this)
+      this.setProgressBarProgress.bind(this),
+      this.setCoolingStatus.bind(this)
     );
   }
 
@@ -73,6 +79,10 @@ export class RunSessionComponent implements OnInit {
     this.progressBarProgress = progress;
   }
 
+  setCoolingStatus(coolingStatus: CoolingStatus): void {
+    // console.log('setCoolingStatus callback: ', coolingStatus);
+    this.coolingStatus = coolingStatus;
+  }
 
   //  Cancel Acquisition button has been clicked.
   cancelAcquisition() {

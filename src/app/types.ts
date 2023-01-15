@@ -50,3 +50,9 @@ export interface TemperatureControl {
   abortOnRise: boolean,     //  Abort session if temperature deviates
   abortThreshold: number    //      ... by this much
 }
+
+//  Information about the status of the camera cooling system
+export interface CoolingStatus {
+  temperature: number,    //  Current chip temperature
+  coolerPower: number     //  Cooler %power
+}
